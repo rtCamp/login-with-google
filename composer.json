@@ -1,0 +1,12 @@
+{
+    "name": "rtcamp/wp-google-login",
+    "description": "Minimal plugin which allows WP user to login with google.",
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Utkarsh Patel",
+            "email": "itismeutkarsh@gmail.com"
+        }
+    ],
+    "require": {}
+}
