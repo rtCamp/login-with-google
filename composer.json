@@ -8,5 +8,7 @@
             "email": "itismeutkarsh@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "google/apiclient": "^2.0"
+    }
 }

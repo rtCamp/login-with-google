@@ -10,3 +10,6 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-google-login
  */
+
+// Todo: This should only require where needed.
+require_once __DIR__ . '/vendor/autoload.php';
