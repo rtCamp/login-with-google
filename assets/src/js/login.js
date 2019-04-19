@@ -1,3 +1,6 @@
+/**
+ * JS for Login and Register page.
+ */
 const wpGoogleLogin = {
 
 	/**
@@ -27,10 +30,7 @@ const wpGoogleLogin = {
 		this.googleLoginButton = this.form.querySelector( '.wp_google_login' ).cloneNode( true );
 		this.googleLoginButton.classList.remove( 'hidden' );
 
-		// if ( 'registerform' === this.form.getAttribute( 'id' ) ) {
-		// 	this.googleLoginButton.querySelector('.wp_google_login__button').innerText = 'Signup with Google';
-		// }
-
+		// HTML is cloned from existing HTML node.
 		this.form.append( this.googleLoginButton );
 	}
 

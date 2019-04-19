@@ -30,21 +30,23 @@ class Helper {
 		}
 
 		if ( ! empty( $variables ) ) {
+			// This will needed for provide variables to the template.
 			// Will skips those variables, those already defined.
-			extract( $variables, EXTR_SKIP );
+			extract( $variables, EXTR_SKIP ); // phpcs:ignore
 		}
-
 
 		if ( true === $echo ) {
 
 			// Load template and output the data.
-			require $template_path;
+			require $template_path; // phpcs:ignore
 
 			return ''; // Job done, bail out.
 		}
 
 		ob_start();
-		require $template_path; // Load template output in buffer.
+
+		// Load template output in buffer.
+		require $template_path; // phpcs:ignore
 
 		return ob_get_clean();
 

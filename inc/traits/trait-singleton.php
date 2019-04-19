@@ -21,18 +21,13 @@
  * another method has done, then you should implement this trait in that class.
  *
  * If you specifically need multiple objects, then use a normal class.
+ *
+ * @package wp-google-login
  */
 
 namespace WP_Google_Login\Inc\Traits;
 
 trait Singleton {
-
-	/**
-	 * Collection of instance.
-	 *
-	 * @var Array
-	 */
-	protected static $_instance = array();
 
 	/**
 	 * Protected class constructor to prevent direct object creation
@@ -60,6 +55,13 @@ trait Singleton {
 	final public static function get_instance() {
 
 		/**
+		 * Collection of instance.
+		 *
+		 * @var array
+		 */
+		static $instance = [];
+
+		/**
 		 * If this trait is implemented in a class which has multiple
 		 * sub-classes then static::$_instance will be overwritten with the most recent
 		 * sub-class instance. Thanks to late static binding
@@ -69,9 +71,9 @@ trait Singleton {
 		 */
 		$called_class = get_called_class();
 
-		if ( ! isset( static::$_instance[ $called_class ] ) ) {
+		if ( ! isset( $instance[ $called_class ] ) ) {
 
-			static::$_instance[ $called_class ] = new $called_class();
+			$instance[ $called_class ] = new $called_class();
 
 			/**
 			 * Dependent items can use the `wp_google_login_extend_singleton_init_{$called_class}` hook to execute code
@@ -80,7 +82,7 @@ trait Singleton {
 
 		}
 
-		return static::$_instance[ $called_class ];
+		return $instance[ $called_class ];
 
 	}
 

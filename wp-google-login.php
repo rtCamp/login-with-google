@@ -9,6 +9,8 @@
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-google-login
+ *
+ * @package wp-google-login
  */
 
 define( 'WP_GOOGLE_LOGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
@@ -22,8 +24,9 @@ if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || 0 !== val
 	return;
 }
 
-require_once( $vendor_autoload );
-require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) );
+// We already making sure that file is exists and valid.
+require_once( $vendor_autoload ); // phpcs:ignore
+require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
 
 \WP_Google_Login\Inc\Plugin::get_instance();
 

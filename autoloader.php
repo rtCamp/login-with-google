@@ -1,7 +1,10 @@
 <?php
 /**
  * To Register autoloader
+ *
+ * @package wp-google-login
  */
+
 spl_autoload_register( function ( $resource = '' ) {
 
 	$resource_path = false;
@@ -60,6 +63,8 @@ spl_autoload_register( function ( $resource = '' ) {
 	}
 
 	if ( file_exists( $resource_path ) && 0 === validate_file( $resource_path ) ) {
-		require_once( $resource_path );
+		// We already making sure that file is exists and valid.
+		require_once( $resource_path ); // phpcs:ignore
 	}
+
 } );
