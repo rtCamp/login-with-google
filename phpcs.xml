@@ -2,4 +2,6 @@
 <ruleset name="WP Google Login ruleset">
 	<rule ref="WordPressVIPMinimum"/>
 	<rule ref="WordPress-Docs"/>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
 </ruleset>
