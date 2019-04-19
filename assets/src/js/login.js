@@ -4,11 +4,6 @@
  * @package wp-google-login
  */
 
-/**
- * To add google sign in button.
- *
- * @type {Object}
- */
 const wpGoogleLogin = {
 
 	/**
