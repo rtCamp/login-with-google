@@ -2,7 +2,9 @@
 <ruleset name="WP Google Login ruleset">
 	<rule ref="WordPressVIPMinimum"/>
 	<rule ref="WordPress-Docs"/>
-
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
+		<type>warning</type>
+	</rule>
 	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
 </ruleset>
