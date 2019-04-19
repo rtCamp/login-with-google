@@ -17,11 +17,21 @@ const wpGoogleLogin = {
 	 */
 	onContentLoaded() {
 
-		this.loginForm = document.getElementById( 'loginform' );
-		this.googleLoginButton = this.loginForm.querySelector( '.wp_google_login' ).cloneNode( true );
+		// Form either can be login or register form.
+		this.form = document.getElementById( 'loginform' ) || document.getElementById( 'registerform' );
+
+		if ( null === this.form ) {
+			return;
+		}
+
+		this.googleLoginButton = this.form.querySelector( '.wp_google_login' ).cloneNode( true );
 		this.googleLoginButton.classList.remove( 'hidden' );
 
-		this.loginForm.append( this.googleLoginButton );
+		// if ( 'registerform' === this.form.getAttribute( 'id' ) ) {
+		// 	this.googleLoginButton.querySelector('.wp_google_login__button').innerText = 'Signup with Google';
+		// }
+
+		this.form.append( this.googleLoginButton );
 	}
 
 };

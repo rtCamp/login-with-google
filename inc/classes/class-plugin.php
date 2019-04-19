@@ -37,6 +37,7 @@ class Plugin {
 		 */
 		add_action( 'login_enqueue_scripts', [ $this, 'login_enqueue_scripts' ] );
 		add_action( 'login_form', [ $this, 'add_google_login_button' ] );
+		add_action( 'register_form', [ $this, 'add_google_login_button' ] );
 
 	}
 
