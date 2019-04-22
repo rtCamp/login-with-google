@@ -159,7 +159,7 @@ class Google_Auth {
 					$user_id = $this->_create_user( $user_info );
 					$user    = get_user_by( 'id', $user_id );
 				} else {
-					$user = new \WP_Error( 'wp_google_login_error', esc_html__( '<strong>ERROR:</strong No user found.', 'google-apps-login' ) );
+					$user = new \WP_Error( 'wp_google_login_error', esc_html__( '<strong>ERROR:</strong> No user found.', 'google-apps-login' ) );
 				}
 
 			}
