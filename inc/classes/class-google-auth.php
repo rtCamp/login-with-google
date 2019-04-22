@@ -136,9 +136,14 @@ class Google_Auth {
 	 * @return null|\WP_User WP_User if the user is authenticated.
 	 *                       WP_Error or null otherwise.
 	 */
-	public function authenticate_user( $user ) {
+	public function authenticate_user( $user = null ) {
 
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+
+		$is_mu_site         = ( defined( 'MULTISITE' ) && true === MULTISITE );
+		$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_ALLOW_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_ALLOW_REGISTRATION );
+
+		$blog_id = $is_mu_site ? get_current_blog_id() : false;
 
 		if ( empty( $token ) ) {
 			return $user;
@@ -146,26 +151,42 @@ class Google_Auth {
 
 		$user_info = $this->_get_user_from_token( $token );
 
-		if ( ! empty( $user_info['user_email'] ) && is_email( $user_info['user_email'] ) ) {
+		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
+			return $user;
+		}
 
-			$user = get_user_by( 'email', $user_info['user_email'] );
+		$user = get_user_by( 'email', $user_info['user_email'] );
 
-			if ( empty( $user ) || ! is_a( $user, 'WP_User' ) ) {
+		// We found the user.
+		if ( ! empty( $user ) && is_a( $user, 'WP_User' ) ) {
 
-				$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_ALLOW_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_ALLOW_REGISTRATION );
-
-				if ( ! empty( $users_can_register ) ) {
-					$user_id = $this->_create_user( $user_info );
-					$user    = get_user_by( 'id', $user_id );
-				} else {
-					$user = new \WP_Error(
-						'wp_google_login_error',
-						sprintf( __( 'User <strong>%s</strong> not registered in Wordpress', 'google-apps-login' ), $user_info['user_email'] )
-					);
-				}
-
+			if ( ! $is_mu_site ) {
+				return $user;
 			}
 
+			// Check for MU site.
+			if ( ! empty( $blog_id ) && is_user_member_of_blog( $user->ID, $blog_id ) ) {
+				return $user;
+			}
+
+		}
+
+		if ( empty( $users_can_register ) ) {
+			return new \WP_Error(
+				'wp_google_login_error',
+				sprintf( __( 'User <strong>%s</strong> not registered in Wordpress', 'google-apps-login' ), $user_info['user_email'] )
+			);
+		}
+
+		// Let's create WP user first.
+		if ( empty( $user ) || ! is_a( $user, 'WP_User' ) ) {
+			$user_id = $this->_create_user( $user_info );
+			$user    = get_user_by( 'id', $user_id );
+		}
+
+		if ( $is_mu_site ) {
+			$default_user_role = get_blog_option( $blog_id, 'default_role', 'subscriber' );
+			add_user_to_blog( $blog_id, $user->ID, $default_user_role );
 		}
 
 		return $user;
