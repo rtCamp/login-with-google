@@ -26,6 +26,13 @@ class Google_Auth {
 	protected $_client = false;
 
 	/**
+	 * To store after login redirect URL.
+	 *
+	 * @var string
+	 */
+	protected $_redirect_to = '';
+
+	/**
 	 * Google_Auth constructor.
 	 */
 	protected function __construct() {
@@ -33,6 +40,8 @@ class Google_Auth {
 		$this->_client = $this->_get_client();
 
 		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
+		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
+		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
 	}
 
 	/**
@@ -47,6 +56,17 @@ class Google_Auth {
 
 		$client->setClientId( WP_GOOGLE_LOGIN_CLIENT_ID );
 		$client->setClientSecret( WP_GOOGLE_LOGIN_SECRET );
+
+		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
+
+		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
+
+		$state = [
+			'redirect_to' => $redirect_to,
+			'blog_id'     => get_current_blog_id(),
+		];
+
+		$client->setState( implode( '|', $state ) );
 
 		$client->setRedirectUri( wp_login_url() );
 
@@ -139,11 +159,15 @@ class Google_Auth {
 	public function authenticate_user( $user = null ) {
 
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
 
 		$is_mu_site         = ( defined( 'MULTISITE' ) && true === MULTISITE );
 		$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_ALLOW_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_ALLOW_REGISTRATION );
 
-		$blog_id = $is_mu_site ? get_current_blog_id() : false;
+		$state = explode( '|', $state );
+
+		$redirect_to = ( ! empty( $state[0] ) ) ? esc_url_raw( $state[0] ) : '';
+		$blog_id     = ( ! empty( $state[1] ) && 0 < intval( $state[1] ) ) ? intval( $state[1] ) : 0;
 
 		if ( empty( $token ) ) {
 			return $user;
@@ -154,6 +178,9 @@ class Google_Auth {
 		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
+
+		// Set redirect URL. so we can redirect after login.
+		$this->_redirect_to = $redirect_to;
 
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
@@ -190,6 +217,17 @@ class Google_Auth {
 		}
 
 		return $user;
+	}
+
+	/**
+	 * To redirect to appropriate URL after auth with google.
+	 *
+	 * @param string $redirect_to Redirect to URL.
+	 *
+	 * @return string Redirect to URL.
+	 */
+	public function get_login_redirect( $redirect_to ) {
+		return ( ! empty( $this->redirect_to ) ) ? $this->redirect_to : $redirect_to;
 	}
 
 	/**
