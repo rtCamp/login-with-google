@@ -130,8 +130,8 @@ class Google_Auth {
 	/**
 	 * To authenticate user.
 	 *
-	 * @param null|WP_User|WP_Error $user WP_User if the user is authenticated.
-	 *                                    WP_Error or null otherwise.
+	 * @param null|\WP_User|\WP_Error $user WP_User if the user is authenticated.
+	 *                                      WP_Error or null otherwise.
 	 *
 	 * @return null|\WP_User WP_User if the user is authenticated.
 	 *                       WP_Error or null otherwise.
