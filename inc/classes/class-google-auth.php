@@ -152,14 +152,16 @@ class Google_Auth {
 
 			if ( empty( $user ) || ! is_a( $user, 'WP_User' ) ) {
 
-				// Only create user if option is enable.
-				$users_can_register = get_option( 'users_can_register' );
+				$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_ALLOW_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_ALLOW_REGISTRATION );
 
 				if ( ! empty( $users_can_register ) ) {
 					$user_id = $this->_create_user( $user_info );
 					$user    = get_user_by( 'id', $user_id );
 				} else {
-					$user = new \WP_Error( 'wp_google_login_error', esc_html__( '<strong>ERROR:</strong> No user found.', 'google-apps-login' ) );
+					$user = new \WP_Error(
+						'wp_google_login_error',
+						sprintf( __( 'User <strong>%s</strong> not registered in Wordpress', 'google-apps-login' ), $user_info['user_email'] )
+					);
 				}
 
 			}
