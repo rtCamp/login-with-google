@@ -79,7 +79,6 @@ class Google_Auth {
 		}
 
 		$client->setRedirectUri( $login_url );
-		$client->setRedirectUri( 'http://test.ciphersoul.com/wp-login.php' );
 
 		if ( defined( 'WP_GOOGLE_LOGIN_HOSTED_DOMAIN' ) ) {
 			$client->setHostedDomain( WP_GOOGLE_LOGIN_HOSTED_DOMAIN );
