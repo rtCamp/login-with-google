@@ -19,7 +19,7 @@ define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 #### How to disable registration?
 1. By default, user registration is disabled, which means if the user does not exist with that email address then plugin won't register a new user. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. See below example:
 
-**Note:** If this const is defined then, It will override WordPress's option ( "Anyone can register" ).
+**Note:** If this const is defined then, It will override WordPress's option ( "Anyone can register" ). Otherwise it will follow settings from WordPress's option.
 
 ```php
 define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', true );
