@@ -16,18 +16,20 @@ define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
 
-#### How to disable registration?
-1. By default, user registration is disabled, which means if the user does not exist with that email address then plugin won't register a new user. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. See below example:
+#### How to enable user registration?
+By default, user registration is disabled, which means if the user does not exist with that email address then plugin won't create a new user. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. See below example:
 
-**Note:** If this const is defined then, It will override WordPress's option ( "Anyone can register" ). Otherwise it will follow settings from WordPress's option.
+**Note:** If this const is set to `true` then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
 ```php
 define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', true );
 ```
 
-#### How to restrict login with a specific domain?
+#### How to restrict user registration to one or more domain(s)?
 
-1. Add your domain name (without any schema and `www.`) in `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` const. You can whitelist multiple domain with comma separated value. See below example:
+By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under Google Suite organization. This configuration variable does that.
+
+Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` const. You can whitelist multiple domains. Please separate domains with commas. See below example:
 
 **Note:** If a user already exists then it will allow a user to login with Google regardless of its domain is whitelisted or not. It will only prevent the user from registering with an email address with a domain that not whitelisted.
  
