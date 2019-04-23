@@ -16,7 +16,7 @@ define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
 
-#### How to restrict login from a specific domain ?
+#### How to restrict login with a specific domain?
 
 1. Add your domain name (without any schema and `www.`) in `WP_GOOGLE_LOGIN_HOSTED_DOMAIN` const. See below example:
 
@@ -24,7 +24,7 @@ define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 define( 'WP_GOOGLE_LOGIN_HOSTED_DOMAIN', 'example.com' );
 ```
 
-#### How to disable registration ?
+#### How to disable registration?
 1. By default, user registration is enabled, which means if the user does not exist with that email address plugin will create it and process authorization. To disable that you can simply define const `WP_GOOGLE_LOGIN_DISABLE_REGISTRATION` and set value `true`. See below example:
 ```php
 define( 'WP_GOOGLE_LOGIN_DISABLE_REGISTRATION', true );
