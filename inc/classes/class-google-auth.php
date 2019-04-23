@@ -40,8 +40,10 @@ class Google_Auth {
 		$this->_client = $this->_get_client();
 
 		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
-		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
-		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
+		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ], 99 );
+		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ], 99 );
+		add_filter( 'allowed_redirect_hosts', [ $this, 'maybe_whitelist_subdomain' ] );
+
 	}
 
 	/**
@@ -227,7 +229,7 @@ class Google_Auth {
 	 * @return string Redirect to URL.
 	 */
 	public function get_login_redirect( $redirect_to ) {
-		return ( ! empty( $this->redirect_to ) ) ? $this->redirect_to : $redirect_to;
+		return ( ! empty( $this->_redirect_to ) ) ? $this->_redirect_to : $redirect_to;
 	}
 
 	/**
@@ -266,6 +268,28 @@ class Google_Auth {
 		}
 
 		return $user_info;
+	}
+
+	/**
+	 * To whitelist domain where we going to redirect after authentication user with google.
+	 *
+	 * @param array $hosts Whitelisted domains.
+	 *
+	 * @return array Whitelisted domains.
+	 */
+	public function maybe_whitelist_subdomain( $hosts = [] ) {
+
+		$hosts = ( ! empty( $hosts ) && is_array( $hosts ) ) ? $hosts : [];
+
+		if ( ! empty( $this->_redirect_to ) ) {
+			$subdomain = wp_parse_url( $this->_redirect_to, PHP_URL_HOST );
+
+			$hosts[] = $subdomain;
+		}
+
+		$hosts = array_unique( $hosts );
+
+		return $hosts;
 	}
 
 }
