@@ -40,8 +40,8 @@ class Google_Auth {
 		$this->_client = $this->_get_client();
 
 		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
-		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ], 99 );
-		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ], 99 );
+		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
+		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'maybe_whitelist_subdomain' ] );
 
 	}
@@ -68,9 +68,18 @@ class Google_Auth {
 			'blog_id'     => get_current_blog_id(),
 		];
 
-		$client->setState( implode( '|', $state ) );
+		$state = urlencode_deep( implode( '|', $state ) );
 
-		$client->setRedirectUri( wp_login_url() );
+		$client->setState( $state );
+
+		$login_url = wp_login_url();
+
+		if ( defined( 'WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL' ) && true === WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL ) {
+			$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : $login_url;
+		}
+
+		$client->setRedirectUri( $login_url );
+		$client->setRedirectUri( 'http://test.ciphersoul.com/wp-login.php' );
 
 		if ( defined( 'WP_GOOGLE_LOGIN_HOSTED_DOMAIN' ) ) {
 			$client->setHostedDomain( WP_GOOGLE_LOGIN_HOSTED_DOMAIN );
@@ -163,9 +172,10 @@ class Google_Auth {
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
 		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
 
-		$is_mu_site         = ( defined( 'MULTISITE' ) && true === MULTISITE );
-		$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_ALLOW_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_ALLOW_REGISTRATION );
+		$is_mu_site         = is_multisite();
+		$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_DISABLE_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_DISABLE_REGISTRATION ) ? false : true;
 
+		$state = urldecode( $state );
 		$state = explode( '|', $state );
 
 		$redirect_to = ( ! empty( $state[0] ) ) ? esc_url_raw( $state[0] ) : '';
