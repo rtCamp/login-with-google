@@ -85,6 +85,44 @@ class Google_Auth {
 	}
 
 	/**
+	 * To get user info from google auth token.
+	 *
+	 * @param string $token Auth token.
+	 *
+	 * @return array User info
+	 */
+	protected function _get_user_from_token( $token ) {
+
+		if ( empty( $token ) ) {
+			return [];
+		}
+
+		$token = urldecode( $token );
+
+		try {
+
+			$this->_client->fetchAccessTokenWithAuthCode( $token );
+
+			$oauthservice = new \Google_Service_Oauth2( $this->_client );
+
+			$google_userinfo = $oauthservice->userinfo->get();
+
+			$user_info = [
+				'user_email'   => $google_userinfo->getEmail(),
+				'display_name' => $google_userinfo->getName(),
+				'first_name'   => $google_userinfo->getGivenName(),
+				'last_name'    => $google_userinfo->getFamilyName(),
+				'picture'      => $google_userinfo->getPicture(),
+			];
+
+		} catch ( \Google_Service_Exception $exception ) {
+			return [];
+		}
+
+		return $user_info;
+	}
+
+	/**
 	 * To get scopes.
 	 *
 	 * @return string
@@ -300,44 +338,6 @@ class Google_Auth {
 	 */
 	public function get_login_redirect( $redirect_to ) {
 		return ( ! empty( $this->_redirect_to ) ) ? $this->_redirect_to : $redirect_to;
-	}
-
-	/**
-	 * To get user info from google auth token.
-	 *
-	 * @param string $token Auth token.
-	 *
-	 * @return array User info
-	 */
-	protected function _get_user_from_token( $token ) {
-
-		if ( empty( $token ) ) {
-			return [];
-		}
-
-		$token = urldecode( $token );
-
-		try {
-			$this->_client->authenticate( $token );
-			$this->_client->getAccessToken();
-
-			$oauthservice = new \Google_Service_Oauth2( $this->_client );
-
-			$google_userinfo = $oauthservice->userinfo->get();
-
-			$user_info = [
-				'user_email'   => $google_userinfo->getEmail(),
-				'display_name' => $google_userinfo->getName(),
-				'first_name'   => $google_userinfo->getGivenName(),
-				'last_name'    => $google_userinfo->getFamilyName(),
-				'picture'      => $google_userinfo->getPicture(),
-			];
-
-		} catch ( \Google_Service_Exception $exception ) {
-			return [];
-		}
-
-		return $user_info;
 	}
 
 	/**
