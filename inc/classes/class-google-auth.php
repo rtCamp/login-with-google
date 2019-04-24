@@ -286,7 +286,7 @@ class Google_Auth {
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
 		// We found the user.
-		if ( ! empty( $user ) && is_a( $user, 'WP_User' ) ) {
+		if ( ! empty( $user ) && $user instanceof \WP_User ) {
 
 			if ( ! $is_mu_site ) {
 				return $user;
@@ -316,7 +316,7 @@ class Google_Auth {
 		}
 
 		// Let's create WP user first.
-		if ( empty( $user ) || ! is_a( $user, 'WP_User' ) ) {
+		if ( empty( $user ) || ! $user instanceof \WP_User ) {
 			$user_id = $this->_create_user( $user_info );
 			$user    = get_user_by( 'id', $user_id );
 		}
