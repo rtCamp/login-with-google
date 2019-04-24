@@ -302,7 +302,7 @@ class Google_Auth {
 		if ( ! $this->_can_users_register() ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User <strong>%s</strong> not registered in Wordpress.', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'google-apps-login' ), $user_info['user_email'] )
 			);
 		}
 
