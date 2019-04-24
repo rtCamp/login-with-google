@@ -80,10 +80,6 @@ class Google_Auth {
 
 		$client->setRedirectUri( $login_url );
 
-		if ( defined( 'WP_GOOGLE_LOGIN_HOSTED_DOMAIN' ) ) {
-			$client->setHostedDomain( WP_GOOGLE_LOGIN_HOSTED_DOMAIN );
-		}
-
 		return $client;
 
 	}
@@ -145,6 +141,64 @@ class Google_Auth {
 	}
 
 	/**
+	 * To check if user can register or not.
+	 *
+	 * @return bool
+	 */
+	protected function _can_users_register() {
+
+		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
+			return (bool) WP_GOOGLE_LOGIN_USER_REGISTRATION;
+		}
+
+		$can_user_register = get_option( 'users_can_register' );
+
+		return ( ! empty( $can_user_register ) ) ? true : false;
+	}
+
+	/**
+	 * To check if given email address can be register or not.
+	 *
+	 * @param string $email Email address.
+	 *
+	 * @return bool True if it can register, Otherwise False.
+	 */
+	protected function _can_register_with_email( $email ) {
+
+		if ( empty( $email ) ) {
+			return false;
+		}
+
+		$whitelisted_domains = defined( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' ) ? trim( WP_GOOGLE_LOGIN_WHITELIST_DOMAINS ) : '';
+
+		/**
+		 * If Const is not defined or empty,
+		 * then allow all domain.
+		 */
+		if ( empty( $whitelisted_domains ) ) {
+			return true;
+		}
+
+		$email_parts  = explode( '@', $email );
+		$email_domain = ( ! empty( $email_parts[1] ) ) ? strtolower( trim( $email_parts[1] ) ) : '';
+
+		$whitelisted_domains = explode( ',', $whitelisted_domains );
+
+		$count = ( ! empty( $whitelisted_domains ) ) && is_array( $whitelisted_domains ) ? count( $whitelisted_domains ) : 1;
+
+		for ( $i = 0; $i < ( $count - 1 ); $i++ ) {
+
+			$whitelisted_domains[ $i ] = strtolower( trim( $whitelisted_domains[ $i ] ) );
+			$whitelisted_domains[ $i ] = str_replace( 'www.', '', $whitelisted_domains[ $i ] );
+
+		}
+
+		$whitelisted_domains = array_unique( $whitelisted_domains );
+
+		return ( ! empty( $email_domain ) && in_array( $email_domain, $whitelisted_domains, true ) ) ? true : false;
+	}
+
+	/**
 	 * To get google authentication URL.
 	 *
 	 * @return string
@@ -168,12 +222,10 @@ class Google_Auth {
 	 */
 	public function authenticate_user( $user = null ) {
 
+		$is_mu_site         = is_multisite();
+
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
 		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
-
-		$is_mu_site         = is_multisite();
-		$users_can_register = ( defined( 'WP_GOOGLE_LOGIN_DISABLE_REGISTRATION' ) && true === WP_GOOGLE_LOGIN_DISABLE_REGISTRATION ) ? false : true;
-
 		$state = urldecode( $state );
 		$state = explode( '|', $state );
 
@@ -209,10 +261,19 @@ class Google_Auth {
 
 		}
 
-		if ( empty( $users_can_register ) ) {
+		// Check if user registration is allow or not.
+		if ( ! $this->_can_users_register() ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User <strong>%s</strong> not registered in Wordpress', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User <strong>%s</strong> not registered in Wordpress.', 'google-apps-login' ), $user_info['user_email'] )
+			);
+		}
+
+		// Check if email address is allowed or not.
+		if ( ! $this->_can_register_with_email( $user_info['user_email'] ) ) {
+			return new \WP_Error(
+				'wp_google_login_error',
+				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'google-apps-login' ), $user_info['user_email'] )
 			);
 		}
 
