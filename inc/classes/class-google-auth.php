@@ -60,14 +60,12 @@ class Google_Auth {
 		$client->setClientSecret( WP_GOOGLE_LOGIN_SECRET );
 
 		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
-
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
 
 		$state = [
 			'redirect_to' => $redirect_to,
 			'blog_id'     => get_current_blog_id(),
 		];
-
 		$state = urlencode_deep( implode( '|', $state ) );
 
 		$client->setState( $state );
@@ -168,6 +166,7 @@ class Google_Auth {
 		}
 
 		$user_info['user_login'] = $user_login;
+		$user_info['user_pass']  = wp_generate_password( 18 );
 
 		$user_id = wp_insert_user( $user_info );
 
