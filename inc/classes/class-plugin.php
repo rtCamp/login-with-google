@@ -19,9 +19,19 @@ class Plugin {
 	use Singleton;
 
 	/**
+	 * Instance of Google_Auth class.
+	 *
+	 * @var \WP_Google_Login\Inc\Google_Auth
+	 */
+	protected $_google_auth = false;
+
+	/**
 	 * Plugin constructor.
 	 */
 	protected function __construct() {
+
+		$this->_google_auth = Google_Auth::get_instance();
+
 		$this->_setup_hooks();
 	}
 
@@ -61,8 +71,11 @@ class Plugin {
 	public function add_google_login_button() {
 
 		$template_path = sprintf( '%s/template/google-login-button.php', WP_GOOGLE_LOGIN_PATH );
+		$login_url     = $this->_google_auth->get_login_url();
 
-		Helper::render_template( $template_path );
+		Helper::render_template( $template_path, [
+			'login_url' => $login_url,
+		] );
 	}
 
 }

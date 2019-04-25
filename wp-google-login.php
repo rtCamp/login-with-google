@@ -24,6 +24,11 @@ if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || 0 !== val
 	return;
 }
 
+// If we don't have client id and secret then bail out, plugin won't work.
+if ( ! defined( 'WP_GOOGLE_LOGIN_CLIENT_ID' ) || ! defined('WP_GOOGLE_LOGIN_SECRET') ) {
+	return;
+}
+
 // We already making sure that file is exists and valid.
 require_once( $vendor_autoload ); // phpcs:ignore
 require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
