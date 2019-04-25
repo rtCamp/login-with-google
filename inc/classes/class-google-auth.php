@@ -87,11 +87,7 @@ class Google_Auth {
 
 		$client->setState( $state );
 
-		$login_url = wp_login_url();
-
-		if ( defined( 'WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL' ) && true === WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL ) {
-			$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : $login_url;
-		}
+		$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : wp_login_url();
 
 		$client->setRedirectUri( $login_url );
 
