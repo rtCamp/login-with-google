@@ -37,12 +37,29 @@ class Google_Auth {
 	 */
 	protected function __construct() {
 
+		$this->_include_vendor();
+
 		$this->_client = $this->_get_client();
 
 		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
 		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'maybe_whitelist_subdomain' ] );
+
+	}
+
+	/**
+	 * To include vendor file.
+	 *
+	 * @return void
+	 */
+	protected function _include_vendor() {
+
+		$vendor_autoload = sprintf( '%s/vendor/autoload.php', WP_GOOGLE_LOGIN_PATH );
+
+		if ( ! empty( $vendor_autoload ) && file_exists( $vendor_autoload ) && 0 === validate_file( $vendor_autoload ) ) {
+			require_once( $vendor_autoload ); // phpcs:ignore
+		}
 
 	}
 
