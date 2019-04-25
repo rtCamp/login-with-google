@@ -13,7 +13,7 @@ class Test_Hello_World extends WP_UnitTestCase {
 	/**
 	 * Hello world example test.
 	 */
-	public function test_hello_world() {
+	public function test_hello() {
         $message = 'Hello World';
 		$this->assertEquals( 'Hello World', $message );
 	}
