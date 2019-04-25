@@ -272,7 +272,7 @@ class Google_Auth {
 	 */
 	public function authenticate_user( $user = null ) {
 
-		$is_mu_site         = is_multisite();
+		$is_mu_site = is_multisite();
 
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
 		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
@@ -286,14 +286,30 @@ class Google_Auth {
 			return $user;
 		}
 
+		// Set redirect URL. so we can redirect after login.
+		$this->_redirect_to = $redirect_to;
+
+		/**
+		 * If blog_id in state does not match current blog ID.
+		 * Then redirect to login page of request blog.
+		 * So that can take care of authentication.
+		 */
+		if ( $is_mu_site && $blog_id !== get_current_blog_id() ) {
+
+			$query_string = filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING );
+
+			$blog_url       = get_blog_option( $blog_id, 'siteurl' );
+			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
+
+			wp_safe_redirect( $blog_login_url );
+			exit();
+		}
+
 		$user_info = $this->_get_user_from_token( $token );
 
 		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
-
-		// Set redirect URL. so we can redirect after login.
-		$this->_redirect_to = $redirect_to;
 
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
