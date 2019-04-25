@@ -17,7 +17,7 @@ define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
 
 #### How to enable user registration?
-By default, user registration is disabled, which means if the user does not exist with that email address then plugin won't create a new user. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. See below example:
+By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. If constant is set then it won't take Membership setting into account. See below example:
 
 **Note:** If this const is set to `true` then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
