@@ -4,12 +4,13 @@ Minimal plugin which allows WP user to login with google.
 
 #### How to use it?
 
+1. If you're cloning repo then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download doesn't need this step.
 1. Create project from [Google console](https://console.developers.google.com/apis/dashboard) if not exists.
-2. Go to **Credentials** tab, And create credential for OAuth client.
+1. Go to **Credentials** tab, And create credential for OAuth client.
     * Application type will be **Web application**
     * Add `YOUR_DOMAIN/wp-login.php` in **Authorized redirect URIs**
-3. This will give you Client ID and Secret key.
-4. Use below snippet, replace value of const with client id and secret. And add that in to `wp-config.php` 
+1. This will give you Client ID and Secret key.
+1. Use below snippet, replace value of const with client id and secret. And add that in to `wp-config.php` 
 
 ```php
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
@@ -39,10 +40,9 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com, sample.com' );
 
 ## wp-config.php parameters list
 
-|                                   | Type    | Description                                                                                                                                                                                                                       |
-|-----------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| WP_GOOGLE_LOGIN_CLIENT_ID         | String  | Google client ID of your application.                                                                                                                                                                                             |
-| WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                                                                                    |
-| WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.                                                       |
-| WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                                                                         |
-| WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL | Boolean | (Optional) Used for MU sites, It will use top level domain for authentication. So, you don't have to add every site's URL into Google console as authorized URL.,Note : Do not use, if your main site use SSL and sub site isn't. |
+|                                   | Type    | Description                                                                                                                                                                 |
+|-----------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| WP_GOOGLE_LOGIN_CLIENT_ID         | String  | Google client ID of your application.                                                                                                                                       |
+| WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                              |
+| WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. |
+| WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                   |

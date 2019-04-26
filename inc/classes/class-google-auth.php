@@ -37,12 +37,29 @@ class Google_Auth {
 	 */
 	protected function __construct() {
 
+		$this->_include_vendor();
+
 		$this->_client = $this->_get_client();
 
 		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
 		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'maybe_whitelist_subdomain' ] );
+
+	}
+
+	/**
+	 * To include vendor file.
+	 *
+	 * @return void
+	 */
+	protected function _include_vendor() {
+
+		$vendor_autoload = sprintf( '%s/vendor/autoload.php', WP_GOOGLE_LOGIN_PATH );
+
+		if ( ! empty( $vendor_autoload ) && file_exists( $vendor_autoload ) && 0 === validate_file( $vendor_autoload ) ) {
+			require_once( $vendor_autoload ); // phpcs:ignore
+		}
 
 	}
 
@@ -70,11 +87,7 @@ class Google_Auth {
 
 		$client->setState( $state );
 
-		$login_url = wp_login_url();
-
-		if ( defined( 'WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL' ) && true === WP_GOOGLE_LOGIN_USE_MAIN_SITE_URL ) {
-			$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : $login_url;
-		}
+		$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : wp_login_url();
 
 		$client->setRedirectUri( $login_url );
 
@@ -259,7 +272,7 @@ class Google_Auth {
 	 */
 	public function authenticate_user( $user = null ) {
 
-		$is_mu_site         = is_multisite();
+		$is_mu_site = is_multisite();
 
 		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
 		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
@@ -273,14 +286,30 @@ class Google_Auth {
 			return $user;
 		}
 
+		// Set redirect URL. so we can redirect after login.
+		$this->_redirect_to = $redirect_to;
+
+		/**
+		 * If blog_id in state does not match current blog ID.
+		 * Then redirect to login page of request blog.
+		 * So that can take care of authentication.
+		 */
+		if ( $is_mu_site && $blog_id !== get_current_blog_id() ) {
+
+			$query_string = filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING );
+
+			$blog_url       = get_blog_option( $blog_id, 'siteurl' );
+			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
+
+			wp_safe_redirect( $blog_login_url );
+			exit();
+		}
+
 		$user_info = $this->_get_user_from_token( $token );
 
 		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
-
-		// Set redirect URL. so we can redirect after login.
-		$this->_redirect_to = $redirect_to;
 
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
