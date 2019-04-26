@@ -30,8 +30,6 @@ if ( ! defined( 'WP_GOOGLE_LOGIN_CLIENT_ID' ) || ! defined('WP_GOOGLE_LOGIN_SECR
 }
 
 // We already making sure that file is exists and valid.
-require_once( $vendor_autoload ); // phpcs:ignore
 require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
 
 \WP_Google_Login\Inc\Plugin::get_instance();
-
