@@ -140,11 +140,14 @@ class Google_Auth {
 	 */
 	protected function _get_scopes() {
 
-		return implode( ' ', [
-			'email',
-			'profile',
-			'openid',
-		] );
+		return implode(
+			' ',
+			[
+				'email',
+				'profile',
+				'openid',
+			]
+		);
 
 	}
 
@@ -324,7 +327,6 @@ class Google_Auth {
 			if ( ! empty( $blog_id ) && is_user_member_of_blog( $user->ID, $blog_id ) ) {
 				return $user;
 			}
-
 		}
 
 		// Check if user registration is allow or not.
