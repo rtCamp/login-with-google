@@ -61,10 +61,10 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$state = $client_config['state'];
 		$state = explode( '|', urldecode_deep( $state ) );
 
-		if ( empty( $redirect_to ) ) {
+		if ( empty( $_redirect_to ) ) {
 			$this->assertEquals( $state[0], admin_url() );
 		} else {
-			$this->assertEquals( $state[0], $redirect_to );
+			$this->assertEquals( $state[0], $_redirect_to );
 		}
 
 		if ( ! empty( get_current_blog_id() ) ) {
@@ -126,7 +126,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		if ( ! empty( $_redirect_to ) ) {
 			$this->assertContains( $_redirect_to, $google_auth->maybe_whitelist_subdomain( array() ) );
 		}
-		$this->assertContains( 'http://rtmedia.com', $google_auth->maybe_whitelist_subdomain( array( 'http://rtmedia.com' ) ) );
+		$this->assertContains( 'http://rtmedia.com', $google_auth->maybe_whitelist_subdomain( [ 'http://rtmedia.com' ] ) );
 	}
 
 }
