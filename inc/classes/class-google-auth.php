@@ -115,13 +115,11 @@ class Google_Auth {
 		// Then use main site login url.
 		if ( is_multisite() && defined( 'BLOG_ID_CURRENT_SITE' ) ) {
 
-			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+			$mu_plugins = get_site_option( 'active_sitewide_plugins', [] );
 
-			$plugin_name = 'wp-google-login/wp-google-login.php';
+			$plugins_activate_on_main_site = get_blog_option( BLOG_ID_CURRENT_SITE, 'active_plugins' );
 
-			$plugins_activate_on_main_site = get_blog_option(BLOG_ID_CURRENT_SITE, 'active_plugins' );
-
-			if ( is_plugin_active_for_network( $plugin_name ) || in_array( $plugin_name, $plugins_activate_on_main_site, true ) ) {
+			if ( ! empty( $mu_plugins[ WP_GOOGLE_LOGIN_PLUGIN_NAME ] ) || in_array( WP_GOOGLE_LOGIN_PLUGIN_NAME, $plugins_activate_on_main_site, true ) ) {
 				$login_url = network_site_url( 'wp-login.php' );
 			}
 

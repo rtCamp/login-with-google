@@ -15,6 +15,7 @@
 
 define( 'WP_GOOGLE_LOGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 define( 'WP_GOOGLE_LOGIN_URL', untrailingslashit( plugin_dir_url( __FILE__ ) ) );
+define( 'WP_GOOGLE_LOGIN_PLUGIN_NAME', plugin_basename( __FILE__ ) );
 define( 'WP_GOOGLE_LOGIN_VERSION', '0.1' );
 
 $vendor_autoload = sprintf( '%s/vendor/autoload.php', WP_GOOGLE_LOGIN_PATH );
