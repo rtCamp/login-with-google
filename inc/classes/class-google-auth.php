@@ -92,12 +92,42 @@ class Google_Auth {
 
 		$client->setState( $state );
 
-		$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : wp_login_url();
+		$login_url = $this->_get_login_url();
 
 		$client->setRedirectUri( $login_url );
 
 		return $client;
 
+	}
+
+	/**
+	 * Get login URL, on which user will redirect after authenticated from google.
+	 *
+	 * @return string Redirect URL.
+	 */
+	protected function _get_login_url() {
+
+		// By default we will use current site's login URL.
+		$login_url = wp_login_url();
+
+		// If it's multisite setup.
+		// Then check if plugin is activate on network wide or if plugin is activate on main site
+		// Then use main site login url.
+		if ( is_multisite() && defined( 'BLOG_ID_CURRENT_SITE' ) ) {
+
+			include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+			$plugin_name = 'wp-google-login/wp-google-login.php';
+
+			$plugins_activate_on_main_site = get_blog_option(BLOG_ID_CURRENT_SITE, 'active_plugins' );
+
+			if ( is_plugin_active_for_network( $plugin_name ) || in_array( $plugin_name, $plugins_activate_on_main_site, true ) ) {
+				$login_url = network_site_url( 'wp-login.php' );
+			}
+
+		}
+
+		return $login_url;
 	}
 
 	/**
