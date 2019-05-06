@@ -79,6 +79,11 @@ class Google_Auth {
 		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
 
+		// If redirect_to url don't have host name then add that.
+		if ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) {
+			$redirect_to = home_url( $redirect_to );
+		}
+
 		$state = [
 			'redirect_to' => $redirect_to,
 			'blog_id'     => get_current_blog_id(),
