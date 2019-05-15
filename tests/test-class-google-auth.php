@@ -17,40 +17,43 @@ use  WP_Google_Login\Inc\Google_Auth;
  * @coversDefaultClass \WP_Google_Login\Inc\Google_Auth
  */
 class Test_Google_Auth extends \WP_UnitTestCase {
+
+	/**
+	 * This google_auth data member will contain google_auth object.
+	 */
+	protected $google_auth = false;
+
+	/**
+	 * This function set the instance for class google-auth.
+	 */
+	public function setUp() {
+		$this->google_auth = Google_Auth::get_instance();
+	}
+
 	/**
 	 * Test the filters and Google_Client instance.
 	 *
-	 * @covers Google_Auth::__construct
+	 * @covers ::__construct
 	 */
 	public function test_construct() {
 
-		$google_auth = Google_Auth::get_instance();
-		$client      = Utility::get_property( $google_auth, '_client' );
+		$client = Utility::get_property( $this->google_auth, '_client' );
+
 		$this->assertInstanceOf( 'Google_Client', $client );
-		$this->assertEquals( 10, has_filter( 'authenticate', [ $google_auth, 'authenticate_user' ] ) );
-		$this->assertEquals( 10, has_filter( 'registration_redirect', [ $google_auth, 'get_login_redirect' ] ) );
-		$this->assertEquals( 10, has_filter( 'login_redirect', [ $google_auth, 'get_login_redirect' ] ) );
-		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [ $google_auth, 'maybe_whitelist_subdomain' ] ) );
-	}
-	/**
-	 * Test vendor autoload file.
-	 *
-	 * @covers Google_Auth::_include_vendor
-	 */
-	public function test_include_vendor() {
-		$vendor_autoload = sprintf( '%s/vendor/autoload.php', WP_GOOGLE_LOGIN_PATH );
-		$this->assertFileExists( $vendor_autoload );
+		$this->assertEquals( 10, has_filter( 'authenticate', [ $this->google_auth, 'authenticate_user' ] ) );
+		$this->assertEquals( 10, has_filter( 'registration_redirect', [ $this->google_auth, 'get_login_redirect' ] ) );
+		$this->assertEquals( 10, has_filter( 'login_redirect', [ $this->google_auth, 'get_login_redirect' ] ) );
+		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [ $this->google_auth, 'maybe_whitelist_subdomain' ] ) );
 	}
 
 	/**
-	 * Test Google client instance and attibutes.
+	 * Test Google client instance and attributes.
 	 *
-	 * @covers Google_Auth::_get_client
+	 * @covers ::_get_client
 	 */
 	public function test_get_client() {
-		$google_auth   = Google_Auth::get_instance();
-		$client        = Utility::get_property( $google_auth, '_client' );
-		$_redirect_to  = Utility::get_property( $google_auth, '_redirect_to' );
+		$client        = Utility::get_property( $this->google_auth, '_client' );
+		$_redirect_to  = Utility::get_property( $this->google_auth, '_redirect_to' );
 		$client_config = Utility::get_property( $client, 'config' );
 
 		$this->assertInstanceOf( 'Google_Client', $client );
@@ -82,52 +85,96 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	/**
 	 * Test user can register or not.
 	 *
-	 * @covers Google_Auth::_can_users_register
+	 * @covers ::_can_users_register
 	 */
 	public function test_can_users_register() {
 
-		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
-			$this->assertTrue( true );
-		}
+		define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', false );
+		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_users_register' ) );
 
-		$this->assertTrue( true, get_option( 'users_can_register' ) );
+		update_option( 'users_can_register', true );
+		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_users_register', [ '' ] ) );
+
 	}
 
 	/**
 	 * Test login url.
 	 *
-	 * @covers Google_Auth::get_login_url
+	 * @covers ::get_login_url
 	 */
 	public function test_get_login_url() {
-		$google_auth = Google_Auth::get_instance();
-		$this->assertContains( 'https://accounts.google.com/o/oauth2/auth', $google_auth->get_login_url() );
+		$this->assertContains( 'https://accounts.google.com/o/oauth2/auth', $this->google_auth->get_login_url() );
 	}
 
 	/**
 	 * Test login url.
 	 *
-	 * @covers Google_Auth::get_login_url
+	 * @covers ::get_login_url
 	 */
 	public function test_get_login_redirect() {
-		$google_auth  = Google_Auth::get_instance();
-		$_redirect_to = Utility::get_property( $google_auth, '_redirect_to' );
-		$this->assertEquals( $_redirect_to, $google_auth->get_login_redirect( $_redirect_to ) );
+
+		$_redirect_to = Utility::get_property( $this->google_auth, '_redirect_to' );
+		$this->assertEquals( $_redirect_to, $this->google_auth->get_login_redirect( $_redirect_to ) );
 	}
 
 	/**
 	 * Test whitelisted subdomain and redirect_to.
 	 *
-	 * @covers Google_Auth::_maybe_whitelist_subdomain
+	 * @covers ::_maybe_whitelist_subdomain
 	 */
 	public function test_maybe_whitelist_subdomain() {
-		$google_auth  = Google_Auth::get_instance();
-		$_redirect_to = Utility::get_property( $google_auth, '_redirect_to' );
+
+		$_redirect_to = Utility::get_property( $this->google_auth, '_redirect_to' );
 
 		if ( ! empty( $_redirect_to ) ) {
-			$this->assertContains( $_redirect_to, $google_auth->maybe_whitelist_subdomain( array() ) );
+			$this->assertContains( $_redirect_to, $this->google_auth->maybe_whitelist_subdomain( array() ) );
 		}
-		$this->assertContains( 'http://rtmedia.com', $google_auth->maybe_whitelist_subdomain( [ 'http://rtmedia.com' ] ) );
+		$this->assertContains( 'http://rtmedia.com', $this->google_auth->maybe_whitelist_subdomain( [ 'http://rtmedia.com' ] ) );
 	}
 
+	/**
+	 * Test for given email address can be register or not.
+	 *
+	 * @covers ::_can_register_with_email
+	 */
+	public function test_can_register_with_email() {
+		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ '' ] ) );
+		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@gmail.com' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@rtcamp.com' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@xyz.com' ] ) );
+
+		define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', [ 'rtcamp.com', 'xyz.com' ] );
+	}
+
+	/**
+	 * Test create user base on provided data.
+	 *
+	 * @covers ::_create_user
+	 */
+	public function test_create_user() {
+		$user_id = Utility::invoke_method( $this->google_auth, '_create_user', [ array( 'user_email' => 'suraj@rtcamp.com' ) ] );
+		$this->assertGreaterThan( 0, $user_id );
+	}
+
+	/**
+	 * To authenticate user.
+	 *
+	 *  * @covers ::authenticate_user
+	 */
+	public function testauthenticate_user() {
+
+	}
+
+	/**
+	 * Test the user info from google auth token.
+	 *
+	 * @covers ::_get_user_from_token
+	 */
+	public function test_get_user_from_token() {
+		$output = Utility::invoke_method( $this->google_auth, '_get_user_from_token', [ '' ] );
+		$this->assertEmpty( $output );
+		$output = Utility::invoke_method( $this->google_auth, '_get_user_from_token', [ 'sadjhsfjf64das2d4s' ] );
+		$this->assertInstanceOf( 'Google_Service_Exception', $output );
+	}
 }
 
