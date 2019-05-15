@@ -81,6 +81,11 @@ class Google_Auth {
 		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
 
+		// If redirect_to url don't have host name then add that.
+		if ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) {
+			$redirect_to = home_url( $redirect_to );
+		}
+
 		$state = [
 			'redirect_to' => $redirect_to,
 			'blog_id'     => get_current_blog_id(),
@@ -89,12 +94,40 @@ class Google_Auth {
 
 		$client->setState( $state );
 
-		$login_url = is_multisite() ? network_site_url( 'wp-login.php' ) : wp_login_url();
+		$login_url = $this->_get_login_url();
 
 		$client->setRedirectUri( $login_url );
 
 		return $client;
 
+	}
+
+	/**
+	 * Get login URL, on which user will redirect after authenticated from google.
+	 *
+	 * @return string Redirect URL.
+	 */
+	protected function _get_login_url() {
+
+		// By default we will use current site's login URL.
+		$login_url = wp_login_url();
+
+		// If it's multisite setup.
+		// Then check if plugin is activate on network wide or if plugin is activate on main site
+		// Then use main site login url.
+		if ( is_multisite() && defined( 'BLOG_ID_CURRENT_SITE' ) ) {
+
+			$mu_plugins = get_site_option( 'active_sitewide_plugins', [] );
+
+			$plugins_activate_on_main_site = get_blog_option( BLOG_ID_CURRENT_SITE, 'active_plugins' );
+
+			if ( ! empty( $mu_plugins[ WP_GOOGLE_LOGIN_PLUGIN_NAME ] ) || in_array( WP_GOOGLE_LOGIN_PLUGIN_NAME, $plugins_activate_on_main_site, true ) ) {
+				$login_url = network_site_url( 'wp-login.php' );
+			}
+
+		}
+
+		return $login_url;
 	}
 
 	/**
