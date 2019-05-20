@@ -20,6 +20,8 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 
 	/**
 	 * This google_auth data member will contain google_auth object.
+	 *
+	 * @var Object Google_auth object.
 	 */
 	protected $google_auth = false;
 
@@ -27,7 +29,15 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * This function set the instance for class google-auth.
 	 */
 	public function setUp() {
+
 		$this->google_auth = Google_Auth::get_instance();
+		/**
+		 * Adding helper hook on wp_redirect which will throw exception
+		 * which have message as redirected URL and Code as status.
+		 * This is one way of escaping from exit in the code.
+		 */
+		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
+
 	}
 
 	/**
@@ -93,7 +103,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_users_register' ) );
 
 		update_option( 'users_can_register', true );
-		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_users_register', [ '' ] ) );
+		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_users_register', [ '' ] ) );
 
 	}
 
@@ -139,7 +149,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 */
 	public function test_can_register_with_email() {
 		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ '' ] ) );
-		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@gmail.com' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@gmail.com' ] ) );
 		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@rtcamp.com' ] ) );
 		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@xyz.com' ] ) );
 
@@ -163,6 +173,28 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 */
 	public function testauthenticate_user() {
 
+		$is_mu_site = is_multisite();
+
+		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$state = urldecode( $state );
+		$state = explode( '|', $state );
+
+		$blog_id = ( ! empty( $state[1] ) && 0 < intval( $state[1] ) ) ? intval( $state[1] ) : 0;
+
+		if ( $is_mu_site && 1 !== $blog_id ) { /**Current blog id as 1  */
+
+			$query_string = filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING );
+
+			$blog_url       = 'google.login';
+			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
+
+			try {
+				wp_safe_redirect( $blog_login_url );
+			} catch ( \Exception $exp ) {
+				$this->assertEquals( $exp->getMessage(), $blog_login_url );
+				$this->assertEquals( $exp->getCode(), 302 );
+			}
+		}
 	}
 
 	/**
@@ -175,6 +207,22 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$this->assertEmpty( $output );
 		$output = Utility::invoke_method( $this->google_auth, '_get_user_from_token', [ 'sadjhsfjf64das2d4s' ] );
 		$this->assertInstanceOf( 'Google_Service_Exception', $output );
+	}
+
+	/**
+	 * To catch any redirection and throw location and status in Exception.
+	 * Note : Destination location can be get from Exception Message and
+	 * status can be get from Exception code.
+	 *
+	 * @param  string $location Redirected location.
+	 * @param  int    $status Status.
+	 *
+	 * @throws \Exception Redirection data.
+	 *
+	 * @return void
+	 */
+	public function catch_redirect_destination( $location, $status ) {
+		throw new \Exception( $location, $status );
 	}
 }
 
