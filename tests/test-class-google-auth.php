@@ -21,16 +21,16 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	/**
 	 * This google_auth data member will contain google_auth object.
 	 *
-	 * @var Object Google_auth object.
+	 * @var \WP_Google_Login\Inc\Google_Auth
 	 */
-	protected $google_auth = false;
+	protected $_instance = false;
 
 	/**
 	 * This function set the instance for class google-auth.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 
-		$this->google_auth = Google_Auth::get_instance();
+		$this->_instance = Google_Auth::get_instance();
 		/**
 		 * Adding helper hook on wp_redirect which will throw exception
 		 * which have message as redirected URL and Code as status.
@@ -47,13 +47,16 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 */
 	public function test_construct() {
 
-		$client = Utility::get_property( $this->google_auth, '_client' );
+		$client = Utility::get_property( $this->_instance, '_client' );
 
 		$this->assertInstanceOf( 'Google_Client', $client );
-		$this->assertEquals( 10, has_filter( 'authenticate', [ $this->google_auth, 'authenticate_user' ] ) );
-		$this->assertEquals( 10, has_filter( 'registration_redirect', [ $this->google_auth, 'get_login_redirect' ] ) );
-		$this->assertEquals( 10, has_filter( 'login_redirect', [ $this->google_auth, 'get_login_redirect' ] ) );
-		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [ $this->google_auth, 'maybe_whitelist_subdomain' ] ) );
+		$this->assertEquals( 10, has_filter( 'authenticate', [ $this->_instance, 'authenticate_user' ] ) );
+		$this->assertEquals( 10, has_filter( 'registration_redirect', [ $this->_instance, 'get_login_redirect' ] ) );
+		$this->assertEquals( 10, has_filter( 'login_redirect', [ $this->_instance, 'get_login_redirect' ] ) );
+		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [
+			$this->_instance,
+			'maybe_whitelist_subdomain'
+		] ) );
 	}
 
 	/**
@@ -62,8 +65,8 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * @covers ::_get_client
 	 */
 	public function test_get_client() {
-		$client        = Utility::get_property( $this->google_auth, '_client' );
-		$_redirect_to  = Utility::get_property( $this->google_auth, '_redirect_to' );
+		$client        = Utility::get_property( $this->_instance, '_client' );
+		$_redirect_to  = Utility::get_property( $this->_instance, '_redirect_to' );
 		$client_config = Utility::get_property( $client, 'config' );
 
 		$this->assertInstanceOf( 'Google_Client', $client );
@@ -100,10 +103,10 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	public function test_can_users_register() {
 
 		define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', false );
-		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_users_register' ) );
+		$this->assertFalse( Utility::invoke_method( $this->_instance, '_can_users_register' ) );
 
 		update_option( 'users_can_register', true );
-		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_users_register', [ '' ] ) );
+		$this->assertFalse( Utility::invoke_method( $this->_instance, '_can_users_register', [ '' ] ) );
 
 	}
 
@@ -113,7 +116,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * @covers ::get_login_url
 	 */
 	public function test_get_login_url() {
-		$this->assertContains( 'https://accounts.google.com/o/oauth2/auth', $this->google_auth->get_login_url() );
+		$this->assertContains( 'https://accounts.google.com/o/oauth2/auth', $this->_instance->get_login_url() );
 	}
 
 	/**
@@ -123,23 +126,23 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 */
 	public function test_get_login_redirect() {
 
-		$_redirect_to = Utility::get_property( $this->google_auth, '_redirect_to' );
-		$this->assertEquals( $_redirect_to, $this->google_auth->get_login_redirect( $_redirect_to ) );
+		$_redirect_to = Utility::get_property( $this->_instance, '_redirect_to' );
+		$this->assertEquals( $_redirect_to, $this->_instance->get_login_redirect( $_redirect_to ) );
 	}
 
 	/**
-	 * Test whitelisted subdomain and redirect_to.
+	 * Test whitelisted sub domain and redirect_to.
 	 *
-	 * @covers ::_maybe_whitelist_subdomain
+	 * @covers ::maybe_whitelist_subdomain
 	 */
 	public function test_maybe_whitelist_subdomain() {
 
-		$_redirect_to = Utility::get_property( $this->google_auth, '_redirect_to' );
+		$_redirect_to = Utility::get_property( $this->_instance, '_redirect_to' );
 
 		if ( ! empty( $_redirect_to ) ) {
-			$this->assertContains( $_redirect_to, $this->google_auth->maybe_whitelist_subdomain( array() ) );
+			$this->assertContains( $_redirect_to, $this->_instance->maybe_whitelist_subdomain( array() ) );
 		}
-		$this->assertContains( 'http://rtmedia.com', $this->google_auth->maybe_whitelist_subdomain( [ 'http://rtmedia.com' ] ) );
+		$this->assertContains( 'http://rtmedia.com', $this->_instance->maybe_whitelist_subdomain( [ 'http://rtmedia.com' ] ) );
 	}
 
 	/**
@@ -148,10 +151,10 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * @covers ::_can_register_with_email
 	 */
 	public function test_can_register_with_email() {
-		$this->assertFalse( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ '' ] ) );
-		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@gmail.com' ] ) );
-		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@rtcamp.com' ] ) );
-		$this->assertTrue( Utility::invoke_method( $this->google_auth, '_can_register_with_email', [ 'abc@xyz.com' ] ) );
+		$this->assertFalse( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ '' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'abc@gmail.com' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'abc@rtcamp.com' ] ) );
+		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'abc@xyz.com' ] ) );
 
 		define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', [ 'rtcamp.com', 'xyz.com' ] );
 	}
@@ -162,7 +165,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * @covers ::_create_user
 	 */
 	public function test_create_user() {
-		$user_id = Utility::invoke_method( $this->google_auth, '_create_user', [ array( 'user_email' => 'suraj@rtcamp.com' ) ] );
+		$user_id = Utility::invoke_method( $this->_instance, '_create_user', [ array( 'user_email' => 'suraj@rtcamp.com' ) ] );
 		$this->assertGreaterThan( 0, $user_id );
 	}
 
@@ -171,30 +174,13 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 *
 	 *  * @covers ::authenticate_user
 	 */
-	public function testauthenticate_user() {
+	public function test_authenticate_user() {
 
-		$is_mu_site = is_multisite();
+		/**
+		 * Test 1: No User passed, No token provided.
+		 */
+		$this->assertEmpty( $this->_instance->authenticate_user( null ) );
 
-		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
-		$state = urldecode( $state );
-		$state = explode( '|', $state );
-
-		$blog_id = ( ! empty( $state[1] ) && 0 < intval( $state[1] ) ) ? intval( $state[1] ) : 0;
-
-		if ( $is_mu_site && 1 !== $blog_id ) { /**Current blog id as 1  */
-
-			$query_string = filter_input( INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_STRING );
-
-			$blog_url       = 'google.login';
-			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
-
-			try {
-				wp_safe_redirect( $blog_login_url );
-			} catch ( \Exception $exp ) {
-				$this->assertEquals( $exp->getMessage(), $blog_login_url );
-				$this->assertEquals( $exp->getCode(), 302 );
-			}
-		}
 	}
 
 	/**
@@ -203,9 +189,9 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * @covers ::_get_user_from_token
 	 */
 	public function test_get_user_from_token() {
-		$output = Utility::invoke_method( $this->google_auth, '_get_user_from_token', [ '' ] );
+		$output = Utility::invoke_method( $this->_instance, '_get_user_from_token', [ '' ] );
 		$this->assertEmpty( $output );
-		$output = Utility::invoke_method( $this->google_auth, '_get_user_from_token', [ 'sadjhsfjf64das2d4s' ] );
+		$output = Utility::invoke_method( $this->_instance, '_get_user_from_token', [ 'sadjhsfjf64das2d4s' ] );
 		$this->assertInstanceOf( 'Google_Service_Exception', $output );
 	}
 
@@ -214,8 +200,8 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * Note : Destination location can be get from Exception Message and
 	 * status can be get from Exception code.
 	 *
-	 * @param  string $location Redirected location.
-	 * @param  int    $status Status.
+	 * @param string $location Redirected location.
+	 * @param int    $status   Status.
 	 *
 	 * @throws \Exception Redirection data.
 	 *
