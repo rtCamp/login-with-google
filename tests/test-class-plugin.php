@@ -18,10 +18,9 @@ use WP_Google_Login\Inc\Google_Auth;
  * @coversDefaultClass \WP_Google_Login\Inc\Plugin
  */
 class Test_Plugin extends \WP_UnitTestCase {
+
 	/**
-	 * Test the action
-	 *
-	 * @covers Plugin::_setup_hooks
+	 * @covers ::_setup_hooks
 	 */
 	public function test_setup_hooks() {
 
@@ -33,9 +32,7 @@ class Test_Plugin extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the enqueue style and script
-	 *
-	 * @covers Plugin::login_enqueue_scripts
+	 * @covers ::login_enqueue_scripts
 	 */
 	public function test_login_enqueue_scripts() {
 
@@ -47,9 +44,7 @@ class Test_Plugin extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test tamplate path
-	 *
-	 * @covers Plugin::add_google_login_button
+	 * @covers ::add_google_login_button
 	 */
 	public function test_add_google_login_button() {
 
@@ -63,5 +58,5 @@ class Test_Plugin extends \WP_UnitTestCase {
 
 		$this->assertContains( $login_url, $login_button_html );
 	}
-}
 
+}

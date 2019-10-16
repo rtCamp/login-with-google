@@ -19,9 +19,7 @@ use WP_Google_Login\Inc\Helper;
 class Test_Helper extends \WP_UnitTestCase {
 
 	/**
-	 * Test tamplate
-	 *
-	 * @covers Plugin::test_render_template
+	 * @covers ::render_template
 	 */
 	public function test_render_template() {
 		$template_path = sprintf( '%s/template/google-login-button.php', WP_GOOGLE_LOGIN_PATH );
