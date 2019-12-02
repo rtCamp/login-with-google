@@ -2,8 +2,6 @@
 /**
  * Test_Google_Auth class for all function test.
  *
- * @author  Suraj Singh <suraj.sk243@gmail.com>
- *
  * @package wp-google-login
  */
 
@@ -13,16 +11,18 @@ namespace WP_Google_Login\Tests;
  * Class Utility
  */
 class Utility {
+
 	/**
-	 * Utility method to call private/protected method of a class and return method result as returned by the said method.
-	 * This is a generic wrapper function to align with relfection class and not to be use directly.
+	 * Utility method to call private/protected method of a class and return method result as returned by the said
+	 * method. This is a generic wrapper function to align with relfection class and not to be use directly.
 	 *
 	 * @param mixed  $object_or_class_name The object/class whose method is to be called.
-	 * @param string $method_name         The Name of the method to call.
+	 * @param string $method_name          The Name of the method to call.
 	 * @param array  $parameters           The Parameters to be passed to the hidden method being called.
+	 *
 	 * @return mixed                      Result returned by the hidden method being called.
 	 */
-	public static function invoke_method( $object_or_class_name, string $method_name, array $parameters = array() ) {
+	public static function invoke_method( $object_or_class_name, string $method_name, array $parameters = [] ) {
 
 		$object = null;
 
@@ -47,7 +47,8 @@ class Utility {
 	 * This is a generic wrapper function to align with relfection class and not to be use directly.
 	 *
 	 * @param mixed  $object_or_class_name The object/class whose property is to be accessed.
-	 * @param string $property_name       The name of the property to access.
+	 * @param string $property_name        The name of the property to access.
+	 *
 	 * @return mixed                      Value of the hidden property being accessed.
 	 */
 	public static function get_property( $object_or_class_name, $property_name ) {
@@ -74,8 +75,9 @@ class Utility {
 	 * This is a generic wrapper function to align with relfection class and not to be use directly.
 	 *
 	 * @param mixed  $object_or_class_name The object/class whose property is to be accessed.
-	 * @param string $property_name       The name of the property to access.
+	 * @param string $property_name        The name of the property to access.
 	 * @param mixed  $property_value       The value to be set for the hidden property.
+	 *
 	 * @return mixed                      Value of the hidden property being accessed.
 	 */
 	public static function set_and_get_property( $object_or_class_name, string $property_name, $property_value ) {
@@ -97,4 +99,5 @@ class Utility {
 		return $property->getValue( $object );
 
 	}
+
 }

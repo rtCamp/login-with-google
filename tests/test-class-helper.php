@@ -2,8 +2,6 @@
 /**
  * Test_Helper class for all helper function test.
  *
- * @author  Suraj Singh <suraj.sk243@gmail.com>
- *
  * @package wp-google-login
  */
 
@@ -27,12 +25,27 @@ class Test_Helper extends \WP_UnitTestCase {
 
 		$login_url = 'http://google.com';
 
+		/**
+		 * Test 1: Without passing third args.
+		 */
 		ob_start();
 		Helper::render_template( $template_path, [ 'login_url' => $login_url ] );
 		$rendered_contents = ob_get_clean();
 
 		$this->assertContains( $login_url, $rendered_contents );
 
+		/**
+		 * Test 2: By passing third args $echo as false.
+		 */
+		$output = Helper::render_template( $template_path, [ 'login_url' => $login_url ], false );
+
+		$this->assertContains( $login_url, $output );
+
+		/**
+		 * Test 3: By passing invalid file.
+		 */
+		$output = Helper::render_template( 'invalid/file/path.php', [], false );
+		$this->assertEquals( '', $output );
 	}
 }
 
