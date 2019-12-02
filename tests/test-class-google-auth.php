@@ -32,13 +32,6 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 
 		$this->_instance = Google_Auth::get_instance();
 
-		/**
-		 * Adding helper hook on wp_redirect which will throw exception
-		 * which have message as redirected URL and Code as status.
-		 * This is one way of escaping from exit in the code.
-		 */
-		add_filter( 'wp_redirect', array( $this, 'catch_redirect_destination' ), 99, 2 );
-
 	}
 
 	/**
@@ -55,10 +48,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$this->assertEquals( 10, has_filter( 'authenticate', [ $this->_instance, 'authenticate_user' ] ) );
 		$this->assertEquals( 10, has_filter( 'registration_redirect', [ $this->_instance, 'get_login_redirect' ] ) );
 		$this->assertEquals( 10, has_filter( 'login_redirect', [ $this->_instance, 'get_login_redirect' ] ) );
-		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [
-			$this->_instance,
-			'maybe_whitelist_subdomain'
-		] ) );
+		$this->assertEquals( 10, has_filter( 'allowed_redirect_hosts', [ $this->_instance, 'maybe_whitelist_subdomain' ] ) );
 	}
 
 	/**
@@ -208,14 +198,14 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$this->assertFalse( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ '' ] ) );
 
 		/**
-		 * Test 1: Allow email with any domain.
+		 * Test 2: Allow email with any domain.
 		 */
 		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'user@gmail.com' ] ) );
 		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'user@sample.com' ] ) );
 		$this->assertTrue( Utility::invoke_method( $this->_instance, '_can_register_with_email', [ 'user@example.com' ] ) );
 
 		/**
-		 * Test 2: Allow selected domains.
+		 * Test 3: Allow selected domains.
 		 */
 		define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com, sample.com' );
 
@@ -232,10 +222,18 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	public function test_authenticate_user() {
 
 		/**
+		 * Adding helper hook on wp_redirect which will throw exception
+		 * which have message as redirected URL and Code as status.
+		 * This is one way of escaping from exit in the code.
+		 */
+		add_filter( 'wp_redirect', [ $this, 'catch_redirect_destination' ], 99, 2 );
+
+		/**
 		 * Test 1: No User passed, No token provided.
 		 */
 		$this->assertEmpty( $this->_instance->authenticate_user( null ) );
 
+		remove_filter( 'wp_redirect', [ $this, 'catch_redirect_destination' ], 99 );
 	}
 
 	/**
