@@ -34,6 +34,8 @@ class Google_Auth {
 
 	/**
 	 * Google_Auth constructor.
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
 
@@ -82,9 +84,7 @@ class Google_Auth {
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
 
 		// If redirect_to url don't have host name then add that.
-		if ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) {
-			$redirect_to = home_url( $redirect_to );
-		}
+		$redirect_to = ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) ? home_url( $redirect_to ) : $redirect_to;
 
 		$state = [
 			'redirect_to' => $redirect_to,
@@ -122,7 +122,7 @@ class Google_Auth {
 			$plugins_activate_on_main_site = get_blog_option( BLOG_ID_CURRENT_SITE, 'active_plugins' );
 
 			if ( ! empty( $mu_plugins[ WP_GOOGLE_LOGIN_PLUGIN_NAME ] ) || in_array( WP_GOOGLE_LOGIN_PLUGIN_NAME, $plugins_activate_on_main_site, true ) ) {
-				$login_url = network_site_url( 'wp-login.php' );
+				$login_url = network_site_url( 'wp-login.php' ); // @codeCoverageIgnore
 			}
 
 		}
@@ -144,9 +144,10 @@ class Google_Auth {
 		}
 
 		$token = urldecode( $token );
-		// @codeCoverageIgnoreStart
+
 		try {
 
+			// @codeCoverageIgnoreStart
 			$this->_client->fetchAccessTokenWithAuthCode( $token );
 
 			$oauthservice = new \Google_Service_Oauth2( $this->_client );
@@ -160,12 +161,15 @@ class Google_Auth {
 				'last_name'    => $google_userinfo->getFamilyName(),
 				'picture'      => $google_userinfo->getPicture(),
 			];
+
+			return $user_info;
+
 			// @codeCoverageIgnoreEnd
+
 		} catch ( \Google_Service_Exception $exception ) {
 			return $exception;
 		}
 
-		return $user_info;
 	}
 
 	/**
@@ -221,11 +225,8 @@ class Google_Auth {
 
 		$user_id = wp_insert_user( $user_info );
 
-		if ( ! empty( $user_id ) && ! is_wp_error( $user_id ) ) {
-			return $user_id;
-		}
+		return ( ! empty( $user_id ) && ! is_wp_error( $user_id ) ) ? $user_id : 0;
 
-		return 0;
 	}
 
 	/**
@@ -271,6 +272,7 @@ class Google_Auth {
 		$email_domain = ( ! empty( $email_parts[1] ) ) ? strtolower( trim( $email_parts[1] ) ) : '';
 
 		$whitelisted_domains = explode( ',', $whitelisted_domains );
+		$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
 
 		$count = ( ! empty( $whitelisted_domains ) ) && is_array( $whitelisted_domains ) ? count( $whitelisted_domains ) : 1;
 
