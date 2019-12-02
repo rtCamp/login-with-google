@@ -2,6 +2,8 @@
 /**
  * Test_Plugin class for all plugin function test.
  *
+ * @author  Suraj Singh <suraj.sk243@gmail.com>
+ *
  * @package wp-google-login
  */
 
