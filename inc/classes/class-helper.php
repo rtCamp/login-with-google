@@ -71,6 +71,13 @@ class Helper {
 		if ( php_sapi_name() !== 'cli' ) {
 
 			/**
+			 * We can not have code coverage since.
+			 * Since this will only execute when sapi is "fpm-fcgi".
+			 * While Unit test case run on "cli"
+			 */
+			// @codeCoverageIgnoreStart
+
+			/**
 			 * Code is not running on PHP Cli and we are in clear.
 			 * Use the PHP method and bail out.
 			 */
@@ -84,6 +91,7 @@ class Helper {
 			}
 
 			return $sanitized_variable;
+			// @codeCoverageIgnoreEnd
 		}
 
 		/**
