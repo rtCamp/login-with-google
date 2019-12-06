@@ -233,6 +233,20 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		 */
 		$this->assertEmpty( $this->_instance->authenticate_user( null ) );
 
+		/**
+		 * Test 2: After passing token and state.
+		 */
+		$state = [
+			'redirect_to' => home_url( 'wp-admin/edit.php' ),
+			'blog_id'     => 1,
+		];
+
+		$_GET['code']  = 'token_code';
+		$_GET['state'] = urlencode_deep( implode( '|', $state ) );
+
+		$output = $this->_instance->authenticate_user( 'custom_user' );
+		$this->assertEquals( 'custom_user', $output );
+
 		remove_filter( 'wp_redirect', [ $this, 'catch_redirect_destination' ], 99 );
 	}
 

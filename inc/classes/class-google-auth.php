@@ -135,7 +135,7 @@ class Google_Auth {
 	 *
 	 * @param string $token Auth token.
 	 *
-	 * @return array User info
+	 * @return array|\Exception|\Google_Service_Exception User info
 	 */
 	protected function _get_user_from_token( $token ) {
 
@@ -307,7 +307,7 @@ class Google_Auth {
 	 * @param null|\WP_User|\WP_Error $user WP_User if the user is authenticated.
 	 *                                      WP_Error or null otherwise.
 	 *
-	 * @return null|\WP_User WP_User if the user is authenticated.
+	 * @return null|\WP_User|\WP_Error WP_User if the user is authenticated.
 	 *                       WP_Error or null otherwise.
 	 */
 	public function authenticate_user( $user = null ) {
@@ -347,7 +347,7 @@ class Google_Auth {
 
 		$user_info = $this->_get_user_from_token( $token );
 
-		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
+		if ( empty( $user_info ) || ! is_array( $user_info ) || empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
 
@@ -370,7 +370,7 @@ class Google_Auth {
 		if ( ! $this->_can_users_register() ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
 
@@ -378,7 +378,7 @@ class Google_Auth {
 		if ( ! $this->_can_register_with_email( $user_info['user_email'] ) ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
 
