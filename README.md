@@ -1,4 +1,5 @@
 # WP Google Login
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 Minimal plugin which allows WP user to login with google.
 
