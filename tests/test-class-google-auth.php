@@ -286,7 +286,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function catch_redirect_destination( $location, $status ) {
+	public function catch_redirect_destination( $location, $status ) { // phpcs:ignore WordPressVIPMinimum.Filters.AlwaysReturn.missingReturnStatement
 		throw new \Exception( $location, $status );
 	}
 }
