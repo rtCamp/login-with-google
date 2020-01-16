@@ -58,10 +58,10 @@ class Helper {
 	 *
 	 * Reference: https://bugs.php.net/bug.php?id=49184
 	 *
-	 * @param int    $type          One of INPUT_GET, INPUT_POST, INPUT_COOKIE, INPUT_SERVER, or INPUT_ENV
-	 * @param string $variable_name Name of a variable to get
-	 * @param int    $filter        The ID of the filter to apply
-	 * @param mixed  $options       filter to apply
+	 * @param int    $type          One of INPUT_GET, INPUT_POST, INPUT_COOKIE, INPUT_SERVER, or INPUT_ENV.
+	 * @param string $variable_name Name of a variable to get.
+	 * @param int    $filter        The ID of the filter to apply.
+	 * @param mixed  $options       filter to apply.
 	 *
 	 * @return mixed Value of the requested variable on success, FALSE if the filter fails, or NULL if the
 	 *               variable_name variable is not set.
