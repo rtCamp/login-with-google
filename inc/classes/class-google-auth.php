@@ -351,8 +351,8 @@ class Google_Auth {
 			return $user;
 		}
 
+		// @codeCoverageIgnoreStart
 		// Ignoring because we cannot mock token and associate it with a user in test cases.
-		// @codeCoverageIgnoreStart.
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
 		// We found the user.
