@@ -124,7 +124,6 @@ class Google_Auth {
 			if ( ! empty( $mu_plugins[ WP_GOOGLE_LOGIN_PLUGIN_NAME ] ) || in_array( WP_GOOGLE_LOGIN_PLUGIN_NAME, $plugins_activate_on_main_site, true ) ) {
 				$login_url = network_site_url( 'wp-login.php' ); // @codeCoverageIgnore
 			}
-
 		}
 
 		return $login_url;
@@ -165,7 +164,6 @@ class Google_Auth {
 			return $user_info;
 
 			// @codeCoverageIgnoreEnd
-
 		} catch ( \Google_Service_Exception $exception ) {
 			return $exception;
 		}
@@ -344,7 +342,7 @@ class Google_Auth {
 			wp_safe_redirect( $blog_login_url );
 			// @codeCoverageIgnoreStart
 			exit();
-			//@codeCoverageIgnoreEnd
+			// @codeCoverageIgnoreEnd
 		}
 
 		$user_info = $this->_get_user_from_token( $token );
@@ -353,8 +351,8 @@ class Google_Auth {
 			return $user;
 		}
 
-		//Ignoring because we cannot mock token and associate it with a user in test cases.
-		// @codeCoverageIgnoreStart
+		// Ignoring because we cannot mock token and associate it with a user in test cases.
+		// @codeCoverageIgnoreStart.
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
 		// We found the user.

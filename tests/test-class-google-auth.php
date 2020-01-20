@@ -254,13 +254,13 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 		$blog_id = self::factory()->blog->create();
 		$current_blog = get_current_blog_id();
 
-		switch_to_blog( $blog_id );
+		switch_to_blog( $blog_id ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.switch_to_blog_switch_to_blog
 
 		$this->expectException(Exception::class);
 
 		$output = $this->_instance->authenticate_user( 'custom_user' );
 
-		switch_to_blog( $current_blog );
+		switch_to_blog( $current_blog ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.switch_to_blog_switch_to_blog
 
 		remove_filter( 'wp_redirect', [ $this, 'catch_redirect_destination' ], 99 );
 	}
