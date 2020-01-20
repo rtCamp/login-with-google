@@ -27,8 +27,6 @@ class Plugin {
 
 	/**
 	 * Plugin constructor.
-	 *
-	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
 

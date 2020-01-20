@@ -37,11 +37,12 @@ class Test_Plugin extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * @covers ::__construct
 	 * @covers ::_setup_hooks
 	 */
-	public function test_setup_hooks() {
+	public function test__construct() {
 
-		Utility::invoke_method( $this->_instance, '_setup_hooks' );
+		Utility::invoke_method( $this->_instance, '__construct' );
 
 		$this->assertEquals( 10, has_action( 'login_enqueue_scripts', [ $this->_instance, 'login_enqueue_scripts' ] ) );
 		$this->assertEquals( 10, has_action( 'login_form', [ $this->_instance, 'add_google_login_button' ] ) );

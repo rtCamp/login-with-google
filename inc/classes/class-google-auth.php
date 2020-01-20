@@ -34,8 +34,6 @@ class Google_Auth {
 
 	/**
 	 * Google_Auth constructor.
-	 *
-	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
 
@@ -53,7 +51,6 @@ class Google_Auth {
 	/**
 	 * To include vendor file.
 	 *
-	 * @codeCoverageIgnore
 	 *
 	 * @return void
 	 */
@@ -147,6 +144,7 @@ class Google_Auth {
 		try {
 
 			// @codeCoverageIgnoreStart
+			// Ignoring because we cannot mock token and associate it with a user in test cases.
 			$this->_client->fetchAccessTokenWithAuthCode( $token );
 
 			$oauthservice = new \Google_Service_Oauth2( $this->_client );
@@ -341,6 +339,7 @@ class Google_Auth {
 
 			wp_safe_redirect( $blog_login_url );
 			// @codeCoverageIgnoreStart
+			// Ignoring because cannot test exit.
 			exit();
 			// @codeCoverageIgnoreEnd
 		}

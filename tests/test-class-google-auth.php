@@ -42,6 +42,8 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 */
 	public function test_construct() {
 
+		Utility::invoke_method( $this->_instance, '__construct' );
+		
 		$client = Utility::get_property( $this->_instance, '_client' );
 
 		$this->assertInstanceOf( 'Google_Client', $client );
