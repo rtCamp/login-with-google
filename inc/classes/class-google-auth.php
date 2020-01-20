@@ -342,7 +342,9 @@ class Google_Auth {
 			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
 
 			wp_safe_redirect( $blog_login_url );
+			// @codeCoverageIgnoreStart
 			exit();
+			//@codeCoverageIgnoreEnd
 		}
 
 		$user_info = $this->_get_user_from_token( $token );
@@ -351,6 +353,8 @@ class Google_Auth {
 			return $user;
 		}
 
+		//Ignoring because we cannot mock token and associate it with a user in test cases.
+		// @codeCoverageIgnoreStart
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
 		// We found the user.
@@ -394,6 +398,7 @@ class Google_Auth {
 		}
 
 		return $user;
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**

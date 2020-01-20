@@ -9,6 +9,7 @@
 
 namespace WP_Google_Login\Tests;
 
+use Exception;
 use  WP_Google_Login\Inc\Google_Auth;
 
 /**
@@ -246,6 +247,20 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 
 		$output = $this->_instance->authenticate_user( 'custom_user' );
 		$this->assertEquals( 'custom_user', $output );
+
+		/**
+		 * Test 3: blog id not equals to current blog
+		 */
+		$blog_id = self::factory()->blog->create();
+		$current_blog = get_current_blog_id();
+
+		switch_to_blog( $blog_id );
+
+		$this->expectException(Exception::class);
+
+		$output = $this->_instance->authenticate_user( 'custom_user' );
+
+		switch_to_blog( $current_blog );
 
 		remove_filter( 'wp_redirect', [ $this, 'catch_redirect_destination' ], 99 );
 	}
