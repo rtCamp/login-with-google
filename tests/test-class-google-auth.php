@@ -39,6 +39,7 @@ class Test_Google_Auth extends \WP_UnitTestCase {
 	 * Test the filters and Google_Client instance.
 	 *
 	 * @covers ::__construct
+	 * @covers ::_include_vendor
 	 */
 	public function test_construct() {
 
