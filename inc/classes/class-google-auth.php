@@ -51,7 +51,6 @@ class Google_Auth {
 	/**
 	 * To include vendor file.
 	 *
-	 *
 	 * @return void
 	 */
 	protected function _include_vendor() {
