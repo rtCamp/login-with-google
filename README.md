@@ -47,3 +47,13 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com, sample.com' );
 | WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                              |
 | WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. |
 | WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                   |
+
+## Unit testing
+
+- Setup local unit test environment by running script from terminal
+
+```./bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]```
+
+- Execute `phpunit` in terminal from repository to run all test cases.
+
+- Execute `phpunit ./tests/inc/test-class.php` in terminal with file path to run specific tests.

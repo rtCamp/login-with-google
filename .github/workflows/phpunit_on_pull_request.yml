@@ -1,0 +1,12 @@
+on: pull_request
+name: PHPUnit
+jobs:
+  runPHPCSInspection:
+    name: Run PHPUnit test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: Run PHPUnit test
+      uses: docker://rtcamp/action-run-phpunit:v1.0.0

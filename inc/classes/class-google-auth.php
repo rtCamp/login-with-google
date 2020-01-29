@@ -80,9 +80,7 @@ class Google_Auth {
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
 
 		// If redirect_to url don't have host name then add that.
-		if ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) {
-			$redirect_to = home_url( $redirect_to );
-		}
+		$redirect_to = ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) ? home_url( $redirect_to ) : $redirect_to;
 
 		$state = [
 			'redirect_to' => $redirect_to,
@@ -120,9 +118,8 @@ class Google_Auth {
 			$plugins_activate_on_main_site = get_blog_option( BLOG_ID_CURRENT_SITE, 'active_plugins' );
 
 			if ( ! empty( $mu_plugins[ WP_GOOGLE_LOGIN_PLUGIN_NAME ] ) || in_array( WP_GOOGLE_LOGIN_PLUGIN_NAME, $plugins_activate_on_main_site, true ) ) {
-				$login_url = network_site_url( 'wp-login.php' );
+				$login_url = network_site_url( 'wp-login.php' ); // @codeCoverageIgnore
 			}
-
 		}
 
 		return $login_url;
@@ -133,7 +130,7 @@ class Google_Auth {
 	 *
 	 * @param string $token Auth token.
 	 *
-	 * @return array User info
+	 * @return array|\Exception|\Google_Service_Exception User info
 	 */
 	protected function _get_user_from_token( $token ) {
 
@@ -145,6 +142,8 @@ class Google_Auth {
 
 		try {
 
+			// @codeCoverageIgnoreStart
+			// Ignoring because we cannot mock token and associate it with a user in test cases.
 			$this->_client->fetchAccessTokenWithAuthCode( $token );
 
 			$oauthservice = new \Google_Service_Oauth2( $this->_client );
@@ -159,11 +158,13 @@ class Google_Auth {
 				'picture'      => $google_userinfo->getPicture(),
 			];
 
+			return $user_info;
+
+			// @codeCoverageIgnoreEnd
 		} catch ( \Google_Service_Exception $exception ) {
-			return [];
+			return $exception;
 		}
 
-		return $user_info;
 	}
 
 	/**
@@ -173,11 +174,14 @@ class Google_Auth {
 	 */
 	protected function _get_scopes() {
 
-		return implode( ' ', [
-			'email',
-			'profile',
-			'openid',
-		] );
+		return implode(
+			' ',
+			[
+				'email',
+				'profile',
+				'openid',
+			]
+		);
 
 	}
 
@@ -216,11 +220,8 @@ class Google_Auth {
 
 		$user_id = wp_insert_user( $user_info );
 
-		if ( ! empty( $user_id ) && ! is_wp_error( $user_id ) ) {
-			return $user_id;
-		}
+		return ( ! empty( $user_id ) && ! is_wp_error( $user_id ) ) ? $user_id : 0;
 
-		return 0;
 	}
 
 	/**
@@ -266,6 +267,7 @@ class Google_Auth {
 		$email_domain = ( ! empty( $email_parts[1] ) ) ? strtolower( trim( $email_parts[1] ) ) : '';
 
 		$whitelisted_domains = explode( ',', $whitelisted_domains );
+		$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
 
 		$count = ( ! empty( $whitelisted_domains ) ) && is_array( $whitelisted_domains ) ? count( $whitelisted_domains ) : 1;
 
@@ -300,15 +302,15 @@ class Google_Auth {
 	 * @param null|\WP_User|\WP_Error $user WP_User if the user is authenticated.
 	 *                                      WP_Error or null otherwise.
 	 *
-	 * @return null|\WP_User WP_User if the user is authenticated.
+	 * @return null|\WP_User|\WP_Error WP_User if the user is authenticated.
 	 *                       WP_Error or null otherwise.
 	 */
 	public function authenticate_user( $user = null ) {
 
 		$is_mu_site = is_multisite();
 
-		$token = filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
-		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$token = Helper::filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
 		$state = urldecode( $state );
 		$state = explode( '|', $state );
 
@@ -335,15 +337,20 @@ class Google_Auth {
 			$blog_login_url = sprintf( '%s/wp-login.php?%s', $blog_url, $query_string );
 
 			wp_safe_redirect( $blog_login_url );
+			// @codeCoverageIgnoreStart
+			// Ignoring because cannot test exit.
 			exit();
+			// @codeCoverageIgnoreEnd
 		}
 
 		$user_info = $this->_get_user_from_token( $token );
 
-		if ( empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
+		if ( empty( $user_info ) || ! is_array( $user_info ) || empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
 
+		// @codeCoverageIgnoreStart
+		// Ignoring because we cannot mock token and associate it with a user in test cases.
 		$user = get_user_by( 'email', $user_info['user_email'] );
 
 		// We found the user.
@@ -357,14 +364,13 @@ class Google_Auth {
 			if ( ! empty( $blog_id ) && is_user_member_of_blog( $user->ID, $blog_id ) ) {
 				return $user;
 			}
-
 		}
 
 		// Check if user registration is allow or not.
 		if ( ! $this->_can_users_register() ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
 
@@ -372,7 +378,7 @@ class Google_Auth {
 		if ( ! $this->_can_register_with_email( $user_info['user_email'] ) ) {
 			return new \WP_Error(
 				'wp_google_login_error',
-				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'google-apps-login' ), $user_info['user_email'] )
+				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
 
@@ -388,6 +394,7 @@ class Google_Auth {
 		}
 
 		return $user;
+		// @codeCoverageIgnoreEnd
 	}
 
 	/**
