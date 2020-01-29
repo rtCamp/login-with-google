@@ -310,7 +310,7 @@ class Google_Auth {
 		$is_mu_site = is_multisite();
 
 		$token = Helper::filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
-		$state = filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
 		$state = urldecode( $state );
 		$state = explode( '|', $state );
 
