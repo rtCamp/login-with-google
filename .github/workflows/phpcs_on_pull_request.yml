@@ -14,5 +14,3 @@ jobs:
         SKIP_FOLDERS: "tests,.github"
         VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
         VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
-      with:
-        args: WordPress,WordPress-Core,WordPress-Docs
