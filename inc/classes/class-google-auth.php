@@ -345,7 +345,7 @@ class Google_Auth {
 
 		$user_info = $this->_get_user_from_token( $token );
 
-		if ( empty( $user_info ) || ! is_array( $user_info ) || empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
+		if ( ! is_array( $user_info ) || empty( $user_info['user_email'] ) || ! is_email( $user_info['user_email'] ) ) {
 			return $user;
 		}
 
