@@ -49,33 +49,31 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com, sample.com' );
 | WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                   |
 
 
-## Contributing
+## Contribute
 
-### Report a Bug
+### Reporting a bug 🐞
 
-Before you create a new issue, please search [existing issues](https://github.com/rtCamp/wp-google-login/issues) to see if there’s an existing resolution to it, or if it’s already been fixed in a newer version.
+Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for resolution or upcoming fixes. 
 
-Once you’ve done a bit of searching and discovered there isn’t an open or fixed issue for your bug, please [create a new issue](https://github.com/rtCamp/wp-google-login/issues/new). Include as much detail as you can, and clear steps to reproduce if possible.
+If you still need to [log an issue](https://github.com/rtCamp/wp-google-login/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
 
-### Create a pull request
+### Creating a pull request
 
-Want to contribute a new feature? Please first open a new issue to discuss whether the feature is a good fit for the project.
+Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/wp-google-login/issues).
 
-Once you've decided to commit the time to seeing your pull request through, please follow our guidelines for creating a pull request.
+Once you're ready to send a pull request, please run through the following checklist: 
 
-1. Search existing issues. If you can’t find anything related to what you want to work on, open a new issue.
+1. Browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
 
-1. Fork the repository.
+1. Fork this repository.
 
-1. Create a branch from `develop` for each issue you’d like to address. Commit your changes.
+1. Create a branch from `develop` for each issue you'd like to address and commit your changes.
 
 1. Push the code changes from your local clone to your fork.
 
-1. Open a pull request.
+1. Open a pull request and that's it! We'll with feedback as soon as possible (Isn't collaboration a great thing? 😌)
 
-1. Respond to code review feedback in a timely manner, recognizing development is a collaborative process.
-
-1. You need at least one approval and Once your pull request has passed code review and tests, it will be merged into `develop` and be in the pipeline for the next release.
+1. Once your pull request has passed final code review and tests, it will be merged into `develop` and be in the pipeline for the next release. Props to you! 🎉
 
 ## Unit testing
 
