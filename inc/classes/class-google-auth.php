@@ -144,7 +144,7 @@ class Google_Auth {
 
 			// @codeCoverageIgnoreStart
 			// Ignoring because we cannot mock token and associate it with a user in test cases.
-			$this->_client->fetchAccessTokenWithAuthCode( $token );
+			$token = $this->_client->fetchAccessTokenWithAuthCode( $token );
 
 			$oauthservice = new \Google_Service_Oauth2( $this->_client );
 
@@ -157,6 +157,17 @@ class Google_Auth {
 				'last_name'    => $google_userinfo->getFamilyName(),
 				'picture'      => $google_userinfo->getPicture(),
 			];
+
+			/**
+			 * @since 0.1
+			 *
+			 * This hook provides access token fetched by google sign-in.
+			 *
+			 * @param array  $token     Converted access token.
+			 * @param array  $user_info User details fetched from this token.
+			 * @param object $client    Google_Client object.
+			 */
+			do_action( 'wp_google_login_token', $token, $user_info, $this->_client );
 
 			return $user_info;
 
@@ -174,14 +185,25 @@ class Google_Auth {
 	 */
 	protected function _get_scopes() {
 
-		return implode(
-			' ',
-			[
-				'email',
-				'profile',
-				'openid',
-			]
-		);
+		$scopes = [
+			'email',
+			'profile',
+			'openid',
+		];
+
+		/**
+		 * @since 0.1
+		 *
+		 * This hook can be used to add/change google API scope.
+		 * By setting different scopes, you can ask different permissions.
+		 *
+		 * @param array $scopes Scopes array.
+		 *
+		 * @return array Modified scopes.
+		 */
+		$scopes = apply_filters( 'wp_google_login_scopes', $scopes );
+
+		return implode( ' ', $scopes );
 
 	}
 
