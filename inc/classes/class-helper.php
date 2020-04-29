@@ -25,7 +25,9 @@ class Helper {
 	 */
 	public static function render_template( $template_path, $variables = [], $echo = true ) {
 
-		if ( empty( $template_path ) || ! file_exists( $template_path ) || 0 !== validate_file( $template_path ) ) {
+		$validate_file = validate_file( $template_path );
+		// Function validate_file returns 2 for Windows drive path, so we check that as well.
+		if ( empty( $template_path ) || ! file_exists( $template_path ) || ( 0 !== $validate_file && 2 !== $validate_file ) ) {
 			return '';
 		}
 
