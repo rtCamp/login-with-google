@@ -3,6 +3,22 @@
 
 Minimal plugin which allows WP user to login with google. This plugin can be used as MU plugin too.
 
+**Author:** rtCamp
+
+**Tags:** Google login
+
+**Requires at least:** 5.0
+
+**Tested up to:** 5.4
+
+**Requires PHP version:** 7.0
+
+**Stable tag:** 1.0
+
+**License:** GPLv2 or later (of course!)
+
+**License URI:** http://www.gnu.org/licenses/gpl-2.0.html
+
 #### How to use it?
 
 1. If you're cloning repo then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download doesn't need this step.
