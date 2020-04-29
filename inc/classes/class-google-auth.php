@@ -161,7 +161,7 @@ class Google_Auth {
 			/**
 			 * This hook provides access token fetched by google sign-in.
 			 *
-			 * @since 0.1
+			 * @since 1.0
 			 *
 			 * @param array  $token     Converted access token.
 			 * @param array  $user_info User details fetched from this token.
@@ -195,7 +195,7 @@ class Google_Auth {
 		 * This hook can be used to add/change google API scope.
 		 * By setting different scopes, you can ask different permissions.
 		 *
-		 * @since 0.1
+		 * @since 1.0
 		 *
 		 * @param array $scopes Scopes array.
 		 *
