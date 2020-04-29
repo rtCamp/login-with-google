@@ -64,7 +64,7 @@ spl_autoload_register( function ( $resource = '' ) {
 
 	$validate_file = validate_file( $resource_path );
 	// Function validate_file returns 2 for Windows drive path, so we check that as well.
-	if ( file_exists( $resource_path ) && ( 0 === $validate_file || 2 === $validate_file ) ) {
+	if ( ! empty( $resource_path ) && file_exists( $resource_path ) && ( 0 === $validate_file || 2 === $validate_file ) ) {
 		// We are already making sure that file exists and it's valid.
 		require_once( $resource_path ); // phpcs:ignore
 	}
