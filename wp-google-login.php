@@ -21,7 +21,9 @@ define( 'WP_GOOGLE_LOGIN_VERSION', '0.1' );
 $vendor_autoload = sprintf( '%s/vendor/autoload.php', WP_GOOGLE_LOGIN_PATH );
 
 // Missing vendor autoload file or invalid file path.
-if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || 0 !== validate_file( $vendor_autoload ) ) {
+$validate_file = validate_file( $vendor_autoload );
+// Function validate_file returns 2 for Windows drive path, so we check that as well.
+if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || ( 0 !== $validate_file && 2 !== $validate_file ) ) {
 	return;
 }
 

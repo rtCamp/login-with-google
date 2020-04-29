@@ -62,8 +62,10 @@ spl_autoload_register( function ( $resource = '' ) {
 		$resource_path = sprintf( '%s/inc/%s/%s.php', untrailingslashit( $theme_root ), $directory, $file_name );
 	}
 
-	if ( file_exists( $resource_path ) && 0 === validate_file( $resource_path ) ) {
-		// We already making sure that file is exists and valid.
+	$validate_file = validate_file( $resource_path );
+	// Function validate_file returns 2 for Windows drive path, so we check that as well.
+	if ( file_exists( $resource_path ) && ( 0 === $validate_file || 2 === $validate_file ) ) {
+		// We are already making sure that file exists and it's valid.
 		require_once( $resource_path ); // phpcs:ignore
 	}
 
