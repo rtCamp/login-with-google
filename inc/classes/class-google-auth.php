@@ -394,6 +394,7 @@ class Google_Auth {
 		if ( ! $this->_can_users_register() ) {
 			return new \WP_Error(
 				'wp_google_login_error',
+				// translators: %s: User email.
 				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
@@ -402,6 +403,7 @@ class Google_Auth {
 		if ( ! $this->_can_register_with_email( $user_info['user_email'] ) ) {
 			return new \WP_Error(
 				'wp_google_login_error',
+				// translators: %s: User email.
 				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'wp-google-login' ), $user_info['user_email'] )
 			);
 		}
