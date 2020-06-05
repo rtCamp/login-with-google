@@ -71,12 +71,22 @@ class Google_Auth {
 	 * @return \Google_Client
 	 */
 	protected function _get_client() {
+		$client_id     = '';
+		$client_secret = '';
+
+		$client_id     = wp_google_login_get_client_id();
+		$client_secret = wp_google_login_get_client_secret();
+
+		// If we don't have client id and secret then bail out, plugin won't work.
+		if ( empty( $client_id ) || empty( $client_secret ) ) {
+			return;
+		}
 
 		$client = new \Google_Client();
 		$client->setApplicationName( 'WP Google Login' );
 
-		$client->setClientId( WP_GOOGLE_LOGIN_CLIENT_ID );
-		$client->setClientSecret( WP_GOOGLE_LOGIN_SECRET );
+		$client->setClientId( $client_id );
+		$client->setClientSecret( $client_secret );
 
 		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
@@ -277,7 +287,7 @@ class Google_Auth {
 			return false;
 		}
 
-		$whitelisted_domains = defined( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' ) ? trim( WP_GOOGLE_LOGIN_WHITELIST_DOMAINS ) : '';
+		$whitelisted_domains = wp_google_login_get_whitelisted_domains();
 
 		/**
 		 * If Const is not defined or empty,
