@@ -264,9 +264,14 @@ class Google_Auth {
 	 * @return bool
 	 */
 	protected function _can_users_register() {
+		$options  = get_option( 'wp_google_login_settings' );
 
 		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
 			return (bool) WP_GOOGLE_LOGIN_USER_REGISTRATION;
+		}
+
+		if ( isset( $options['registration_enabled'] ) ) {
+			return (bool) $options['registration_enabled'];
 		}
 
 		$can_user_register = get_option( 'users_can_register' );

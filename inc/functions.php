@@ -59,3 +59,20 @@ function wp_google_login_get_whitelisted_domains() {
 
 	return $whitelisted_domains;
 }
+
+/**
+ * Check if registration via Google Login is enabled.
+ *
+ * @return bool
+ */
+function wp_google_login_is_registration_enabled() {
+	$options              = get_option( 'wp_google_login_settings' );
+	$registration_enabled = false;
+	if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
+		$registration_enabled = WP_GOOGLE_LOGIN_USER_REGISTRATION;
+	} else {
+		$registration_enabled = ! empty( $options['registration_enabled'] ) ? $options['registration_enabled'] : false;
+	}
+
+	return $registration_enabled;
+}

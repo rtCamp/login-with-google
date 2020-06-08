@@ -106,6 +106,15 @@ class Settings {
 			'wp_google_login_section',
 			[ 'label_for' => 'whitelisted-domains' ]
 		);
+
+		add_settings_field(
+			'wp_google_login_enable_registration',
+			__( 'Enable Google Login Registration', 'wp-google-login' ),
+			[ $this, 'wp_google_login_enable_registrationr' ],
+			'wp_google_login',
+			'wp_google_login_section',
+			[ 'label_for' => 'enable-registration' ]
+		);
 	}
 
 	/**
@@ -155,7 +164,26 @@ class Settings {
 		}
 		?>
 		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
-        <p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.' ); ?></p>
+        <p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.', 'wp-google-login' ); ?></p>
+		<?php
+
+	}
+
+	/**
+	 * Render Google Login Registration settings field.
+	 *
+	 * @return void
+	 */
+	public function wp_google_login_enable_registrationr(  ) {
+		$registration_enabled = wp_google_login_is_registration_enabled();
+		$disabled             = '';
+		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
+			$disabled = 'disabled';
+		}
+		?>
+        <input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
+        <input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
+        <?php esc_html_e( 'Enable Registration', 'wp-google-login' ); ?>
 		<?php
 
 	}
