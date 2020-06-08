@@ -85,7 +85,8 @@ class Settings {
 			__( 'Client ID', 'wp-google-login' ),
 			[ $this, 'wp_google_login_client_id_render' ],
 			'wp_google_login',
-			'wp_google_login_section'
+			'wp_google_login_section',
+			[ 'label_for' => 'client-id' ]
 		);
 
 		add_settings_field(
@@ -93,15 +94,17 @@ class Settings {
 			__( 'Client Secret', 'wp-google-login' ),
 			[ $this, 'wp_google_login_client_secret_render' ],
 			'wp_google_login',
-			'wp_google_login_section'
+			'wp_google_login_section',
+			[ 'label_for' => 'client-secret' ]
 		);
 
 		add_settings_field(
 			'wp_google_login_whitelisted_domains',
-			__( 'Whitelisted Domains <br>(Optional, Seperate by Comma)', 'wp-google-login' ),
+			__( 'Whitelisted Domains', 'wp-google-login' ),
 			[ $this, 'wp_google_login_whitelisted_domains_render' ],
 			'wp_google_login',
-			'wp_google_login_section'
+			'wp_google_login_section',
+			[ 'label_for' => 'whitelisted-domains' ]
 		);
 	}
 
@@ -152,6 +155,7 @@ class Settings {
 		}
 		?>
 		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
+        <p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.' ); ?></p>
 		<?php
 
 	}
@@ -162,7 +166,7 @@ class Settings {
 	 * @return void
 	 */
 	public function settings_section_callback() {
-		echo wp_kses_post( __( '<strong>If you do not have Project and Credentials, you can create one from <a target="_blank" href="https://console.developers.google.com/apis/dashboard">Here</a>.</strong>', 'wp-google-login' ) );
+		echo wp_kses_post( __( '<p>If you do not have Project and Credentials, you can create one from <a target="_blank" href="https://console.developers.google.com/apis/dashboard">here</a>.</p>', 'wp-google-login' ) );
 	}
 
 	/**
@@ -172,13 +176,15 @@ class Settings {
 	 */
 	public function options_page() {
 		?>
-		<form action='options.php' method='post'>
-			<?php
-			settings_fields( 'wp_google_login' );
-			do_settings_sections( 'wp_google_login' );
-			submit_button();
-			?>
-		</form>
+		<div class="wrap">
+			<form action='options.php' method='post'>
+				<?php
+				settings_fields( 'wp_google_login' );
+				do_settings_sections( 'wp_google_login' );
+				submit_button();
+				?>
+			</form>
+		</div>
 		<?php
 	}
 }
