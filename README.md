@@ -36,16 +36,16 @@ Minimal plugin which allows WP user to login with google. This plugin can be use
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
-Or you can set them in `Settings > WP Google Login > Client ID` & `Settings > WP Google Login > Client Secret`
+Or you can set these from `Settings > WP Google Login` page from wp-admin
 
 #### How to enable user registration?
-By default, user registration defers to `Settings > General Settings > Membership` if constant is not set or the option in `Settings > WP Google Login > Enable Google Login Registration` not selected. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value to `true` or enable `Settings > WP Google Login > Enable Google Login Registration`. If the constant is set, or the option is enabled then it won't take Membership setting into account. See the below example to know how to do it via constants:
+You can enable user registration either by
+- Checking `Settings > WP Google Login > Enable Google Login Registration`
+OR
+- Adding `define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', 'true' );` in wp-config.php file.
 
-**Note:** If this const is set to `true` then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
-
-```php
-define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', true );
-```
+**Note:** If this is not done, then value of `Settings > General Settings > Membership` will be taken into account.
+If you've enabled user registration from WP Google Login plugin, then a new user will be registered even when `Settings > General Settings > Membership > Anyone can register` is unchecked.
 
 #### How to restrict user registration to one or more domain(s)?
 

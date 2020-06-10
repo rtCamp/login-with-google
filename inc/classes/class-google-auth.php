@@ -71,9 +71,6 @@ class Google_Auth {
 	 * @return \Google_Client
 	 */
 	protected function _get_client() {
-		$client_id     = '';
-		$client_secret = '';
-
 		$client_id     = wp_google_login_get_client_id();
 		$client_secret = wp_google_login_get_client_secret();
 

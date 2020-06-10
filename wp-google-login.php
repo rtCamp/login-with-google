@@ -30,7 +30,6 @@ if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || ( 0 !== $
 
 // We already making sure that file is exists and valid.
 require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
-require_once( sprintf( '%s//inc/functions.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
+require_once( sprintf( '%s/inc/functions.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
 
 \WP_Google_Login\Inc\Plugin::get_instance();
-\WP_Google_Login\Inc\Settings::get_instance();

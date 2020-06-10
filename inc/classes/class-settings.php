@@ -46,7 +46,10 @@ class Settings {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_filter( 'plugin_action_links', [ $this, 'plugin_action_links' ], 10, 2 );
 		}
-		add_options_page( 'WP Google Login', 'WP Google Login', 'manage_options', 'wp-google-login', [ $this, 'options_page' ] );
+		add_options_page( 'WP Google Login', 'WP Google Login', 'manage_options', 'wp-google-login', [
+			$this,
+			'options_page'
+		] );
 	}
 
 	/**
@@ -55,11 +58,11 @@ class Settings {
 	 * @param array  $links Array of links for plugin actions.
 	 * @param string $file Path to the plugin file relative to the plugins directory.
 	 *
-	 * @return array $links  Array of links for plugin actions.
+	 * @return array $links Array of links for plugin actions.
 	 */
 	public function plugin_action_links( $links, $file ) {
 		if ( 'wp-google-login/wp-google-login.php' === $file ) {
-			$links[] = "<a href='options-general.php?page=wp-google-login'>" . __( 'Settings' ) . '</a>';
+			$links[] = "<a href='options-general.php?page=wp-google-login'>" . __( 'Settings', 'wp-google-login' ) . '</a>';
 		}
 
 		return $links;
@@ -129,7 +132,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[client_id]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>' >
+        <input type='text' name='wp_google_login_settings[client_id]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>'>
 		<?php
 
 	}
@@ -146,7 +149,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[client_secret]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
+        <input type='text' name='wp_google_login_settings[client_secret]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
 		<?php
 
 	}
@@ -163,7 +166,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
+        <input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
         <p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.', 'wp-google-login' ); ?></p>
 		<?php
 
@@ -174,7 +177,7 @@ class Settings {
 	 *
 	 * @return void
 	 */
-	public function wp_google_login_enable_registrationr(  ) {
+	public function wp_google_login_enable_registrationr() {
 		$registration_enabled = wp_google_login_is_registration_enabled();
 		$disabled             = '';
 		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
@@ -182,10 +185,9 @@ class Settings {
 		}
 		?>
         <input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
-        <input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
-        <?php esc_html_e( 'Enable Registration', 'wp-google-login' ); ?>
+        <input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?>value='1'>
 		<?php
-
+		esc_html_e( 'Enable Registration', 'wp-google-login' );
 	}
 
 	/**
@@ -194,7 +196,7 @@ class Settings {
 	 * @return void
 	 */
 	public function settings_section_callback() {
-		echo wp_kses_post( __( '<p>If you do not have Project and Credentials, you can create one from <a target="_blank" href="https://console.developers.google.com/apis/dashboard">here</a>.</p>', 'wp-google-login' ) );
+		echo wp_kses_post( sprintf( '<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', esc_html__( 'If you do not have Project and Credentials, you can create one from', 'wp-google-login' ), esc_url( 'https://console.developers.google.com/apis/dashboard' ), esc_html__( 'here', 'wp-google-login' ) ) );
 	}
 
 	/**
@@ -204,15 +206,15 @@ class Settings {
 	 */
 	public function options_page() {
 		?>
-		<div class="wrap">
-			<form action='options.php' method='post'>
+        <div class="wrap">
+            <form action='options.php' method='post'>
 				<?php
 				settings_fields( 'wp_google_login' );
 				do_settings_sections( 'wp_google_login' );
 				submit_button();
 				?>
-			</form>
-		</div>
+            </form>
+        </div>
 		<?php
 	}
 }
