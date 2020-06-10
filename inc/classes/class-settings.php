@@ -132,7 +132,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-        <input type='text' name='wp_google_login_settings[client_id]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>'>
+		<input type='text' name='wp_google_login_settings[client_id]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>'>
 		<?php
 
 	}
@@ -149,7 +149,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-        <input type='text' name='wp_google_login_settings[client_secret]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
+		<input type='text' name='wp_google_login_settings[client_secret]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
 		<?php
 
 	}
@@ -166,8 +166,8 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-        <input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
-        <p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.', 'wp-google-login' ); ?></p>
+		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
+		<p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.', 'wp-google-login' ); ?></p>
 		<?php
 
 	}
@@ -184,8 +184,8 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-        <input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
-        <input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?>value='1'>
+		<input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
+		<input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?>value='1'>
 		<?php
 		esc_html_e( 'Enable Registration', 'wp-google-login' );
 	}
@@ -206,15 +206,15 @@ class Settings {
 	 */
 	public function options_page() {
 		?>
-        <div class="wrap">
-            <form action='options.php' method='post'>
+		<div class="wrap">
+			<form action='options.php' method='post'>
 				<?php
 				settings_fields( 'wp_google_login' );
 				do_settings_sections( 'wp_google_login' );
 				submit_button();
 				?>
-            </form>
-        </div>
+			</form>
+		</div>
 		<?php
 	}
 }
