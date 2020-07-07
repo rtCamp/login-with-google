@@ -44,8 +44,7 @@ You can enable user registration either by
 OR
 - Adding `define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', 'true' );` in wp-config.php file.
 
-**Note:** If this is not done, then value of `Settings > General Settings > Membership` will be taken into account.
-If you've enabled user registration from WP Google Login plugin, then a new user will be registered even when `Settings > General Settings > Membership > Anyone can register` is unchecked.
+Note: If the checkbox is ON then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
 #### How to restrict user registration to one or more domain(s)?
 
