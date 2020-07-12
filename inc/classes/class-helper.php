@@ -66,7 +66,7 @@ class Helper {
 	 * @param mixed  $options       filter to apply.
 	 *
 	 * @return mixed Value of the requested variable on success, FALSE if the filter fails, or NULL if the
-	 *               variable_name variable is not set.
+	 *  variable_name variable is not set.
 	 */
 	public static function filter_input( $type, $variable_name, $filter = FILTER_DEFAULT, $options = null ) {
 

@@ -220,10 +220,10 @@ class Google_Auth {
 	 * Create user base on provided data.
 	 *
 	 * @param array $user_info User info,
-	 *                         user_email : User email address
-	 *                         display_name : Display name
-	 *                         first_name : First name
-	 *                         last_name : Last name.
+	 *  user_email : User email address
+	 *  display_name : Display name
+	 *  first_name : First name
+	 *  last_name : Last name.
 	 *
 	 * @return int
 	 */
@@ -338,10 +338,10 @@ class Google_Auth {
 	 * To authenticate user.
 	 *
 	 * @param null|\WP_User|\WP_Error $user WP_User if the user is authenticated.
-	 *                                      WP_Error or null otherwise.
+	 *  WP_Error or null otherwise.
 	 *
 	 * @return null|\WP_User|\WP_Error WP_User if the user is authenticated.
-	 *                       WP_Error or null otherwise.
+	 *  WP_Error or null otherwise.
 	 */
 	public function authenticate_user( $user = null ) {
 
