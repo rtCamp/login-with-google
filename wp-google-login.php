@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Google Login
  * Plugin URI:  https://github.com/rtCamp/wp-google-login
- * Description: Minimal plugin which allows WP user to login with google.
+ * Description: Allow users to login with Google on the WordPress login screen.
  * Version:     1.0
  * Author:      rtCamp
  * Author URI:  https://rtcamp.com
@@ -27,12 +27,9 @@ if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || ( 0 !== $
 	return;
 }
 
-// If we don't have client id and secret then bail out, plugin won't work.
-if ( ! defined( 'WP_GOOGLE_LOGIN_CLIENT_ID' ) || ! defined('WP_GOOGLE_LOGIN_SECRET') ) {
-	return;
-}
 
 // We already making sure that file is exists and valid.
 require_once( sprintf( '%s/autoloader.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
+require_once( sprintf( '%s/inc/functions.php', WP_GOOGLE_LOGIN_PATH ) ); // phpcs:ignore
 
 \WP_Google_Login\Inc\Plugin::get_instance();

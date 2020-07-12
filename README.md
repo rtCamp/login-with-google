@@ -1,3 +1,6 @@
+<p align="center">
+<a href="https://rtcamp.com/?ref=wp-menu-custom-fields-repo" target="_blank"><img width="200"src="https://rtcamp.com/wp-content/themes/rtcamp-v9/assets/img/site-logo-black.svg"></a>
+</p>
 # WP Google Login
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
@@ -22,32 +25,32 @@ Minimal plugin which allows WP user to login with google. This plugin can be use
 #### How to use it?
 
 1. If you're cloning repo then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download doesn't need this step.
-1. Create project from [Google console](https://console.developers.google.com/apis/dashboard) if not exists.
-1. Go to **Credentials** tab, And create credential for OAuth client.
+2. Create project from [Google console](https://console.developers.google.com/apis/dashboard) if not exists.
+3. Go to **Credentials** tab, And create credential for OAuth client.
     * Application type will be **Web application**
     * Add `YOUR_DOMAIN/wp-login.php` in **Authorized redirect URIs**
-1. This will give you Client ID and Secret key.
-1. Use below snippet, replace value of const with client id and secret. And add that in to `wp-config.php` 
+4. This will give you Client ID and Secret key.
+5. You can use below snippet, replace value of const with client id and secret. And add that in to `wp-config.php` 
 
 ```php
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
+Or you can set these from `Settings > WP Google Login` page from wp-admin
 
 #### How to enable user registration?
-By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. To enable that you can simply define const `WP_GOOGLE_LOGIN_USER_REGISTRATION` and set value `true`. If constant is set then it won't take Membership setting into account. See below example:
+You can enable user registration either by
+- Checking `Settings > WP Google Login > Enable Google Login Registration`
+OR
+- Adding `define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', 'true' );` in wp-config.php file.
 
-**Note:** If this const is set to `true` then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
-
-```php
-define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', true );
-```
+Note: If the checkbox is ON then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
 #### How to restrict user registration to one or more domain(s)?
 
-By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under Google Suite organization. This configuration variable does that.
+By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable `Settings > WP Google Login > Enable Google Login Registration`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under Google Suite organization. This configuration variable does that.
 
-Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` const. You can whitelist multiple domains. Please separate domains with commas. See below example:
+Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` const or in the settings `Settings > WP Google Login > Whitelisted Domains`. You can whitelist multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
 
 **Note:** If a user already exists then it will allow a user to login with Google regardless of its domain is whitelisted or not. It will only prevent the user from registering with an email address with a domain that not whitelisted.
  
@@ -117,3 +120,8 @@ Once you're ready to send a pull request, please run through the following check
 - Execute `phpunit` in terminal from repository to run all test cases.
 
 - Execute `phpunit ./tests/inc/test-class.php` in terminal with file path to run specific tests.
+
+
+# BTW, We're Hiring!
+
+<a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
