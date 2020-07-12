@@ -112,7 +112,7 @@ class Settings {
 
 		add_settings_field(
 			'wp_google_login_enable_registration',
-			__( 'Enable Google Login Registration', 'wp-google-login' ),
+			__( 'Register New Users', 'wp-google-login' ),
 			[ $this, 'wp_google_login_enable_registrationr' ],
 			'wp_google_login',
 			'wp_google_login_section',
@@ -196,7 +196,12 @@ class Settings {
 	 * @return void
 	 */
 	public function settings_section_callback() {
-		echo wp_kses_post( sprintf( '<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', esc_html__( 'If you do not have Project and Credentials, you can create one from', 'wp-google-login' ), esc_url( 'https://console.developers.google.com/apis/dashboard' ), esc_html__( 'here', 'wp-google-login' ) ) );
+		echo wp_kses_post( sprintf( 
+			'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', 
+			esc_html__( 'Create oAuth Client ID and Client Secret at', 'wp-google-login' ), 
+			esc_url( 'https://console.developers.google.com/apis/dashboard' ),
+			esc_html__( 'console.developers.google.com', 'wp-google-login' ) 
+		) );
 	}
 
 	/**

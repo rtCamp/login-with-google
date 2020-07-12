@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Google Login
  * Plugin URI:  https://github.com/rtCamp/wp-google-login
- * Description: Minimal plugin which allows WP user to login with google.
+ * Description: Allow users to login with Google on the WordPress login screen.
  * Version:     1.0
  * Author:      rtCamp
  * Author URI:  https://rtcamp.com
