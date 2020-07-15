@@ -132,9 +132,18 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[client_id]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>'>
+		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_id ); ?>'>
+		<p class="description">
 		<?php
-
+		echo wp_kses_post( sprintf( 
+			'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', 
+			esc_html__( 'Create oAuth Client ID and Client Secret at', 'wp-google-login' ), 
+			esc_url( 'https://console.developers.google.com/apis/dashboard' ),
+			esc_html__( 'console.developers.google.com', 'wp-google-login' ) 
+		) );
+		?>
+		</p>
+		<?php
 	}
 
 	/**
@@ -149,7 +158,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[client_secret]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
+		<input type='text' name='wp_google_login_settings[client_secret]' id="client-secret" <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $client_secret ); ?>'>
 		<?php
 
 	}
@@ -166,7 +175,7 @@ class Settings {
 			$disabled = 'disabled';
 		}
 		?>
-		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
+		<input type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
 		<p class="description"><?php esc_html_e( 'Optional field, add comma-separated list of whitelisted domains.', 'wp-google-login' ); ?></p>
 		<?php
 
@@ -185,10 +194,8 @@ class Settings {
 		}
 		?>
 		<input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
-		<input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
-		<?php
-		esc_html_e( 'Enable Registration', 'wp-google-login' ); ?>
-		<p class="description"><?php esc_html_e( 'Auto-provisioning. If user does not exist, WordPress will create a new user with the data provided by Google.' ); ?></p>
+		<input type='checkbox' name='wp_google_login_settings[registration_enabled]' id="enable-registration" <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
+		<p class="description"><?php esc_html_e( 'If user does not exist, WordPress will create a new user with the data provided by Google.' ); ?></p>
 		<?php
 	}
 
@@ -198,12 +205,7 @@ class Settings {
 	 * @return void
 	 */
 	public function settings_section_callback() {
-		echo wp_kses_post( sprintf( 
-			'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', 
-			esc_html__( 'Create oAuth Client ID and Client Secret at', 'wp-google-login' ), 
-			esc_url( 'https://console.developers.google.com/apis/dashboard' ),
-			esc_html__( 'console.developers.google.com', 'wp-google-login' ) 
-		) );
+		
 	}
 
 	/**
