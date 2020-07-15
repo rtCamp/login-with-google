@@ -11,7 +11,6 @@
  * Text Domain: wp-google-login
  *
  * @package wp-google-login
- * @phpcs:disable WordPressVIPMinimum.Files.IncludingFile.UsingCustomConstant
  */
 
 define( 'WP_GOOGLE_LOGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
@@ -30,7 +29,7 @@ if ( empty( $vendor_autoload ) || ! file_exists( $vendor_autoload ) || ( 0 !== $
 
 
 // We already making sure that file is exists and valid.
-require_once WP_GOOGLE_LOGIN_PATH . '/autoloader.php';
-require_once WP_GOOGLE_LOGIN_PATH . '/inc/functions.php';
+require_once plugin_dir_path( __FILE__ ) . 'autoloader.php';
+require_once plugin_dir_path( __FILE__ ) . 'inc/functions.php';
 
 \WP_Google_Login\Inc\Plugin::get_instance();
