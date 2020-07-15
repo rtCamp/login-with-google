@@ -112,7 +112,7 @@ class Settings {
 
 		add_settings_field(
 			'wp_google_login_enable_registration',
-			__( 'Register New Users', 'wp-google-login' ),
+			__( 'Create user if none exists', 'wp-google-login' ),
 			[ $this, 'wp_google_login_enable_registrationr' ],
 			'wp_google_login',
 			'wp_google_login_section',
@@ -167,7 +167,7 @@ class Settings {
 		}
 		?>
 		<input type='text' name='wp_google_login_settings[whitelisted_domains]' <?php echo esc_attr( $disabled ); ?> value='<?php echo esc_attr( $whitelisted_domains ); ?>'>
-		<p class="description"><?php esc_html_e( 'Optional, Seperate by Comma.', 'wp-google-login' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Optional field, add comma-separated list of whitelisted domains.', 'wp-google-login' ); ?></p>
 		<?php
 
 	}
@@ -187,7 +187,9 @@ class Settings {
 		<input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
 		<input type='checkbox' name='wp_google_login_settings[registration_enabled]' <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
 		<?php
-		esc_html_e( 'Enable Registration', 'wp-google-login' );
+		esc_html_e( 'Enable Registration', 'wp-google-login' ); ?>
+		<p class="description"><?php esc_html_e( 'Auto-provisioning. If user does not exist, WordPress will create a new user with the data provided by Google.' ); ?></p>
+		<?php
 	}
 
 	/**
