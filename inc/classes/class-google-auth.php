@@ -71,12 +71,19 @@ class Google_Auth {
 	 * @return \Google_Client
 	 */
 	protected function _get_client() {
+		$client_id     = wp_google_login_get_client_id();
+		$client_secret = wp_google_login_get_client_secret();
+
+		// If we don't have client id and secret then bail out, plugin won't work.
+		if ( empty( $client_id ) || empty( $client_secret ) ) {
+			return;
+		}
 
 		$client = new \Google_Client();
 		$client->setApplicationName( 'WP Google Login' );
 
-		$client->setClientId( WP_GOOGLE_LOGIN_CLIENT_ID );
-		$client->setClientSecret( WP_GOOGLE_LOGIN_SECRET );
+		$client->setClientId( $client_id );
+		$client->setClientSecret( $client_secret );
 
 		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
@@ -213,10 +220,10 @@ class Google_Auth {
 	 * Create user base on provided data.
 	 *
 	 * @param array $user_info User info,
-	 *                         user_email : User email address
-	 *                         display_name : Display name
-	 *                         first_name : First name
-	 *                         last_name : Last name.
+	 *  user_email : User email address
+	 *  display_name : Display name
+	 *  first_name : First name
+	 *  last_name : Last name.
 	 *
 	 * @return int
 	 */
@@ -254,9 +261,16 @@ class Google_Auth {
 	 * @return bool
 	 */
 	protected function _can_users_register() {
+		$options  = get_option( 'wp_google_login_settings' );
 
 		if ( defined( 'WP_GOOGLE_LOGIN_USER_REGISTRATION' ) ) {
 			return (bool) WP_GOOGLE_LOGIN_USER_REGISTRATION;
+		}
+
+		$registration_enabled = ! empty( $options['registration_enabled'] ) ? (bool) $options['registration_enabled'] : false;
+
+		if ( $registration_enabled ) {
+			return true;
 		}
 
 		$can_user_register = get_option( 'users_can_register' );
@@ -277,7 +291,7 @@ class Google_Auth {
 			return false;
 		}
 
-		$whitelisted_domains = defined( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' ) ? trim( WP_GOOGLE_LOGIN_WHITELIST_DOMAINS ) : '';
+		$whitelisted_domains = wp_google_login_get_whitelisted_domains();
 
 		/**
 		 * If Const is not defined or empty,
@@ -324,10 +338,10 @@ class Google_Auth {
 	 * To authenticate user.
 	 *
 	 * @param null|\WP_User|\WP_Error $user WP_User if the user is authenticated.
-	 *                                      WP_Error or null otherwise.
+	 *  WP_Error or null otherwise.
 	 *
 	 * @return null|\WP_User|\WP_Error WP_User if the user is authenticated.
-	 *                       WP_Error or null otherwise.
+	 *  WP_Error or null otherwise.
 	 */
 	public function authenticate_user( $user = null ) {
 

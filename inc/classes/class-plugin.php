@@ -29,6 +29,7 @@ class Plugin {
 	 * Plugin constructor.
 	 */
 	protected function __construct() {
+		\WP_Google_Login\Inc\Settings::get_instance();
 
 		$this->_google_auth = Google_Auth::get_instance();
 
