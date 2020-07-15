@@ -11,6 +11,7 @@
  * Text Domain: wp-google-login
  *
  * @package wp-google-login
+ * @phpcs:disable WordPressVIPMinimum.Files.IncludingFile.UsingCustomConstant
  */
 
 define( 'WP_GOOGLE_LOGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
