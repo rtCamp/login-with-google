@@ -46,7 +46,7 @@ class Settings {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_filter( 'plugin_action_links', [ $this, 'plugin_action_links' ], 10, 2 );
 		}
-		add_options_page( 'WP Google Login', 'WP Google Login', 'manage_options', 'wp-google-login', [
+		add_options_page( __( 'WP Google Login', 'wp-google-login' ), __( 'WP Google Login', 'wp-google-login' ), 'manage_options', 'wp-google-login', [
 			$this,
 			'options_page'
 		] );
@@ -138,8 +138,8 @@ class Settings {
 		echo wp_kses_post( sprintf( 
 			'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>', 
 			esc_html__( 'Create oAuth Client ID and Client Secret at', 'wp-google-login' ), 
-			esc_url( 'https://console.developers.google.com/apis/dashboard' ),
-			esc_html__( 'console.developers.google.com', 'wp-google-login' ) 
+			'https://console.developers.google.com/apis/dashboard',
+			'console.developers.google.com'
 		) );
 		?>
 		</p>
