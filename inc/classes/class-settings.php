@@ -112,7 +112,7 @@ class Settings {
 
 		add_settings_field(
 			'wp_google_login_enable_registration',
-			__( 'Create user if none exists', 'wp-google-login' ),
+			__( 'Create new user', 'wp-google-login' ),
 			[ $this, 'wp_google_login_enable_registrationr' ],
 			'wp_google_login',
 			'wp_google_login_section',
@@ -194,8 +194,19 @@ class Settings {
 		}
 		?>
 		<input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
-		<input type='checkbox' name='wp_google_login_settings[registration_enabled]' id="enable-registration" <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
-		<p class="description"><?php esc_html_e( 'If user does not exist, WordPress will create a new user with the data provided by Google.' ); ?></p>
+		<label><input type='checkbox' name='wp_google_login_settings[registration_enabled]' id="enable-registration" <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
+			<?php _e( 'Create a new user account if it doesn’t exist already', 'wp-google-login' ) ?>
+		</label>
+		<p class="description"><?php 
+			echo sprintf( 
+				'%1s <a target="_blank" href="%2s">%3s</a> %4s.', 
+				__( 'If this setting is checked, a new user will be created even if', 'wp-google-login' ), 
+				'options-general.php',
+				__( 'Membership setting', 'wp-google-login' ),
+				__( 'is off', 'wp-google-login' )
+			);
+		?>
+		</p>
 		<?php
 	}
 
