@@ -194,7 +194,7 @@ class Settings {
 		}
 		?>
 		<input type='hidden' name='wp_google_login_settings[registration_enabled]' value='0' <?php echo esc_attr( $disabled ); ?> >
-		<label><input type='checkbox' name='wp_google_login_settings[registration_enabled]' id="enable-registration" <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
+		<label style='display:block;margin-top:6px;'><input type='checkbox' name='wp_google_login_settings[registration_enabled]' id="enable-registration" <?php echo esc_attr( checked( $registration_enabled ) ); ?> <?php echo esc_attr( $disabled ); ?> value='1'>
 			<?php _e( 'Create a new user account if it doesn’t exist already', 'wp-google-login' ) ?>
 		</label>
 		<p class="description"><?php 
