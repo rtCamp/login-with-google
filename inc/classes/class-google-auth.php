@@ -329,7 +329,9 @@ class Google_Auth {
 	public function get_login_url() {
 
 		$scopes = $this->_get_scopes();
-		$url    = $this->_client->createAuthUrl( $scopes );
+		if ( ! is_null( $this->_client ) ) {
+			$url    = $this->_client->createAuthUrl( $scopes );
+		}
 
 		return $url;
 	}
