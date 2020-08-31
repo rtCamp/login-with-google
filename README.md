@@ -1,10 +1,11 @@
 <p align="center">
 <a href="https://rtcamp.com/?ref=wp-menu-custom-fields-repo" target="_blank"><img width="200"src="https://rtcamp.com/wp-content/themes/rtcamp-v9/assets/img/site-logo-black.svg"></a>
 </p>
-# WP Google Login
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
-Minimal plugin which allows WP user to login with google. This plugin can be used as MU plugin too.
+# WP Google Login
+<a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
+
+Minimal plugin which allows WordPress users to login using Google. Can also be used as an mu-plugin.
 
 **Author:** rtCamp
 
@@ -22,41 +23,40 @@ Minimal plugin which allows WP user to login with google. This plugin can be use
 
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
-#### How to use it?
+#### Setup
 
-1. If you're cloning repo then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download doesn't need this step.
-2. Create project from [Google console](https://console.developers.google.com/apis/dashboard) if not exists.
-3. Go to **Credentials** tab, And create credential for OAuth client.
-    * Application type will be **Web application**
+1. If you're cloning repo, then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download can skip this step.
+2. Create a project from [Google Developers Console](https://console.developers.google.com/apis/dashboard) if none exists.
+3. Go to **Credentials** tab, then create credential for OAuth client.
+    * Application type will be **Web Application**
     * Add `YOUR_DOMAIN/wp-login.php` in **Authorized redirect URIs**
-4. This will give you Client ID and Secret key.
-5. You can use below snippet, replace value of const with client id and secret. And add that in to `wp-config.php` 
+4. This will give you **Client ID** and **Secret key**.
+5. Input these values either in `WP Admin > Settings > WP Google Login`, or in `wp-config.php` using the following code snippet:
 
 ```php
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
-Or you can set these from `Settings > WP Google Login` page from wp-admin
 
-#### How to enable user registration?
+#### How to enable automatic user registration?
 You can enable user registration either by
 - Checking `Settings > WP Google Login > Enable Google Login Registration`
 OR
 - Adding `define( 'WP_GOOGLE_LOGIN_USER_REGISTRATION', 'true' );` in wp-config.php file.
 
-Note: If the checkbox is ON then, it will register user even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
+Note: If the checkbox is ON then, it will register valid Google users even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
 #### How to restrict user registration to one or more domain(s)?
 
-By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable `Settings > WP Google Login > Enable Google Login Registration`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under Google Suite organization. This configuration variable does that.
+By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable `Settings > WP Google Login > Enable Google Login Registration`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under a single Google Suite organization. This configuration variable does that.
 
-Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` const or in the settings `Settings > WP Google Login > Whitelisted Domains`. You can whitelist multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
+Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` constant or in the settings `Settings > WP Google Login > Whitelisted Domains`. You can whitelist multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
 
-**Note:** If a user already exists then it will allow a user to login with Google regardless of its domain is whitelisted or not. It will only prevent the user from registering with an email address with a domain that not whitelisted.
- 
 ```php
-define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com, sample.com' );
+define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 ```
+
+**Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
 
 
 ### Hooks
