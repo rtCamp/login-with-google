@@ -12,5 +12,4 @@ jobs:
       uses: docker://rtcamp/action-phpcs-code-review:v2.0.1
       env:
         SKIP_FOLDERS: "tests,.github"
-        VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
-        VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
+        GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
