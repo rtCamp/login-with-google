@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WP Google Login 1.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-google-login\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,14 +12,14 @@ msgstr ""
 "POT-Creation-Date: 2020-04-29T09:17:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
-"X-Domain: wp-google-login\n"
+"X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
 msgid "WP Google Login"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://github.com/rtCamp/wp-google-login"
+msgid "https://github.com/rtCamp/login-with-google"
 msgstr ""
 
 #. Description of the plugin

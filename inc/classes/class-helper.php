@@ -4,7 +4,7 @@
  *
  * @author  Dhaval Parekh <dmparekh007@gmail.com>
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 namespace WP_Google_Login\Inc;

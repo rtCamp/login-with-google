@@ -1,5 +1,5 @@
 {
-    "name": "rtcamp/wp-google-login",
+    "name": "rtcamp/login-with-google",
     "description": "Minimal plugin which allows WP user to login with google.",
     "license": "GPLv2",
     "authors": [

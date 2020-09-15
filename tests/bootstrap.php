@@ -27,7 +27,7 @@ function _manually_load_plugin() {
 	define( 'WP_GOOGLE_LOGIN_CLIENT_ID', '1' );
 	define( 'WP_GOOGLE_LOGIN_SECRET', '1' );
 
-	require_once dirname( dirname( __FILE__ ) ) . '/wp-google-login.php';
+	require_once dirname( dirname( __FILE__ ) ) . '/login-with-google.php';
 	require_once dirname( __FILE__ ) . '/class-utility.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

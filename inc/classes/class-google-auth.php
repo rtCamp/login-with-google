@@ -4,7 +4,7 @@
  *
  * @author  Dhaval Parekh <dmparekh007@gmail.com>
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 namespace WP_Google_Login\Inc;
@@ -411,7 +411,7 @@ class Google_Auth {
 			return new \WP_Error(
 				'wp_google_login_error',
 				// translators: %s: User email.
-				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'wp-google-login' ), $user_info['user_email'] )
+				sprintf( __( 'User <strong>%s</strong> not registered in WordPress.', 'login-with-google' ), $user_info['user_email'] )
 			);
 		}
 
@@ -420,7 +420,7 @@ class Google_Auth {
 			return new \WP_Error(
 				'wp_google_login_error',
 				// translators: %s: User email.
-				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'wp-google-login' ), $user_info['user_email'] )
+				sprintf( __( 'User can not register with <strong>%s</strong> email address.', 'login-with-google' ), $user_info['user_email'] )
 			);
 		}
 
