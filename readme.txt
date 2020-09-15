@@ -1,7 +1,7 @@
-=== WP Google Login ===
+=== Login with Google ===
 Contributors: rtCamp
 Donate link: https://rtcamp.com/
-Tags: Google, login, sso, oauth, authentication
+Tags: Google, login, sso, oauth, authentication, sign in
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 7.0
@@ -81,17 +81,17 @@ This filter will provide 1 parameter `scopes` in callback, which contains array 
  
 = Reporting a bug 🐞 =
  
-Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for resolution or upcoming fixes. 
+Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes. 
 
-If you still need to [log an issue](https://github.com/rtCamp/wp-google-login/issues/new), making sure to include as much detail as you can, including clear steps to reproduce the issue, if possible.
+If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce the issue, if possible.
  
 = Creating a pull request =
  
-Want to contribute a new feature? Start a conversation by [logging an issue](https://github.com/rtCamp/wp-google-login/issues).
+Want to contribute a new feature? Start a conversation by [logging an issue](https://github.com/rtCamp/login-with-google/issues).
 
 Once you're ready to send a pull request, please run through the following checklist: 
 
-1. Browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
+1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
 
 2. Fork this repository.
 

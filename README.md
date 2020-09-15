@@ -2,14 +2,14 @@
 <a href="https://rtcamp.com/?ref=wp-menu-custom-fields-repo" target="_blank"><img width="200"src="https://rtcamp.com/wp-content/themes/rtcamp-v9/assets/img/site-logo-black.svg"></a>
 </p>
 
-# WP Google Login
+# Login with Google
 <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
 
 Minimal plugin which allows WordPress users to login using Google. Can also be used as an mu-plugin.
 
 **Author:** rtCamp
 
-**Tags:** Google login
+**Tags:** Google, login, sso, oauth, authentication, sign in
 
 **Requires at least:** 5.0
 
@@ -89,17 +89,17 @@ This filter will provide 1 parameter `scopes` in callback, which contains array 
 
 ### Reporting a bug 🐞
 
-Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for resolution or upcoming fixes. 
+Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes. 
 
-If you still need to [log an issue](https://github.com/rtCamp/wp-google-login/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
+If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
 
 ### Creating a pull request
 
-Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/wp-google-login/issues).
+Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/login-with-google/issues).
 
 Once you're ready to send a pull request, please run through the following checklist: 
 
-1. Browse through the [existing issues](https://github.com/rtCamp/wp-google-login/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
+1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
 
 1. Fork this repository.
 
