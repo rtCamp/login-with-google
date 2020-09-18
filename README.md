@@ -2,7 +2,7 @@
 <a href="https://rtcamp.com/?ref=wp-menu-custom-fields-repo" target="_blank"><img width="200"src="https://rtcamp.com/wp-content/themes/rtcamp-v9/assets/img/site-logo-black.svg"></a>
 </p>
 
-# Login with Google
+# Log in with Google
 <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
 
 Minimal plugin which allows WordPress users to login using Google. Can also be used as an mu-plugin.

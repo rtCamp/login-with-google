@@ -46,7 +46,7 @@ class Settings {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_filter( 'plugin_action_links', [ $this, 'plugin_action_links' ], 10, 2 );
 		}
-		add_options_page( __( 'WP Google Login', 'login-with-google' ), __( 'WP Google Login', 'login-with-google' ), 'manage_options', 'login-with-google', [
+		add_options_page( __( 'Log in with Google', 'login-with-google' ), __( 'Log in with Google', 'login-with-google' ), 'manage_options', 'login-with-google', [
 			$this,
 			'options_page'
 		] );
@@ -78,7 +78,7 @@ class Settings {
 
 		add_settings_section(
 			'wp_google_login_section',
-			__( 'WP Google Login Settings', 'login-with-google' ),
+			__( 'Log in with Google Settings', 'login-with-google' ),
 			[ $this, 'settings_section_callback' ],
 			'wp_google_login'
 		);

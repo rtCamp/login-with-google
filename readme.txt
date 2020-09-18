@@ -1,7 +1,7 @@
-=== Login with Google ===
+=== Log in with Google ===
 Contributors: rtCamp
 Donate link: https://rtcamp.com/
-Tags: Google, login, sso, oauth, authentication, sign in
+Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 7.0

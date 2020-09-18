@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Login with Google
+ * Plugin Name: Log in with Google
  * Plugin URI:  https://github.com/rtCamp/login-with-google
- * Description: Allow users to login with Google on the WordPress login screen.
+ * Description: Allow users to log in with Google on the WordPress login screen.
  * Version:     1.0
  * Author:      rtCamp
  * Author URI:  https://rtcamp.com
