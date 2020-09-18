@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
-msgid "WP Google Login"
+msgid "Log in with Google"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -45,5 +45,5 @@ msgid "User can not register with <strong>%s</strong> email address."
 msgstr ""
 
 #: template/google-login-button.php:10
-msgid "Sign in with Google"
+msgid "Log in with Google"
 msgstr ""
