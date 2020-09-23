@@ -202,7 +202,7 @@ class Settings {
 				'%1s <a target="_blank" href="%2s">%3s</a> %4s.', 
 				__( 'If this setting is checked, a new user will be created even if', 'login-with-google' ), 
 				'options-general.php',
-				__( 'Membership setting', 'login-with-google' ),
+				__( 'membership setting', 'login-with-google' ),
 				__( 'is off', 'login-with-google' )
 			) );
 		?>
