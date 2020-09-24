@@ -4,7 +4,7 @@
  *
  * @author  Suraj Singh <suraj.sk243@gmail.com>
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 namespace WP_Google_Login\Tests;

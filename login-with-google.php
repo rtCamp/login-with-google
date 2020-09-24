@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: WP Google Login
- * Plugin URI:  https://github.com/rtCamp/wp-google-login
- * Description: Allow users to login with Google on the WordPress login screen.
+ * Plugin Name: Log in with Google
+ * Plugin URI:  https://github.com/rtCamp/login-with-google
+ * Description: Allow users to log in with Google on the WordPress login screen.
  * Version:     1.0
  * Author:      rtCamp
  * Author URI:  https://rtcamp.com
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: wp-google-login
+ * Text Domain: login-with-google
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 define( 'WP_GOOGLE_LOGIN_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );

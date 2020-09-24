@@ -4,10 +4,10 @@
  *
  * @author  Dhaval Parekh <dmparekh007@gmail.com>
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
-$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Sign in with Google', 'wp-google-login' );
+$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'login-with-google' );
 
 if ( empty( $login_url ) ) {
 	return;

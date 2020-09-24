@@ -1,7 +1,7 @@
 /**
  * JS for Login and Register page.
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 const wpGoogleLogin = {
