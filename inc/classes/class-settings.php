@@ -199,11 +199,8 @@ class Settings {
 		</label>
 		<p class="description"><?php 
 			echo wp_kses_post( sprintf( 
-				'%1s <a target="_blank" href="%2s">%3s</a> %4s.', 
-				__( 'If this setting is checked, a new user will be created even if', 'login-with-google' ), 
-				'options-general.php',
-				__( 'membership setting', 'login-with-google' ),
-				__( 'is off', 'login-with-google' )
+				__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="%1s">membership setting</a> is off.', 'login-with-google' ), 
+				is_multisite() ? 'network/settings.php' : 'options-general.php'
 			) );
 		?>
 		</p>

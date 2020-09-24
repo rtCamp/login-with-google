@@ -1,7 +1,7 @@
 === Log in with Google ===
 Contributors: rtCamp
 Donate link: https://rtcamp.com/
-Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-on
+Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-on, log in
 Requires at least: 5.0
 Tested up to: 5.4
 Requires PHP: 7.0
@@ -9,7 +9,7 @@ Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Minimal plugin which allows WordPress users to login using Google. Can also be used as an mu-plugin.
+Minimal plugin that allows WordPress users to log in using Google.
  
 == Description ==
  

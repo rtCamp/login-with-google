@@ -5,11 +5,11 @@
 # Log in with Google
 <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
 
-Minimal plugin which allows WordPress users to login using Google. Can also be used as an mu-plugin.
+Minimal plugin that allows WordPress users to log in using Google.
 
 **Author:** rtCamp
 
-**Tags:** Google, login, sso, oauth, authentication, sign in
+**Tags:** Google, login, sso, oauth, authentication, sign in, log in
 
 **Requires at least:** 5.0
 
