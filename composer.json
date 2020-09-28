@@ -16,8 +16,6 @@
     },
     "extra": {
         "google/apiclient-services": [
-            "Drive",
-            "YouTube",
             "Oauth2"
         ]
     }
