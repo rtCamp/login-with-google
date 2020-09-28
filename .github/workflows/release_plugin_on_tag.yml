@@ -1,0 +1,19 @@
+name: Release Plugin
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: WordPress Plugin Deploy
+      uses: rtCamp/action-wordpress-org-plugin-deploy@master
+      env:
+        CUSTOM_COMMAND: composer install --no-dev --optimize-autoloader && composer update
+        EXCLUDE_LIST: .github .gitignore .eslintignore phpunit.xml phpcs.xml tests README.md 
+        SLUG: login-with-google
+        ASSETS_DIR: assets
+        WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
+        WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
