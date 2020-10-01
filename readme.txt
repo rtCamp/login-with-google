@@ -5,7 +5,7 @@ Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-o
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -50,7 +50,7 @@ Add your domain name, without any schema prefix and `www,` as the value of `WP_G
 
 = Hooks =
 
-1. Action `wp_google_login_token`
+Action `wp_google_login_token`
 This action provides access token received after Google login.  
 **Parameters:**
 
@@ -58,7 +58,7 @@ This action provides access token received after Google login.
 * `user_info` (Array): Details of user after login.
 * `client` (Object): `Google_Client` object in use.
 
-2. Filter `wp_google_login_scopes`
+Filter `wp_google_login_scopes`
 This filter can be used to filter existing scope used in Google Sign in.
 You can ask for additional permission while user logs in.
 This filter will provide 1 parameter `scopes` in callback, which contains array of scopes.
@@ -124,10 +124,10 @@ Once you're ready to send a pull request, please run through the following check
  
 == Changelog ==
  
-= 1.0.5 =
+= 1.0.6 =
 * Initial release.
  
 == Upgrade Notice ==
  
-= 1.0.5 =
+= 1.0.6 =
 Initial release.
