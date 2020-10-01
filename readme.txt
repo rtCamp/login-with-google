@@ -1,11 +1,11 @@
 === Log in with Google ===
 Contributors: rtCamp
 Donate link: https://rtcamp.com/
-Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-on, log in
+Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-on, log in, Google login
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -124,10 +124,10 @@ Once you're ready to send a pull request, please run through the following check
  
 == Changelog ==
  
-= 1.0.6 =
+= 1.0.7 =
 * Initial release.
  
 == Upgrade Notice ==
  
-= 1.0.6 =
+= 1.0.7 =
 Initial release.
