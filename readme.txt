@@ -24,10 +24,10 @@ Minimal plugin that allows WordPress users to log in using Google.
 3. This will give you **Client ID** and **Secret key**.
 4. Input these values either in `WP Admin > Settings > WP Google Login`, or in `wp-config.php` using the following code snippet:
 
-```
+`
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
-```
+`
 
 = How to enable automatic user registration =
 
@@ -65,7 +65,9 @@ This filter will provide 1 parameter `scopes` in callback, which contains array 
 
 = wp-config.php parameters list =
 
-* `WP_GOOGLE_LOGIN_CLIENT_ID` (string): Google client ID of your application.          * `WP_GOOGLE_LOGIN_SECRET` (string): Secret key of your application                    * `WP_GOOGLE_LOGIN_USER_REGISTRATION` (boolean) (optional): Set `true` If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.
+* `WP_GOOGLE_LOGIN_CLIENT_ID` (string): Google client ID of your application.
+* `WP_GOOGLE_LOGIN_SECRET` (string): Secret key of your application
+* `WP_GOOGLE_LOGIN_USER_REGISTRATION` (boolean) (optional): Set `true` If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.
 * `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` (string) (optional): Domain names, if you want to restrict login with your custom domain. By default, it will allow all domains. You can whitelist multiple domains.
 
 = BTW, We're Hiring! =
@@ -108,7 +110,7 @@ Once you're ready to send a pull request, please run through the following check
 
 - Setup local unit test environment by running script from terminal
 
-```./bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]```
+`./bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]`
 
 - Execute `phpunit` in terminal from repository to run all test cases.
 
@@ -122,10 +124,10 @@ Once you're ready to send a pull request, please run through the following check
  
 == Changelog ==
  
-= 1.0.3 =
+= 1.0.4 =
 * Initial release.
  
 == Upgrade Notice ==
  
-= 1.0.3 =
+= 1.0.4 =
 Initial release.
