@@ -5,14 +5,16 @@ Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-o
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
 Minimal plugin that allows WordPress users to log in using Google.
  
 == Description ==
- 
+
+Minimal plugin that allows WordPress users to log in using Google.
+
 = Setup =
 
 1. Create a project from [Google Developers Console](https://console.developers.google.com/apis/dashboard) if none exists.
@@ -22,7 +24,7 @@ Minimal plugin that allows WordPress users to log in using Google.
 3. This will give you **Client ID** and **Secret key**.
 4. Input these values either in `WP Admin > Settings > WP Google Login`, or in `wp-config.php` using the following code snippet:
 
-```php
+```
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
@@ -42,9 +44,7 @@ By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER
 
 Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` constant or in the settings `Settings > WP Google Login > Whitelisted Domains`. You can whitelist multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
 
-```php
-define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
-```
+`define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );`
 
 **Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
 
@@ -121,10 +121,10 @@ Once you're ready to send a pull request, please run through the following check
  
 == Changelog ==
  
-= 1.0.1 =
+= 1.0.2 =
 * Initial release.
  
 == Upgrade Notice ==
  
-= 1.0.1 =
+= 1.0.2 =
 Initial release.
