@@ -5,7 +5,7 @@ Tags: Google, login, sso, oauth, authentication, sign-in, sign in, single sign-o
 Requires at least: 5.0
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -124,10 +124,10 @@ Once you're ready to send a pull request, please run through the following check
  
 == Changelog ==
  
-= 1.0.7 =
+= 1.0.8 =
 * Initial release.
  
 == Upgrade Notice ==
  
-= 1.0.7 =
+= 1.0.8 =
 Initial release.
