@@ -3,7 +3,7 @@
  * Plugin Name: Log in with Google
  * Plugin URI:  https://github.com/rtCamp/login-with-google
  * Description: Allow users to log in with Google on the WordPress login screen.
- * Version:     1.0
+ * Version:     1.0.1
  * Author:      rtCamp
  * Author URI:  https://rtcamp.com
  * License:     GPL2
