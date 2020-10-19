@@ -3,6 +3,7 @@
 </p>
 
 # Log in with Google
+
 <a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a>
 
 Minimal plugin that allows WordPress users to log in using Google.
@@ -17,13 +18,13 @@ Minimal plugin that allows WordPress users to log in using Google.
 
 **Requires PHP version:** 7.0
 
-**Stable tag:** 1.0.9
+**Stable tag:** 1.0.10
 
 **License:** GPLv2 or later (of course!)
 
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
-#### Setup
+## Setup
 
 1. If you're cloning repo, then after cloning run `composer install --no-dev` to install dependencies. GitHub release zip and WordPress.org download can skip this step.
 2. Create a project from [Google Developers Console](https://console.developers.google.com/apis/dashboard) if none exists.
@@ -38,7 +39,8 @@ define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
 
-#### How to enable automatic user registration?
+### How to enable automatic user registration?
+
 You can enable user registration either by
 - Checking `Settings > WP Google Login > Enable Google Login Registration`
 OR
@@ -46,7 +48,7 @@ OR
 
 Note: If the checkbox is ON then, it will register valid Google users even when WordPress default setting, under `Settings > General Settings > Membership > Anyone can register` checkbox is OFF.
 
-#### How to restrict user registration to one or more domain(s)?
+### How to restrict user registration to one or more domain(s)?
 
 By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable `Settings > WP Google Login > Enable Google Login Registration`, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under a single Google Suite organization. This configuration variable does that.
 
@@ -59,16 +61,18 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 **Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
 
 
-### Hooks
+## Hooks
 
-#### 1. Action `wp_google_login_token`
+### 1. Action `wp_google_login_token`
+
 This action provides access token received after Google login.  
 **Parameters:**
 * `token` (Array): Converted token using `fetchAccessTokenWithAuthCode` method of `Google_Client` class.
 * `user_info` (Array): Details of user after login.
 * `client` (Object): `Google_Client` object in use.
 
-#### 2. Filter `wp_google_login_scopes`
+### 2. Filter `wp_google_login_scopes`
+
 This filter can be used to filter existing scope used in Google Sign in.
 You can ask for additional permission while user logs in.
 
@@ -122,6 +126,6 @@ Once you're ready to send a pull request, please run through the following check
 - Execute `phpunit ./tests/inc/test-class.php` in terminal with file path to run specific tests.
 
 
-# BTW, We're Hiring!
+## BTW, We're Hiring!
 
 <a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
