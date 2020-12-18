@@ -2,7 +2,7 @@
 /**
  * To Register autoloader
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 spl_autoload_register( function ( $resource = '' ) {

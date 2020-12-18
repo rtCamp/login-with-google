@@ -22,7 +22,7 @@
  *
  * If you specifically need multiple objects, then use a normal class.
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 namespace WP_Google_Login\Inc\Traits;

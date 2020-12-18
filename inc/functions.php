@@ -2,7 +2,7 @@
 /**
  * Don't load directly.
  *
- * @package wp-google-login
+ * @package login-with-google
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
