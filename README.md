@@ -14,7 +14,7 @@ Minimal plugin that allows WordPress users to log in using Google.
 
 **Requires at least:** 5.0
 
-**Tested up to:** 5.5
+**Tested up to:** 5.7
 
 **Requires PHP version:** 7.0
 
