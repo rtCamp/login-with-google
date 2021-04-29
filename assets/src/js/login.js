@@ -30,7 +30,7 @@ const wpGoogleLogin = {
 			return;
 		}
 
-		this.googleLoginButton = this.form.querySelector( '.wp_google_login' ).cloneNode( true );
+		this.googleLoginButton = this.form.querySelector( '.wp_google_login' );
 		this.googleLoginButton.classList.remove( 'hidden' );
 
 		// HTML is cloned from existing HTML node.
