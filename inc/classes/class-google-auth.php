@@ -79,7 +79,12 @@ class Google_Auth {
 			return;
 		}
 
-		$client = new \Google_Client();
+		$client = new \Google_Client(
+			/**
+			 * See vendor/google/apiclient/src/Google/Client.php::__construct() for arguments.
+			 */
+			apply_filters( 'login_with_google/client_arguments', [] )
+		);
 		$client->setApplicationName( 'WP Google Login' );
 
 		$client->setClientId( $client_id );
