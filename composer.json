@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "google/apiclient": "2.8.3"
+        "google/apiclient": "^2.0"
     },
      "scripts": {
         "post-update-cmd": "Google_Task_Composer::cleanup"
