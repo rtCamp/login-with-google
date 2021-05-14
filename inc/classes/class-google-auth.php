@@ -90,19 +90,7 @@ class Google_Auth {
 		$client->setClientId( $client_id );
 		$client->setClientSecret( $client_secret );
 
-		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
-		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
-
-		// If redirect_to url don't have host name then add that.
-		$redirect_to = ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) ? home_url( $redirect_to ) : $redirect_to;
-
-		$state = [
-			'redirect_to' => $redirect_to,
-			'blog_id'     => get_current_blog_id(),
-		];
-		$state = urlencode_deep( implode( '|', $state ) );
-
-		$client->setState( $state );
+		$client->setState( $this->_get_state() );
 
 		$login_url = $this->_get_login_url();
 
@@ -110,6 +98,34 @@ class Google_Auth {
 
 		return $client;
 
+	}
+
+	/**
+	 * Get the state to pass in OAuth.
+	 *
+	 * This state will be re-verified while authenticating the user.
+	 * Any modifications or tampering would result in no authentication.
+	 *
+	 * @return string
+	 */
+	protected function _get_state(): string {
+		$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
+		$redirect_to = ( ! empty( $redirect_to ) ) ? $redirect_to : admin_url();
+
+		// If redirect_to url don't have host name then add that.
+		$redirect_to = ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) ? home_url( $redirect_to ) : $redirect_to;
+
+		$state = apply_filters(
+			'wp_google_client_state',
+			[
+				'redirect_to' => $redirect_to,
+				'blog_id'     => get_current_blog_id(),
+			]
+		);
+
+		$state['provider'] = 'google';
+
+		return urlencode_deep( implode( '|', $state ) );
 	}
 
 	/**
@@ -355,16 +371,27 @@ class Google_Auth {
 		$is_mu_site = is_multisite();
 
 		$token = Helper::filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
-		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
-		$state = urldecode( $state );
-		$state = explode( '|', $state );
-
-		$redirect_to = ( ! empty( $state[0] ) ) ? esc_url_raw( $state[0] ) : '';
-		$blog_id     = ( ! empty( $state[1] ) && 0 < intval( $state[1] ) ) ? intval( $state[1] ) : 0;
 
 		if ( empty( $token ) ) {
 			return $user;
 		}
+
+		$state       = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$state       = urldecode( $state );
+		$state       = explode( '|', $state );
+
+		/**
+		 * 1. Ensure that provider is google. This is to avoid conflict between this and any other plugins
+		 *    providing OAuth.
+		 *
+		 * 2. Ensure that returned state is similar to passed one.
+		 */
+		if ( empty( $state['provider'] ) || 'google' !== $state['provider'] || $this->_get_state() !== $state ) {
+			return $user;
+		}
+
+		$redirect_to = ( ! empty( $state[0] ) ) ? esc_url_raw( $state[0] ) : '';
+		$blog_id     = ( ! empty( $state[1] ) && 0 < intval( $state[1] ) ) ? intval( $state[1] ) : 0;
 
 		// Set redirect URL. so we can redirect after login.
 		$this->_redirect_to = $redirect_to;
