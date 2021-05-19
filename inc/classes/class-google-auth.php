@@ -116,7 +116,7 @@ class Google_Auth {
 		$redirect_to = ( ! wp_parse_url( $redirect_to, PHP_URL_HOST ) ) ? home_url( $redirect_to ) : $redirect_to;
 
 		$state = apply_filters(
-			'wp_google_client_state',
+			'login_with_google/client_state',
 			[
 				'redirect_to' => $redirect_to,
 				'blog_id'     => get_current_blog_id(),
