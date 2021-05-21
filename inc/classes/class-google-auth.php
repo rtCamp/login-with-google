@@ -376,9 +376,10 @@ class Google_Auth {
 			return $user;
 		}
 
-		$state       = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
-		$state       = urldecode( $state );
-		$state       = explode( '|', $state );
+		$state          = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$received_state = $state;
+		$state          = urldecode( $state );
+		$state          = explode( '|', $state );
 
 		/**
 		 * 1. Ensure that provider is google. This is to avoid conflict between this and any other plugins
@@ -386,7 +387,7 @@ class Google_Auth {
 		 *
 		 * 2. Ensure that returned state is similar to passed one.
 		 */
-		if ( empty( $state['provider'] ) || 'google' !== $state['provider'] || $this->_get_state() !== $state ) {
+		if ( empty( $state['provider'] ) || 'google' !== $state['provider'] || $this->_get_state() !== $received_state ) {
 			return $user;
 		}
 
