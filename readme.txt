@@ -5,7 +5,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
@@ -123,6 +123,9 @@ Once you're ready to send a pull request, please run through the following check
 3. Settings within Google Developer Console.
  
 == Changelog ==
+
+= 1.0.13 =
+* Fix login issue related to oAuth state.
 
 = 1.0.12 =
 * Fix conflict with Login with GitHub plugin.
