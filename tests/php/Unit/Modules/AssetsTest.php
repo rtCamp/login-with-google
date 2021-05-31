@@ -5,18 +5,18 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit\Modules;
+namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
 use WP_Mock;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Modules\Assets as Testee;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Modules\Assets as Testee;
 
 /**
  * Class AssetsTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Modules\Assets
+ * @coversDefaultClass \RtCamp\GoogleLogin\Modules\Assets
  *
- * @package RtCamp\GithubLogin\Tests\Unit\Modules
+ * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class AssetsTest extends TestCase {
 	/**
@@ -61,7 +61,7 @@ class AssetsTest extends TestCase {
 	 */
 	public function testRegisterLoginStyles() {
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			2,
 			function () {
@@ -94,7 +94,7 @@ class AssetsTest extends TestCase {
 	 */
 	public function testRegisterLoginScript() {
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			2,
 			function () {
@@ -191,7 +191,7 @@ class AssetsTest extends TestCase {
 		);
 
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			2,
 			function () {

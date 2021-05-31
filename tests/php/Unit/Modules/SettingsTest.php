@@ -5,19 +5,19 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit\Modules;
+namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
 use WP_Mock;
-use RtCamp\GithubLogin\Interfaces\Module as ModuleInterface;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Modules\Settings as Testee;
+use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Modules\Settings as Testee;
 
 /**
  * Class SettingsTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Modules\Settings
+ * @coversDefaultClass \RtCamp\GoogleLogin\Modules\Settings
  *
- * @package RtCamp\GithubLogin\Tests\Unit\Modules
+ * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class SettingsTest extends TestCase {
 	/**

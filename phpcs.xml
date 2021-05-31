@@ -6,7 +6,7 @@
 	<rule ref="PHPCompatibilityWP"/>
 
     <file>src</file>
-    <file>login-with-github.php</file>
+    <file>login-with-google.php</file>
 
     <!-- Show progress and sniff codes in all reports. -->
     <arg value="ps"/>
@@ -37,7 +37,7 @@
     <rule ref="WordPress.WP.I18n">
         <properties>
             <property name="text_domain" type="array">
-                <element value="github-login" />
+                <element value="login-with-google" />
             </property>
         </properties>
     </rule>

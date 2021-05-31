@@ -5,30 +5,30 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit\Modules;
+namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
 use Exception;
-use RtCamp\GithubLogin\Container;
-use RtCamp\GithubLogin\Plugin;
+use RtCamp\GoogleLogin\Container;
+use RtCamp\GoogleLogin\Plugin;
 use WP_Mock;
 use Mockery;
-use RtCamp\GithubLogin\Utils\Helper;
-use RtCamp\GithubLogin\Utils\GithubClient;
-use RtCamp\GithubLogin\Modules\Settings;
-use RtCamp\GithubLogin\Modules\Login as Testee;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Interfaces\Module as ModuleInterface;
+use RtCamp\GoogleLogin\Utils\Helper;
+use RtCamp\GoogleLogin\Utils\GoogleClient;
+use RtCamp\GoogleLogin\Modules\Settings;
+use RtCamp\GoogleLogin\Modules\Login as Testee;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 
 /**
  * Class LoginTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Modules\Login
+ * @coversDefaultClass \RtCamp\GoogleLogin\Modules\Login
  *
- * @package RtCamp\GithubLogin\Tests\Unit\Modules
+ * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class LoginTest extends TestCase {
 	/**
-	 * @var GithubClient
+	 * @var GoogleClient
 	 */
 	private $ghClientMock;
 
@@ -48,7 +48,7 @@ class LoginTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GithubClient::class );
+		$this->ghClientMock = $this->createMock( GoogleClient::class );
 		$this->settingsMock = $this->createMock( Settings::class );
 
 		$this->testee = new Testee( $this->ghClientMock, $this->settingsMock );
@@ -104,7 +104,7 @@ class LoginTest extends TestCase {
 		                   ->willReturn( 'https://github.com/auth/' );
 
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			2,
 			$pluginMock

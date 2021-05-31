@@ -5,27 +5,27 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit\Modules;
+namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
-use RtCamp\GithubLogin\Interfaces\Module as ModuleInterface;
-use RtCamp\GithubLogin\Utils\Helper;
+use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
+use RtCamp\GoogleLogin\Utils\Helper;
 use WP_Mock;
 use Mockery;
-use RtCamp\GithubLogin\Modules\Shortcode as Testee;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Utils\GithubClient;
-use RtCamp\GithubLogin\Modules\Assets;
+use RtCamp\GoogleLogin\Modules\Shortcode as Testee;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Utils\GoogleClient;
+use RtCamp\GoogleLogin\Modules\Assets;
 
 /**
  * Class ShortCodeTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Modules\Shortcode
+ * @coversDefaultClass \RtCamp\GoogleLogin\Modules\Shortcode
  *
- * @package RtCamp\GithubLogin\Tests\Unit\Modules
+ * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class ShortCodeTest extends TestCase {
 	/**
-	 * @var GithubClient
+	 * @var GoogleClient
 	 */
 	private $ghClientMock;
 
@@ -45,7 +45,7 @@ class ShortCodeTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GithubClient::class );
+		$this->ghClientMock = $this->createMock( GoogleClient::class );
 		$this->assetMock    = $this->createMock( Assets::class );
 
 		$this->testee = new Testee( $this->ghClientMock, $this->assetMock );
@@ -159,7 +159,7 @@ class ShortCodeTest extends TestCase {
 		WP_Mock::expectFilterAdded( 'rtcamp.github_redirect_url', [ $this->testee, 'redirect_url' ] );
 
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			1,
 			(object) [

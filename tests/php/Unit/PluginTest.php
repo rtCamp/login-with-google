@@ -5,22 +5,22 @@
 
 declare(strict_types=1);
 
-namespace RtCamp\GithubLogin\Tests\Unit;
+namespace RtCamp\GoogleLogin\Tests\Unit;
 
 use WP_Mock;
-use RtCamp\GithubLogin\Plugin;
-use RtCamp\GithubLogin\Container;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Plugin as Testee;
-use RtCamp\GithubLogin\Interfaces\Module as ModuleInterface;
-use RtCamp\GithubLogin\Interfaces\Container as ContainerInterface;
+use RtCamp\GoogleLogin\Plugin;
+use RtCamp\GoogleLogin\Container;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Plugin as Testee;
+use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
+use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
 
 /**
  * Class PluginTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Plugin
+ * @coversDefaultClass \RtCamp\GoogleLogin\Plugin
  *
- * @package RtCamp\GithubLogin\Tests\Unit
+ * @package RtCamp\GoogleLogin\Tests\Unit
  */
 class PluginTest extends TestCase {
 
@@ -286,7 +286,7 @@ class PluginTest extends TestCase {
 		);
 
 		$this->wpMockFunction(
-			'RtCamp\GithubLogin\plugin',
+			'RtCamp\GoogleLogin\plugin',
 			[],
 			1,
 			function () {

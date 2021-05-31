@@ -5,22 +5,22 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit;
+namespace RtCamp\GoogleLogin\Tests\Unit;
 
 use Mockery;
 use InvalidArgumentException;
 use Pimple\Container as PimpleContainer;
-use RtCamp\GithubLogin\Container;
-use RtCamp\GithubLogin\Container as Testee;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Interfaces\Container as ContainerInterface;
+use RtCamp\GoogleLogin\Container;
+use RtCamp\GoogleLogin\Container as Testee;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
 
 /**
  * Class ContainerTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Container
+ * @coversDefaultClass \RtCamp\GoogleLogin\Container
  *
- * @package RtCamp\GithubLogin\Tests\Unit
+ * @package RtCamp\GoogleLogin\Tests\Unit
  */
 class ContainerTest extends  TestCase {
 

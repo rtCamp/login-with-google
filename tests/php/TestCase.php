@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace RtCamp\GithubLogin\Tests;
+namespace RtCamp\GoogleLogin\Tests;
 
 use WP_Mock\Tools\TestCase as WPMockTestCase;
 use ReflectionException;

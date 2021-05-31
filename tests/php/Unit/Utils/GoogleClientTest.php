@@ -5,21 +5,21 @@
 
 declare( strict_types=1 );
 
-namespace RtCamp\GithubLogin\Tests\Unit\Utils;
+namespace RtCamp\GoogleLogin\Tests\Unit\Utils;
 
 use WP_Mock;
 use Exception;
-use RtCamp\GithubLogin\Tests\TestCase;
-use RtCamp\GithubLogin\Utils\GithubClient as Testee;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Utils\GoogleClient as Testee;
 
 /**
- * Class GithubClientTest
+ * Class GoogleClientTest
  *
- * @coversDefaultClass \RtCamp\GithubLogin\Utils\GithubClient
+ * @coversDefaultClass \RtCamp\GoogleLogin\Utils\GoogleClient
  *
- * @package RtCamp\GithubLogin\Tests\Unit\Utils
+ * @package RtCamp\GoogleLogin\Tests\Unit\Utils
  */
-class GithubClientTest extends TestCase {
+class GoogleClientTest extends TestCase {
 
 	/**
 	 * Object under test.
