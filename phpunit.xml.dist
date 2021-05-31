@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        bootstrap="tests/php/bootstrap.php"
+        backupGlobals="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">tests/php/Unit</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory suffix=".php">vendor/</directory>
+                <directory suffix=".php">templates/</directory>
+                <file>src/Utils/Helper.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+    <logging>
+    <log type="coverage-html" target="/tmp/report/html" lowUpperBound="35"
+         highLowerBound="70"/>
+    </logging>
+</phpunit>
