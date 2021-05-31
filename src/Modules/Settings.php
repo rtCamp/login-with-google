@@ -73,7 +73,7 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function init(): void {
-		$this->options = get_option( 'wp_github_login_settings', [] );
+		$this->options = get_option( 'wp_google_login_settings', [] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
 	}
@@ -84,49 +84,49 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		register_setting( 'wp_github_login', 'wp_github_login_settings' );
+		register_setting( 'wp_google_login', 'wp_google_login_settings' );
 
 		add_settings_section(
-			'wp_github_login_section',
-			__( 'Log in with Github Settings', 'login-with-google' ),
+			'wp_google_login_section',
+			__( 'Log in with Google Settings', 'login-with-google' ),
 			function () {
 			},
-			'login-with-github'
+			'login-with-google'
 		);
 
 		add_settings_field(
-			'wp_github_login_client_id',
+			'wp_google_login_client_id',
 			__( 'Client ID', 'login-with-google' ),
 			[ $this, 'client_id_field' ],
-			'login-with-github',
-			'wp_github_login_section',
+			'login-with-google',
+			'wp_google_login_section',
 			[ 'label_for' => 'client-id' ]
 		);
 
 		add_settings_field(
-			'wp_github_login_client_secret',
+			'wp_google_login_client_secret',
 			__( 'Client Secret', 'login-with-google' ),
 			[ $this, 'client_secret_field' ],
-			'login-with-github',
-			'wp_github_login_section',
+			'login-with-google',
+			'wp_google_login_section',
 			[ 'label_for' => 'client-secret' ]
 		);
 
 		add_settings_field(
-			'wp_github_allow_registration',
+			'wp_google_allow_registration',
 			__( 'Create new user', 'login-with-google' ),
 			[ $this, 'user_registration' ],
-			'login-with-github',
-			'wp_github_login_section',
+			'login-with-google',
+			'wp_google_login_section',
 			[ 'label_for' => 'user-registration' ]
 		);
 
 		add_settings_field(
-			'wp_github_whitelisted_domain',
+			'wp_google_whitelisted_domain',
 			__( 'Whitelisted Domains', 'login-with-google' ),
 			[ $this, 'whitelisted_domains' ],
-			'login-with-github',
-			'wp_github_login_section',
+			'login-with-google',
+			'wp_google_login_section',
 			[ 'label_for' => 'whitelisted-domains' ]
 		);
 	}
@@ -137,15 +137,15 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function client_id_field(): void { ?>
-		<input type='text' name='wp_github_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" />
+		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" />
 		<p class="description">
 			<?php
 			echo wp_kses_post(
 				sprintf(
 					'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>',
 					esc_html__( 'Create oAuth Client ID and Client Secret at', 'login-with-google' ),
-					'https://github.com/settings/developers',
-					'github.com'
+					'https://console.developers.google.com/apis/dashboard',
+					'console.developers.google.com'
 				)
 			);
 			?>
@@ -160,7 +160,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function client_secret_field(): void {
 		?>
-		<input type='password' name='wp_github_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" />
+		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" />
 		<?php
 	}
 
@@ -177,7 +177,7 @@ class Settings implements ModuleInterface {
 	public function user_registration(): void {
 		?>
 		<label style='display:block;margin-top:6px;'><input type='checkbox'
-															name='wp_github_login_settings[registration_enabled]'
+															name='wp_google_login_settings[registration_enabled]'
 															id="user-registration" <?php echo esc_attr( checked( $this->registration_enabled ) ); ?>
 															value='1'>
 			<?php esc_html_e( 'Create a new user account if it does not exist already', 'login-with-google' ); ?>
@@ -208,7 +208,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-		<textarea cols="40" rows="5" name="wp_github_login_settings[whitelisted_domains]"><?php echo esc_textarea( $this->whitelisted_domains ); ?></textarea>
+		<textarea cols="40" rows="5" name="wp_google_login_settings[whitelisted_domains]"><?php echo esc_textarea( $this->whitelisted_domains ); ?></textarea>
 		<p class="description">
 			<?php echo esc_html( __( 'Add each domain on new line', 'login-with-google' ) ); ?>
 		</p>
@@ -222,10 +222,10 @@ class Settings implements ModuleInterface {
 	 */
 	public function settings_page(): void {
 		add_options_page(
-			__( 'Login with Github settings', 'login-with-google' ),
-			__( 'Login with Github', 'login-with-google' ),
+			__( 'Login with Google settings', 'login-with-google' ),
+			__( 'Login with Google', 'login-with-google' ),
 			'manage_options',
-			'login-with-github',
+			'login-with-google',
 			[ $this, 'output' ]
 		);
 	}
@@ -240,8 +240,8 @@ class Settings implements ModuleInterface {
 		<div class="wrap">
 		<form action='options.php' method='post'>
 			<?php
-			settings_fields( 'wp_github_login' );
-			do_settings_sections( 'login-with-github' );
+			settings_fields( 'wp_google_login' );
+			do_settings_sections( 'login-with-google' );
 			submit_button();
 			?>
 		</form>

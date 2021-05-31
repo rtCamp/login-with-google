@@ -3,7 +3,7 @@
  * Login class.
  *
  * This will manage the login flow, which includes adding the
- * github login button on wp-login page, authorizing the user,
+ * google login button on wp-login page, authorizing the user,
  * authenticating user and redirecting him to admin.
  *
  * @package RtCamp\GoogleLogin
@@ -30,7 +30,7 @@ use function RtCamp\GoogleLogin\plugin;
  */
 class Login implements ModuleInterface {
 	/**
-	 * Github client instance.
+	 * Google client instance.
 	 *
 	 * @var GoogleClient
 	 */
@@ -93,7 +93,7 @@ class Login implements ModuleInterface {
 	 * @return void
 	 */
 	public function login_button(): void {
-		$template  = trailingslashit( plugin()->template_dir ) . 'github-login-button.php';
+		$template  = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 		$login_url = plugin()->container()->get( 'gh_client' )->authorization_url();
 
 		Helper::render_template(
@@ -137,7 +137,6 @@ class Login implements ModuleInterface {
 			$this->gh_client->set_access_token( $code );
 			$user = $this->gh_client->user();
 			$user = apply_filters( 'rtcamp.google_user_profile', $user );
-			$user->email = 'admin@someotherdomain.com';
 
 			if ( email_exists( $user->email ) ) {
 				$this->authenticated = true;
@@ -147,7 +146,7 @@ class Login implements ModuleInterface {
 			/**
 			 * Check if we need to register the user.
 			 *
-			 * @param stdClass $user User object from github.
+			 * @param stdClass $user User object from google.
 			 * @since 1.0.0
 			 */
 			return apply_filters( 'rtcamp.register_user', $user );
@@ -160,7 +159,7 @@ class Login implements ModuleInterface {
 	/**
 	 * Register the new user if setting is on for registration.
 	 *
-	 * @param stdClass $user User object from github.
+	 * @param stdClass $user User object from google.
 	 *
 	 * @return WP_User|null
 	 * @throws \Throwable Invalid email registration.

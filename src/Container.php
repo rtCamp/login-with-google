@@ -98,7 +98,7 @@ class Container implements ContainerInterface {
 		};
 
 		/**
-		 * Define a service for Github OAuth client.
+		 * Define a service for Google OAuth client.
 		 *
 		 * @param PimpleContainer $c Pimple container instance.
 		 *
@@ -128,7 +128,7 @@ class Container implements ContainerInterface {
 		};
 
 		/**
-		 * Define Shortcode service to register shortcode for github login.
+		 * Define Shortcode service to register shortcode for google login.
 		 *
 		 * @param PimpleContainer $c Pimple container object.
 		 *

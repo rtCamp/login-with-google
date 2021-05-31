@@ -6,7 +6,7 @@
  * @since 1.0.0
  */
 
-$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'github-login' );
+$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'login-with-google' );
 
 if ( empty( $login_url ) ) {
 	return;

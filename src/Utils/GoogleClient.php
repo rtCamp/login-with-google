@@ -1,6 +1,6 @@
 <?php
 /**
- * Github API Client.
+ * Google API Client.
  *
  * Useful for authenticating the user and other API related operations.
  *
@@ -15,7 +15,7 @@ namespace RtCamp\GoogleLogin\Utils;
 use Exception;
 
 /**
- * Class GithubClient
+ * Class GoogleClient
  *
  * @package RtCamp\GoogleLogin\Utils
  */
@@ -35,7 +35,7 @@ class GoogleClient {
 	const TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 	/**
-	 * API base for github.
+	 * API base for google.
 	 *
 	 * @var string
 	 */
@@ -70,7 +70,7 @@ class GoogleClient {
 	private $access_token;
 
 	/**
-	 * GithubClient constructor.
+	 * GoogleClient constructor.
 	 *
 	 * @param array $config Configuration for client.
 	 */

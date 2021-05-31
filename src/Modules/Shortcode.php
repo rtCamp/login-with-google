@@ -37,7 +37,7 @@ class Shortcode implements ModuleInterface {
 	public $redirect_uri;
 
 	/**
-	 * Github client instance.
+	 * Google client instance.
 	 *
 	 * @var GoogleClient
 	 */
@@ -109,7 +109,7 @@ class Shortcode implements ModuleInterface {
 
 		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 		remove_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
-		$template           = trailingslashit( plugin()->template_dir ) . 'github-login-button.php';
+		$template           = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 
 		return Helper::render_template( $template, $attrs, false );
 	}

@@ -5,13 +5,13 @@
  * Version: 1.0.15
  * Author: rtCamp
  * Author URI: https://rtcamp.com
- * Text Domain: github-login
+ * Text Domain: login-with-google
  * Domain Path: /languages
  * License: GPLv2+
  * Requires at least: 5.4.2
  * Requires PHP: 7.0
  *
- * @package RtCamp\GithubLogin
+ * @package RtCamp\GoogleLogin
  * @since 1.0.0
  */
 
@@ -39,7 +39,7 @@ if ( version_compare( PHP_VERSION, '7.1', '<' ) ) {
 			function () {
 				$message = __(
 					'Login with google Plugin requires PHP version 7.1 or higher. <br />Please ask your server administrator to update your environment to PHP version 7.1',
-					'github-login'
+					'login-with-google'
 				);
 
 				printf(
