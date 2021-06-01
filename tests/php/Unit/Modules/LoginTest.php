@@ -236,10 +236,6 @@ class LoginTest extends TestCase {
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
 
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlX2ZvcmdlZCJ9' );
-
 		$returned = $this->testee->authenticate();
 
 		$this->assertSame( null, $returned );
@@ -343,9 +339,19 @@ class LoginTest extends TestCase {
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
-		$this->ghClientMock->expects( $this->once() )
+		$this->ghClientMock->expects( $this->never() )
 		                   ->method( 'state' )
 		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+
+		$this->wpMockFunction(
+			'wp_verify_nonce',
+			[
+				'testnonce',
+				'login_with_google',
+			],
+			1,
+			true
+		);
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'set_access_token' )
@@ -359,7 +365,7 @@ class LoginTest extends TestCase {
 		                   ->method( 'user' )
 		                   ->willReturn( $user );
 
-		WP_Mock::expectFilter( 'rtcamp.github_user_profile', $user );
+		WP_Mock::expectFilter( 'rtcamp.google_user_profile', $user );
 
 		$this->wpMockFunction(
 			'email_exists',
@@ -391,6 +397,7 @@ class LoginTest extends TestCase {
 	}
 
 	/**
+	 * @group failing
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticationCapturesExceptions() {
@@ -411,7 +418,7 @@ class LoginTest extends TestCase {
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
-		$this->ghClientMock->expects( $this->once() )
+		$this->ghClientMock->expects( $this->never() )
 		                   ->method( 'state' )
 		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
@@ -419,6 +426,7 @@ class LoginTest extends TestCase {
 			'wp_verify_nonce',
 			[
 				'testnonce',
+				'login_with_google',
 			],
 			1,
 			true
@@ -434,72 +442,6 @@ class LoginTest extends TestCase {
 
 		$this->assertInstanceOf( 'WP_Error', $returned );
 		$this->assertConditionsMet();
-	}
-
-	/**
-	 * @covers ::maybe_fetch_emails
-	 */
-	public function testMaybeFetchEmailReturnSameEmailInObject() {
-		$user = (object) [
-			'email' => 'somefakeemail@domain.com',
-		];
-
-		$userObject = $this->testee->maybe_fetch_emails( $user );
-
-		$this->assertSame( $user, $userObject );
-	}
-
-	/**
-	 * @covers ::maybe_fetch_emails
-	 */
-	public function testMaybeFetchEmailCallsAPI() {
-		$user = (object) [
-			'email' => null,
-		];
-
-		$expected_object = (object) [
-			'email' => 'mainemail1@domain.com',
-		];
-
-		$user_emails = [
-			(object) [
-				'email'   => 'fakeemail1@domain.com',
-				'primary' => false,
-			],
-			(object) [
-				'email'   => 'mainemail1@domain.com',
-				'primary' => true,
-			],
-			(object) [
-				'email'   => 'fakeemail2@domain.com',
-				'primary' => false,
-			],
-		];
-
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'emails' )
-		                   ->willReturn( $user_emails );
-
-		$userObject = $this->testee->maybe_fetch_emails( $user );
-
-		$this->assertEquals( $expected_object, $userObject );
-	}
-
-	/**
-	 * @covers ::maybe_fetch_emails
-	 */
-	public function testMaybeFetchEmailThrowsException() {
-		$user = (object) [
-			'email' => null,
-		];
-
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'emails' )
-		                   ->willThrowException( new Exception( 'Fetch emails exception' ) );
-
-		$this->expectException( Exception::class );
-
-		$this->testee->maybe_fetch_emails( $user );
 	}
 
 	/**
@@ -574,7 +516,7 @@ class LoginTest extends TestCase {
 			20
 		);
 
-		WP_Mock::expectAction( 'rtcamp.github_user_created', 20, $user );
+		WP_Mock::expectAction( 'rtcamp.google_user_created', 20, $user );
 
 		$wp_user = Mockery::mock( 'WP_User' );
 
@@ -645,19 +587,7 @@ class LoginTest extends TestCase {
 			[
 				20,
 				'oauth_provider',
-				'github',
-				true,
-			],
-			1,
-			true
-		);
-
-		$this->wpMockFunction(
-			'add_user_meta',
-			[
-				20,
-				'github_login',
-				'login',
+				'google',
 				true,
 			],
 			1,
@@ -671,49 +601,21 @@ class LoginTest extends TestCase {
 	/**
 	 * @covers ::redirect_url
 	 */
-	public function testRedirectURLReturnsSameURL() {
-		$url = 'https://example.com/';
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
-				INPUT_GET,
-				'redirect_to',
-				FILTER_SANITIZE_STRING,
-			]
-		)->andReturn( null );
-
-		$redirect = $this->testee->redirect_url( $url );
-		$this->assertSame( $url, $redirect );
-	}
-
-	/**
-	 * @covers ::redirect_url
-	 */
 	public function testRedirectURLRetuensWithQueryParam() {
-		$url = 'https://example.com/';
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
-				INPUT_GET,
-				'redirect_to',
-				FILTER_SANITIZE_STRING,
-			]
-		)->andReturn( 'https://example.com/wp-admin' );
+		$url = 'https://example.com/?redirect_to=https://example.com/wp-admin';
 
 		$this->wpMockFunction(
-			'add_query_arg',
+			'remove_query_arg',
 			[
-				[
-					'redirect_to' => 'https://example.com/wp-admin'
-				],
-				'https://example.com/'
+				'redirect_to',
+				$url,
 			],
 			1,
-			'https://example.com/?redirect_to=https://example.com/wp-admin'
+			'https://example.com/'
 		);
 
 		$redirect = $this->testee->redirect_url( $url );
-		$this->assertSame( 'https://example.com/?redirect_to=https://example.com/wp-admin', $redirect );
+		$this->assertSame( 'https://example.com/', $redirect );
 	}
 
 }
