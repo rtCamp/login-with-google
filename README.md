@@ -62,6 +62,15 @@ You can add the google login button to any page/post using shortcode: `google_lo
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
 
+## Unit testing
+
+Unit tests can be run with simple command `composer tests:unit`. 
+Please note that you'll need to do `composer install` (need to install dev dependencies) for running
+unit tests.
+
+You should have PHP CLI > 7.1 installed. If you have Xdebug enabled with php, code coverage report will be
+generated at `/tmp/report/html`
+
 ## Minimum Requirements
 
 WordPress >= 5.4.0
