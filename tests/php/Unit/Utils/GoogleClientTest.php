@@ -227,7 +227,7 @@ class GoogleClientTest extends TestCase {
 	public function testAccessTokenThrowsExceptionForNon200Code() {
 		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url', 'state' ] );
 		$ghClient->expects( $this->once() )->method( 'gt_redirect_url' )->willReturn( '' );
-		$ghClient->expects( $this->once() )->method( 'state' )->willReturn( 'dummystate' );
+		$ghClient->expects( $this->never() )->method( 'state' )->willReturn( 'dummystate' );
 		$ghClient->client_id     = 'cid';
 		$ghClient->client_secret = 'csc';
 
@@ -370,115 +370,6 @@ class GoogleClientTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::emails
-	 */
-	public function testEmailReturnsObject() {
-		$this->setTesteeProperty( $this->testee, 'access_token', 'someToken' );
-
-		$this->wpMockFunction(
-			'trailingslashit',
-			[
-				'https://api.github.com'
-			],
-			1,
-			'https://api.github.com/'
-		);
-
-		$this->wpMockFunction(
-			'wp_remote_get',
-			[
-				'https://api.github.com/user/emails',
-				[
-					'headers' => [
-						'Authorization' => 'token ' . 'someToken',
-						'Accept'        => 'application/json',
-					],
-				]
-			],
-			1,
-			'response'
-		);
-
-		$this->wpMockFunction(
-			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
-			1,
-			200
-		);
-
-		$this->wpMockFunction(
-			'wp_remote_retrieve_body',
-			[
-				'response',
-			],
-			1,
-			function () {
-				$mails = [
-					[
-						'email'   => 'user1@domain.com',
-						'primary' => true,
-					],
-					[
-						'email'   => 'user2@domain.com',
-						'primary' => false,
-					]
-				];
-
-				return json_encode( $mails );
-			}
-		);
-
-		$emails = $this->testee->emails();
-		$this->assertIsArray( $emails );
-		$this->assertConditionsMet();
-	}
-
-	/**
-	 * @covers ::emails
-	 */
-	public function testEmailsThrowsException() {
-		$this->setTesteeProperty( $this->testee, 'access_token', 'someToken' );
-
-		$this->wpMockFunction(
-			'trailingslashit',
-			[
-				'https://api.github.com'
-			],
-			1,
-			'https://api.github.com/'
-		);
-
-		$this->wpMockFunction(
-			'wp_remote_get',
-			[
-				'https://api.github.com/user/emails',
-				[
-					'headers' => [
-						'Authorization' => 'token ' . 'someToken',
-						'Accept'        => 'application/json',
-					],
-				]
-			],
-			1,
-			'response'
-		);
-
-		$this->wpMockFunction(
-			'wp_remote_retrieve_response_code',
-			[
-				'response'
-			],
-			1,
-			400
-		);
-
-		$this->expectException( Exception::class );
-		$this->testee->emails();
-	}
-
-	/**
 	 * @covers ::authorization_url
 	 */
 	public function testAuthorizationURL() {
@@ -487,7 +378,7 @@ class GoogleClientTest extends TestCase {
 		$ghClient->expects( $this->once() )->method( 'state' )->willReturn( 'abcd' );
 		$ghClient->client_id     = 'cid';
 
-		$expected = 'https://github.com/login/oauth/authorize?client_id=cid&redirect_uri=&state=abcd&scope=user%3Aemail+read%3Auser';
+		$expected = 'https://accounts.google.com/o/oauth2/auth?client_id=cid&redirect_uri=&state=abcd&scope=email+profile+openid&access_type=online&response_type=code';
 
 		$this->assertSame( $expected, $ghClient->authorization_url() );
 	}

@@ -225,7 +225,7 @@ class ShortCodeTest extends TestCase {
 
 		$this->assetMock->expects( $this->once() )->method( 'enqueue_login_styles' );
 
-		$output = $this->testee->scan_shortcode( 'Hello', 'gh_login', [] );
+		$output = $this->testee->scan_shortcode( 'Hello', 'google_login', [] );
 		$this->assertSame( 'Hello', $output );
 	}
 
@@ -285,6 +285,6 @@ class ShortCodeTest extends TestCase {
 		);
 
 		$r_url = $this->testee->redirect_url( $url );
-		$this->assertSame( $r_url, 'https://example.com/redirect_to=https://example.com/some-page' );
+		$this->assertSame( $r_url, 'https://example.com/' );
 	}
 }

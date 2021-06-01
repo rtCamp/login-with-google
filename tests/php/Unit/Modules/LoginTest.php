@@ -74,10 +74,12 @@ class LoginTest extends TestCase {
 	public function testInit() {
 		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
 		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.github_user_profile', [ $this->testee, 'maybe_fetch_emails' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.register_user', [ $this->testee, 'register' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.github_redirect_url', [ $this->testee, 'redirect_url' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.github_user_created', [ $this->testee, 'user_meta' ], 10, 2 );
+		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
+		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ], 10, 2 );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_user_profile', [ $this->testee, 'user_login' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
+		WP_Mock::expectActionAdded( 'wp_login', [ $this->testee, 'login_redirect' ] );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
@@ -101,7 +103,7 @@ class LoginTest extends TestCase {
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'authorization_url' )
-		                   ->willReturn( 'https://github.com/auth/' );
+		                   ->willReturn( 'https://google.com/auth/' );
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
@@ -124,9 +126,9 @@ class LoginTest extends TestCase {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'render_template' )->once()->withArgs(
 			[
-				'https://example.com/templates/github-login-button.php',
+				'https://example.com/templates/google-login-button.php',
 				[
-					'login_url' => 'https://github.com/auth/',
+					'login_url' => 'https://google.com/auth/',
 				]
 			]
 		);
@@ -236,12 +238,11 @@ class LoginTest extends TestCase {
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'something_else' );
+		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlX2ZvcmdlZCJ9' );
 
-		Mockery::mock( 'WP_Error' );
 		$returned = $this->testee->authenticate();
 
-		$this->assertInstanceOf( 'WP_Error', $returned );
+		$this->assertSame( null, $returned );
 		$this->assertConditionsMet();
 	}
 
@@ -264,11 +265,21 @@ class LoginTest extends TestCase {
 				'state',
 				FILTER_SANITIZE_STRING
 			]
-		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
-		$this->ghClientMock->expects( $this->once() )
+		$this->ghClientMock->expects( $this->never() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+
+		$this->wpMockFunction(
+			'wp_verify_nonce',
+			[
+				'testnonce',
+				'login_with_google',
+			],
+			1,
+			true
+		);
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'set_access_token' )
@@ -282,7 +293,7 @@ class LoginTest extends TestCase {
 		                   ->method( 'user' )
 		                   ->willReturn( $user );
 
-		WP_Mock::expectFilter( 'rtcamp.github_user_profile', $user );
+		WP_Mock::expectFilter( 'rtcamp.google_user_profile', $user );
 
 		$this->wpMockFunction(
 			'email_exists',
@@ -330,11 +341,11 @@ class LoginTest extends TestCase {
 				'state',
 				FILTER_SANITIZE_STRING
 			]
-		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'set_access_token' )
@@ -398,11 +409,20 @@ class LoginTest extends TestCase {
 				'state',
 				FILTER_SANITIZE_STRING
 			]
-		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
+		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+
+		$this->wpMockFunction(
+			'wp_verify_nonce',
+			[
+				'testnonce',
+			],
+			1,
+			true
+		);
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'set_access_token' )
