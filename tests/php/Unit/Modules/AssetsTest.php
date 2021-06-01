@@ -76,7 +76,7 @@ class AssetsTest extends TestCase {
 			'wp_register_style',
 			[
 				'login-with-google',
-				'https://example.com/assets/css/login.css',
+				'https://example.com/assets/build/css/login.css',
 				[],
 				false,
 				true,
@@ -138,9 +138,19 @@ class AssetsTest extends TestCase {
 	 */
 	public function testEnqueueLoginStyleWithStyleRegistered() {
 		$this->wpMockFunction(
-			'wp_script_is',
+			'wp_style_is',
 			[
 				'login-with-google',
+				'registered',
+			],
+			1,
+			true
+		);
+
+		$this->wpMockFunction(
+			'wp_script_is',
+			[
+				'login-with-google-script',
 				'registered',
 			],
 			1,
@@ -151,7 +161,7 @@ class AssetsTest extends TestCase {
 			'wp_register_style',
 			[
 				'login-with-google',
-				'https://example.com/assets/css/login.css',
+				'https://example.com/assets/build/css/login.css',
 				[],
 				false,
 				true,
@@ -169,6 +179,15 @@ class AssetsTest extends TestCase {
 			true
 		);
 
+		$this->wpMockFunction(
+			'wp_enqueue_script',
+			[
+				'login-with-google-script',
+			],
+			1,
+			true
+		);
+
 		$this->testee->enqueue_login_styles();
 		$this->assertConditionsMet();
 	}
@@ -181,7 +200,7 @@ class AssetsTest extends TestCase {
 	 */
 	public function testEnqueueLoginStyleWithStyleNotRegistered() {
 		$this->wpMockFunction(
-			'wp_script_is',
+			'wp_style_is',
 			[
 				'login-with-google',
 				'registered',
@@ -191,9 +210,19 @@ class AssetsTest extends TestCase {
 		);
 
 		$this->wpMockFunction(
+			'wp_script_is',
+			[
+				'login-with-google-script',
+				'registered',
+			],
+			1,
+			false
+		);
+
+		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
 			[],
-			2,
+			4,
 			function () {
 				return (object) [
 					'url'        => 'https://example.com/',
@@ -206,7 +235,7 @@ class AssetsTest extends TestCase {
 			'wp_register_style',
 			[
 				'login-with-google',
-				'https://example.com/assets/css/login.css',
+				'https://example.com/assets/build/css/login.css',
 				[],
 				false,
 				true,
@@ -219,6 +248,15 @@ class AssetsTest extends TestCase {
 			'wp_enqueue_style',
 			[
 				'login-with-google',
+			],
+			1,
+			true
+		);
+
+		$this->wpMockFunction(
+			'wp_enqueue_script',
+			[
+				'login-with-google-script',
 			],
 			1,
 			true
