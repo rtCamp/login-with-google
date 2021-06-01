@@ -1,6 +1,6 @@
-# Login with Github
+# Login with Google
 
-> WordPress plugin to login/register with github
+> WordPress plugin to login/register with google
 
 1. [Overview](#overview)
 2. [Installation](#installation)
@@ -11,8 +11,8 @@
 
 ## Overview
 
-Login with github provides seamless experience for users to login in to WordPress 
-sites using their github account. No need to manually create accounts, no need to remember quirky
+Login with google provides seamless experience for users to login in to WordPress 
+sites using their google account. No need to manually create accounts, no need to remember quirky
 passwords. Just one click and land into the site!
 
 ## Installation
@@ -24,13 +24,13 @@ passwords. Just one click and land into the site!
 
 ## Usage Instructions
 
-1. You will need to register a new application at https://github.com/settings/applications/new
+1. You will need to register a new application at https://console.cloud.google.com/apis/dashboard
 
 2. `Authorization callback URL` should be like `https://yourdomain.com/wp-login.php`, where
 `https://yourdomain.com` will be replaced by your site URL.
 
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
-in `Settings > Login with github` settings page in their respective fields.
+in `Settings > Login with google` settings page in their respective fields.
    
 4. `Create new user` enables new user registration irrespective of `Membership` settings in 
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
