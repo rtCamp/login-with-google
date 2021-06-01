@@ -54,7 +54,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'get_option',
 			[
-				'wp_github_login_settings',
+				'wp_google_login_settings',
 				[]
 			],
 			1,
@@ -75,8 +75,8 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'register_setting',
 			[
-				'wp_github_login',
-				'wp_github_login_settings'
+				'wp_google_login',
+				'wp_google_login_settings'
 			],
 			1,
 			true
@@ -85,10 +85,10 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'add_settings_section',
 			[
-				'wp_github_login_section',
-				'Log in with Github Settings',
+				'wp_google_login_section',
+				'Log in with Google Settings',
 				\Closure::class,
-				'login-with-github'
+				'login-with-google'
 			],
 			1
 		);
@@ -119,10 +119,10 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'add_options_page',
 			[
-				'Login with Github settings',
-				'Login with Github',
+				'Login with Google settings',
+				'Login with Google',
 				'manage_options',
-				'login-with-github',
+				'login-with-google',
 				[
 					$this->testee,
 					'output'
@@ -141,7 +141,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'settings_fields',
 			[
-				'wp_github_login',
+				'wp_google_login',
 			],
 			1
 		);
@@ -149,7 +149,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'do_settings_sections',
 			[
-				'login-with-github',
+				'login-with-google',
 			],
 			1
 		);

@@ -75,7 +75,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_register_style',
 			[
-				'github-login',
+				'login-with-google',
 				'https://example.com/assets/css/login.css',
 				[],
 				false,
@@ -108,7 +108,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_register_script',
 			[
-				'github-login-js',
+				'login-with-google',
 				'https://example.com/assets/js/login.js',
 				[
 					'some-other-script'
@@ -121,7 +121,7 @@ class AssetsTest extends TestCase {
 		);
 
 		$this->testee->register_script(
-			'github-login-js',
+			'login-with-google',
 			'js/login.js',
 			[
 				'some-other-script'
@@ -140,7 +140,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_script_is',
 			[
-				'github-login',
+				'login-with-google',
 				'registered',
 			],
 			1,
@@ -150,7 +150,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_register_style',
 			[
-				'github-login',
+				'login-with-google',
 				'https://example.com/assets/css/login.css',
 				[],
 				false,
@@ -163,7 +163,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_enqueue_style',
 			[
-				'github-login',
+				'login-with-google',
 			],
 			1,
 			true
@@ -183,7 +183,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_script_is',
 			[
-				'github-login',
+				'login-with-google',
 				'registered',
 			],
 			1,
@@ -205,7 +205,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_register_style',
 			[
-				'github-login',
+				'login-with-google',
 				'https://example.com/assets/css/login.css',
 				[],
 				false,
@@ -218,7 +218,7 @@ class AssetsTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_enqueue_style',
 			[
-				'github-login',
+				'login-with-google',
 			],
 			1,
 			true

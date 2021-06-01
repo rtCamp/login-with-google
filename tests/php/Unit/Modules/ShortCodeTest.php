@@ -72,7 +72,7 @@ class ShortCodeTest extends TestCase {
 		$this->wpMockFunction(
 			'add_shortcode',
 			[
-				'gh_login',
+				'google_login',
 				[
 					$this->testee,
 					'callback',
@@ -103,12 +103,12 @@ class ShortCodeTest extends TestCase {
 			[
 				'args'       => [
 					[
-						'button_text'   => __( 'Login with github', 'github-login' ),
+						'button_text'   => __( 'Login with google', 'login-with-google' ),
 						'force_display' => 'no',
 						'redirect_to'   => 'https://example.com/',
 					],
 					[],
-					'gh_login',
+					'google_login',
 				],
 				'times'      => 1,
 				'return_arg' => 0
@@ -137,12 +137,12 @@ class ShortCodeTest extends TestCase {
 			[
 				'args'       => [
 					[
-						'button_text'   => __( 'Login with github', 'github-login' ),
+						'button_text'   => __( 'Login with google', 'login-with-google' ),
 						'force_display' => 'no',
 						'redirect_to'   => null,
 					],
 					[],
-					'gh_login',
+					'google_login',
 				],
 				'times'      => 1,
 				'return_arg' => 0
@@ -156,7 +156,7 @@ class ShortCodeTest extends TestCase {
 			false
 		);
 
-		WP_Mock::expectFilterAdded( 'rtcamp.github_redirect_url', [ $this->testee, 'redirect_url' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
 
 		$this->wpMockFunction(
 			'RtCamp\GoogleLogin\plugin',
@@ -176,18 +176,18 @@ class ShortCodeTest extends TestCase {
 
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'authorization_url' )
-		                   ->willReturn( 'https://github.com/auth/' );
+		                   ->willReturn( 'https://google.com/auth/' );
 
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'render_template' )->once()->withArgs(
 			[
-				'/some/path/templates/github-login-button.php',
+				'/some/path/templates/google-login-button.php',
 				[
-					'button_text'   => 'Login with github',
+					'button_text'   => 'Login with google',
 					'force_display' => 'no',
 					'redirect_to'   => null,
-					'login_url'     => 'https://github.com/auth/',
+					'login_url'     => 'https://google.com/auth/',
 				],
 				false
 			]
@@ -270,18 +270,6 @@ class ShortCodeTest extends TestCase {
 			],
 			1,
 			'https://example.com/'
-		);
-
-		$this->wpMockFunction(
-			'add_query_arg',
-			[
-				[
-					'redirect_to' => 'https://example.com/some-page'
-				],
-				'https://example.com/'
-			],
-			1,
-			'https://example.com/redirect_to=https://example.com/some-page'
 		);
 
 		$r_url = $this->testee->redirect_url( $url );
