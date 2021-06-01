@@ -81,35 +81,12 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::access_token
 	 */
 	public function testSetAccessToken() {
-		WP_Mock::expectFilter( 'rtcamp.github_redirect_url', '' );
-
-		$this->wpMockFunction(
-			'wp_create_nonce',
-			[
-				'login_with_github'
-			],
-			1,
-			'some123'
-		);
-
-		WP_Mock::expectFilter( 'rtcamp.github_login_state', [ 'nonce' => 'some123' ] );
-
-		$this->wpMockFunction(
-			'wp_json_encode',
-			[
-				[
-					'nonce'    => 'some123',
-					'provider' => 'github',
-				]
-			],
-			1,
-			'jsonEncoded'
-		);
+		WP_Mock::expectFilter( 'rtcamp.google_redirect_url', '' );
 
 		$this->wpMockFunction(
 			'wp_remote_post',
 			[
-				'https://github.com/login/oauth/access_token',
+				'https://oauth2.googleapis.com/token',
 				[
 					'headers' => [
 						'Accept' => 'application/json',
@@ -119,7 +96,7 @@ class GoogleClientTest extends TestCase {
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
-						'state'         => base64_encode( 'jsonEncoded' ),
+						'grant_type'    => 'authorization_code',
 					],
 				]
 			],
@@ -162,35 +139,12 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::set_access_token
 	 */
 	public function testSetAccessTokenThrowsException() {
-		WP_Mock::expectFilter( 'rtcamp.github_redirect_url', '' );
-
-		$this->wpMockFunction(
-			'wp_create_nonce',
-			[
-				'login_with_github'
-			],
-			1,
-			'some123'
-		);
-
-		WP_Mock::expectFilter( 'rtcamp.github_login_state', [ 'nonce' => 'some123' ] );
-
-		$this->wpMockFunction(
-			'wp_json_encode',
-			[
-				[
-					'nonce'    => 'some123',
-					'provider' => 'github',
-				]
-			],
-			1,
-			'jsonEncoded'
-		);
+		WP_Mock::expectFilter( 'rtcamp.google_redirect_url', '' );
 
 		$this->wpMockFunction(
 			'wp_remote_post',
 			[
-				'https://github.com/login/oauth/access_token',
+				'https://oauth2.googleapis.com/token',
 				[
 					'headers' => [
 						'Accept' => 'application/json',
@@ -200,7 +154,7 @@ class GoogleClientTest extends TestCase {
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
-						'state'         => base64_encode( 'jsonEncoded' ),
+						'grant_type'    => 'authorization_code',
 					],
 				]
 			],
@@ -225,16 +179,16 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::access_token
 	 */
 	public function testAccessTokenThrowsExceptionForNon200Code() {
-		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url', 'state' ] );
+		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url' ] );
 		$ghClient->expects( $this->once() )->method( 'gt_redirect_url' )->willReturn( '' );
-		$ghClient->expects( $this->never() )->method( 'state' )->willReturn( 'dummystate' );
+
 		$ghClient->client_id     = 'cid';
 		$ghClient->client_secret = 'csc';
 
 		$this->wpMockFunction(
 			'wp_remote_post',
 			[
-				'https://github.com/login/oauth/access_token',
+				'https://oauth2.googleapis.com/token',
 				[
 					'headers' => [
 						'Accept' => 'application/json',
@@ -244,7 +198,7 @@ class GoogleClientTest extends TestCase {
 						'client_secret' => 'csc',
 						'redirect_uri'  => '',
 						'code'          => 'abc',
-						'state'         => 'dummystate',
+						'grant_type'    => 'authorization_code',
 					],
 				]
 			],
@@ -274,20 +228,19 @@ class GoogleClientTest extends TestCase {
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				'https://api.github.com'
+				'https://www.googleapis.com'
 			],
 			1,
-			'https://api.github.com/'
+			'https://www.googleapis.com/'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
 			[
-				'https://api.github.com/user',
+				'https://www.googleapis.com/oauth2/v2/userinfo?access_token=someToken',
 				[
 					'headers' => [
-						'Authorization' => 'token ' . 'someToken',
-						'Accept'        => 'application/json',
+						'Accept' => 'application/json',
 					],
 				]
 			],
@@ -335,20 +288,19 @@ class GoogleClientTest extends TestCase {
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				'https://api.github.com'
+				'https://www.googleapis.com'
 			],
 			1,
-			'https://api.github.com/'
+			'https://www.googleapis.com/'
 		);
 
 		$this->wpMockFunction(
 			'wp_remote_get',
 			[
-				'https://api.github.com/user',
+				'https://www.googleapis.com/oauth2/v2/userinfo?access_token=someToken',
 				[
 					'headers' => [
-						'Authorization' => 'token ' . 'someToken',
-						'Accept'        => 'application/json',
+						'Accept' => 'application/json',
 					],
 				]
 			],
@@ -376,7 +328,7 @@ class GoogleClientTest extends TestCase {
 		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url', 'state' ] );
 		$ghClient->expects( $this->once() )->method( 'gt_redirect_url' )->willReturn( '' );
 		$ghClient->expects( $this->once() )->method( 'state' )->willReturn( 'abcd' );
-		$ghClient->client_id     = 'cid';
+		$ghClient->client_id = 'cid';
 
 		$expected = 'https://accounts.google.com/o/oauth2/auth?client_id=cid&redirect_uri=&state=abcd&scope=email+profile+openid&access_type=online&response_type=code';
 
