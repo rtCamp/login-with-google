@@ -40,13 +40,13 @@ in `Settings > Login with google` settings page in their respective fields.
 5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered on site.
 This will prevent unwanted registration on website. 
 **For Example:** If you want users only from your organization (`myorg.com`) to get registered on the 
-website, you enter `myorg.com` in whitelisted domains. Users with github primary 
+website, you enter `myorg.com` in whitelisted domains. Users with google 
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
    
 ## Shortcode
 
-You can add the github login button to any page/post using shortcode: `gh_login` 
+You can add the google login button to any page/post using shortcode: `google_login` 
 
 **Example:**
 ```php 
@@ -57,7 +57,7 @@ You can add the github login button to any page/post using shortcode: `gh_login`
 
 | Parameter      | Description                                                   | Values | Default            |
 | -------------- | --------------------------------------------------------------| -------| ------------------ |
-| button_text    | Text to show for login button                                 | string | Login with github  |
+| button_text    | Text to show for login button                                 | string | Login with google  |
 | force_display  | Whether to display button when user is already logged in      | yes/no | no                 |
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
