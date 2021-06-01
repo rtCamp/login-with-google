@@ -50,7 +50,7 @@ You can add the github login button to any page/post using shortcode: `gh_login`
 
 **Example:**
 ```php 
-[gh_login button_text="Github Login" force_display="yes" /]
+[google_login button_text="Google Login" force_display="yes" /]
 ```
 
 **Supported attributes for shortcode**
