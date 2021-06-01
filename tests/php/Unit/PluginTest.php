@@ -85,7 +85,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-github.php'
+				'slashedstring/login-with-google.php'
 			]
 		);
 
@@ -123,7 +123,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-github.php'
+				'slashedstring/login-with-google.php'
 			]
 		);
 
@@ -155,7 +155,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-github.php'
+				'slashedstring/login-with-google.php'
 			]
 		);
 
@@ -188,7 +188,7 @@ class PluginTest extends TestCase {
 			'plugin_dir_url',
 			[
 				'args'       => [
-					'slashedstring/login-with-github.php'
+					'slashedstring/login-with-google.php'
 				],
 				'return_arg' => 0
 			]
@@ -196,7 +196,7 @@ class PluginTest extends TestCase {
 
 		$this->testee->run();
 
-		$this->assertSame( 'slashedstring/login-with-github.php', $this->testee->url );
+		$this->assertSame( 'slashedstring/login-with-google.php', $this->testee->url );
 	}
 
 	/**
@@ -222,7 +222,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-github.php'
+				'slashedstring/login-with-google.php'
 			]
 		);
 
@@ -254,7 +254,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-github.php'
+				'slashedstring/login-with-google.php'
 			]
 		);
 
@@ -299,7 +299,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'load_plugin_textdomain',
 			[
-				'github-login',
+				'login-with-google',
 				false,
 				'path-to-test/languages/en_US'
 			]
