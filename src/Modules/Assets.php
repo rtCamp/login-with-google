@@ -49,7 +49,7 @@ class Assets implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_login_styles(): void {
-		$this->register_style( 'login-with-google', 'css/login.css' );
+		$this->register_style( 'login-with-google', 'build/css/login.css' );
 	}
 
 	/**
@@ -61,10 +61,15 @@ class Assets implements ModuleInterface {
 		/**
 		 * If style is not registered, register it.
 		 */
-		if ( ! wp_script_is( 'login-with-google', 'registered' ) ) {
+		if ( ! wp_style_is( 'login-with-google', 'registered' ) ) {
 			$this->register_login_styles();
 		}
 
+		if ( ! wp_script_is( 'login-with-google-script', 'registered' ) ) {
+			$this->register_script( 'login-with-google-script', 'build/js/login.js' );
+		}
+
+		wp_enqueue_script( 'login-with-google-script' );
 		wp_enqueue_style( 'login-with-google' );
 	}
 
