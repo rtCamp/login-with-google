@@ -1,0 +1,83 @@
+
+$light_gray_color: #e1e2e2;
+$gray_color: #ccced0;
+$white_color: #FFFFFF;
+
+.wp_google_login {
+
+	margin: 40px auto 0 auto;
+	clear: both;
+
+	&.hidden {
+		display: none;
+	}
+
+	&__divider {
+
+		position: relative;
+		text-align: center;
+
+		&::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			width: 100%;
+			background-color: $light_gray_color;
+			height: 1px;
+			top: 8px;
+		}
+
+		span {
+			text-transform: uppercase;
+			color: $light_gray_color;
+			background-color: $white_color;
+			font-size: 14px;
+			padding-left: 8px;
+			padding-right: 8px;
+			position: relative;
+			z-index: 2;
+		}
+	}
+
+	&__button-container {
+		margin-top: 10px;
+	}
+
+	&__button {
+		border-color: $gray_color;
+		border-style: solid;
+		border-width: 1px 1px 2px;
+		cursor: pointer;
+		display: block;
+		width: 100%;
+		margin: 0;
+		outline: 0;
+		overflow: hidden;
+		font-weight: 500;
+		text-overflow: ellipsis;
+		text-decoration: none;
+		box-sizing: border-box;
+		font-size: 14px;
+		line-height: 25px;
+		border-radius: 4px;
+		padding: 10px 15px;
+		background-color: $white_color;
+		color: #3d4145;
+		text-align: center;
+
+		&:hover{
+			color: #3d4145;
+		}
+
+	}
+
+	&__google-icon{
+		background: url("../images/google_light.png") no-repeat center;
+		width: 25px;
+		height: 25px;
+		display: inline-block;
+		background-size: contain;
+		vertical-align: middle;
+		margin-right: 10px;
+	}
+}
