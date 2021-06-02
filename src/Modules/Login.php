@@ -79,7 +79,7 @@ class Login implements ModuleInterface {
 	public function init(): void {
 		add_action( 'login_form', [ $this, 'login_button' ] );
 		add_action( 'authenticate', [ $this, 'authenticate' ] );
-		add_action( 'rtcamp.register_user', [ $this, 'register' ] );
+		add_action( 'rtcamp.google_register_user', [ $this, 'register' ] );
 		add_action( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_action( 'rtcamp.google_user_created', [ $this, 'user_meta' ], 10, 2 );
 		add_filter( 'rtcamp.google_user_profile', [ $this, 'user_login' ] );
@@ -149,7 +149,7 @@ class Login implements ModuleInterface {
 			 * @param stdClass $user User object from google.
 			 * @since 1.0.0
 			 */
-			return apply_filters( 'rtcamp.register_user', $user );
+			return apply_filters( 'rtcamp.google_register_user', $user );
 
 		} catch ( \Throwable $e ) {
 			return new WP_Error( 'google_login_failed', $e->getMessage() );

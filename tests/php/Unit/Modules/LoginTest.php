@@ -74,7 +74,7 @@ class LoginTest extends TestCase {
 	public function testInit() {
 		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
 		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.register_user', [ $this->testee, 'register' ] );
+		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->testee, 'register' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ], 10, 2 );
 		WP_Mock::expectFilterAdded( 'rtcamp.google_user_profile', [ $this->testee, 'user_login' ] );
@@ -388,7 +388,7 @@ class LoginTest extends TestCase {
 			$userMock
 		);
 
-		WP_Mock::expectFilter( 'rtcamp.register_user', $user );
+		WP_Mock::expectFilter( 'rtcamp.google_register_user', $user );
 
 		$returned = $this->testee->authenticate();
 		$this->assertSame( $returned, $user );
