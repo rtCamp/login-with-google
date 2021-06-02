@@ -618,4 +618,82 @@ class LoginTest extends TestCase {
 		$this->assertSame( 'https://example.com/', $redirect );
 	}
 
+	/**
+	 * @covers ::state_redirect
+	 */
+	public function testStateRedirect() {
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'redirect_to',
+				FILTER_SANITIZE_STRING
+			]
+		)->andReturn( 'https://example.com/state-page' );
+
+		$state_data = $this->testee->state_redirect( [] );
+
+		$this->assertIsArray( $state_data );
+		$this->assertContains( 'https://example.com/state-page', $state_data );
+	}
+
+	/**
+	 * @covers ::login_redirect
+	 */
+	public function testLoginRedirectWithNotStateAuthenticated() {
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_STRING
+			]
+		)->andReturn( [] );
+
+		$data = $this->testee->login_redirect();
+		$this->assertNull( $data );
+	}
+
+	/**
+	 * @covers ::user_login
+	 */
+	public function testUserLoginWithoutDefault() {
+		$user = new \stdClass();
+		$user->url = 'https://example.com';
+
+		$expected = $this->testee->user_login( $user );
+		$this->assertSame( $expected->url, 'https://example.com' );
+
+		$login = ! empty( $expected->login ) ?? false;
+		$this->assertfalse( $login );
+	}
+
+	/**
+	 * @covers ::user_login
+	 */
+	public function testUserLoginWithDefault() {
+		$user = new \stdClass();
+		$user->email = 'someone@example.com';
+
+		$this->wpMockFunction(
+			'sanitize_user',
+			[
+				'someone',
+				true,
+			],
+			1,
+			'someone'
+		);
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'unique_username' )->once()->withArgs(
+			[
+				'someone',
+			]
+		)->andReturn( 'someone1' );
+
+		$expected = $this->testee->user_login( $user );
+
+		$this->assertEquals( $expected->login, 'someone1' );
+	}
 }

@@ -48,6 +48,35 @@ class SettingsTest extends TestCase {
 	}
 
 	/**
+	 * @covers ::__get
+	 */
+	public function testGetWithNull() {
+		$value = $this->testee->__get( 'some_test_property' );
+		$this->assertEquals( null, $value );
+	}
+
+	/**
+	 * @covers ::__get
+	 */
+	public function testGetWithProper() {
+		$this->wpMockFunction(
+			'get_option',
+			[
+				'wp_google_login_settings',
+				[]
+			],
+			1,
+			[
+				'client_id' => 'cid'
+			]
+		);
+
+		$this->testee->init();
+		$value = $this->testee->__get( 'client_id' );
+		$this->assertEquals( 'cid', $value );
+	}
+
+	/**
 	 * @covers ::init
 	 */
 	public function testInit() {
@@ -165,4 +194,125 @@ class SettingsTest extends TestCase {
 		$this->testee->output();
 		$this->assertConditionsMet();
 	}
+
+	/**
+	 * @covers ::client_id_field
+	 */
+	public function testClientIdField() {
+		$this->wpMockFunction(
+			'esc_html__',
+			[
+				'Create oAuth Client ID and Client Secret at',
+				'login-with-google'
+			],
+			2,
+		);
+
+		$this->wpMockFunction(
+			'wp_kses_post',
+			[
+				sprintf(
+					'<p>%1s <a target="_blank" href="%2s">%3s</a>.</p>',
+					esc_html__( 'Create oAuth Client ID and Client Secret at', 'login-with-google' ),
+					'https://console.developers.google.com/apis/dashboard',
+					'console.developers.google.com'
+				)
+			],
+			1,
+		);
+
+		$this->setOutputCallback(function() {});
+		$this->testee->client_id_field();
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::user_registration
+	 */
+	public function testUserRegistration() {
+		$this->testee->registration_enabled = 'yes';
+
+		$this->wpMockFunction(
+			'checked',
+			[
+				'yes'
+			],
+			1,
+		);
+
+		$this->wpMockFunction(
+			'esc_html_e',
+			[
+				'Create a new user account if it does not exist already',
+				'login-with-google'
+			],
+			1,
+		);
+
+		$this->wpMockFunction(
+			'is_multisite',
+			[],
+			1,
+			'network/settings.php'
+		);
+
+		$this->wpMockFunction(
+			'wp_kses_post',
+			[
+				/* translators: %1s will be replaced by page link */
+				__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="network/settings.php">membership setting</a> is off.', 'login-with-google' ),
+			],
+			1,
+		);
+
+		$this->setOutputCallback(function() {});
+		$this->testee->user_registration();
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::whitelisted_domains
+	 */
+	public function testWhitelistedDomains() {
+		$this->testee->whitelisted_domains = 'https://example1.com,https://example2.com';
+
+		$this->wpMockFunction(
+			'esc_textarea',
+			[
+				'https://example1.com,https://example2.com',
+			],
+			1,
+		);
+
+		$this->wpMockFunction(
+			'esc_html',
+			[
+				__( 'Add each domain on new line', 'login-with-google' )
+			],
+			1,
+		);
+
+		$this->setOutputCallback(function() {});
+		$this->testee->whitelisted_domains();
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::client_secret_field
+	 */
+	public function testClientSecretField() {
+		$this->testee->client_secret = 'cis';
+		$this->wpMockFunction(
+			'esc_attr',
+			[
+				'cis'
+			],
+			1
+		);
+
+		$this->setOutputCallback(function() {});
+		$this->testee->client_secret_field();
+		$this->assertConditionsMet();
+	}
+
 }

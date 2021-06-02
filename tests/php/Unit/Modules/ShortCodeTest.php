@@ -275,4 +275,33 @@ class ShortCodeTest extends TestCase {
 		$r_url = $this->testee->redirect_url( $url );
 		$this->assertSame( $r_url, 'https://example.com/' );
 	}
+
+	/**
+	 * @covers ::state_redirect
+	 */
+	public function testStateRedirectWithRedirectUrl() {
+		$this->testee->redirect_uri = 'https://example.com';
+
+		$state = [
+			'provider'    => 'google',
+			'redirect_to' => 'https://example.com'
+		];
+
+		$expected = $this->testee->state_redirect( $state );
+		$this->assertSame( $expected, $state );
+	}
+
+	/**
+	 * @covers ::state_redirect
+	 */
+	public function testStateRedirectWithoutRedirectUrl() {
+		$this->testee->redirect_uri = null;
+
+		$state = [
+			'provider' => 'google'
+		];
+
+		$expected = $this->testee->state_redirect( $state );
+		$this->assertSame( $expected, $state );
+	}
 }
