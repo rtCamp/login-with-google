@@ -20,7 +20,7 @@
         "sirbrillig/phpcs-variable-analysis": "^2.10",
         "automattic/vipwpcs": "^2.2",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
-        "phpunit/phpunit": "8.5",
+        "phpunit/phpunit": "9.5",
         "10up/wp_mock": "0.4.2"
     },
     "autoload": {
