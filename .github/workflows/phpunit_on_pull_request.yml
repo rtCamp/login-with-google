@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.1', '7.2', '7.3', '7.4', '8.0']
+        php: ['7.3', '7.4', '8.0']
     runs-on: ubuntu-20.04
 
     steps:
@@ -50,4 +50,4 @@ jobs:
 
       - name: Run PHPUnit
         if: steps.check_files.outputs.files_exists == 'true'
-        run: composer tests:unit
+        run: composer update && composer tests:unit
