@@ -9,7 +9,7 @@
  * Domain Path: /languages
  * License: GPLv2+
  * Requires at least: 5.4.2
- * Requires PHP: 7.0
+ * Requires PHP: 7.3
  *
  * @package RtCamp\GoogleLogin
  * @since 1.0.0
@@ -30,7 +30,7 @@ $hooks = [
 ];
 
 /**
- * PHP 7.1+ is required in order to use the plugin.
+ * PHP 7.3+ is required in order to use the plugin.
  */
 if ( version_compare( PHP_VERSION, '7.3', '<' ) ) {
 	foreach ( $hooks as $hook ) {
