@@ -297,7 +297,7 @@ class Login implements ModuleInterface {
 	 * @return bool
 	 */
 	private function can_register_with_email( string $email ): bool {
-		$whitelisted_domains = explode( PHP_EOL, $this->settings->whitelisted_domains );
+		$whitelisted_domains = explode( ',', $this->settings->whitelisted_domains );
 		$whitelisted_domains = array_map( 'strtolower', $whitelisted_domains );
 		$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
 		$email_parts         = explode( '@', $email );

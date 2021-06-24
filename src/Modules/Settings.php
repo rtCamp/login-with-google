@@ -39,10 +39,10 @@ class Settings implements ModuleInterface {
 	 * @var string[]
 	 */
 	private $getters = [
-		'client_id',
-		'client_secret',
-		'registration_enabled',
-		'whitelisted_domains',
+		'WP_GOOGLE_LOGIN_CLIENT_ID'         => 'client_id',
+		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
+		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
+		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
 	];
 
 	/**
@@ -52,7 +52,9 @@ class Settings implements ModuleInterface {
 	 */
 	public function __get( string $name ) {
 		if ( in_array( $name, $this->getters, true ) ) {
-			return $this->options[ $name ] ?? '';
+			$constant_name = array_search( $name, $this->getters );
+
+			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
 
 		return null;
@@ -208,11 +210,11 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-		<textarea cols="40" rows="5" name="wp_google_login_settings[whitelisted_domains]"><?php echo esc_textarea( $this->whitelisted_domains ); ?></textarea>
-		<p class="description">
-			<?php echo esc_html( __( 'Add each domain on new line', 'login-with-google' ) ); ?>
-		</p>
-		<?php
+        <input type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+        <p class="description">
+			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
+        </p>
+        <?php
 	}
 
 	/**
