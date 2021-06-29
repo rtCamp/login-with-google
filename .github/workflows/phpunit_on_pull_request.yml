@@ -79,16 +79,17 @@ jobs:
         run: |
           branch=$(echo ${GITHUB_REF#refs/heads/})
           repo=$(echo ${GITHUB_REPOSITORY#rtCamp/})
-          rm -rf "$repo/$branch"
-          mkdir -p "$repo/$branch"
-          rsync -avhP code-coverage-report/ "$repo/$branch/"
+          rm -rf "$repo$branch"
+          mkdir -p "$repo$branch"
+          rsync -avhP code-coverage-report/ "$repo$branch/"
           rm -rf code-coverage-report
 
       - name: Commit files
         run: |
+          repo=$(echo ${GITHUB_REPOSITORY#rtCamp/})
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add "$REPO_NAME"
+          git add "$repo"
           git commit -m "artifcat report build: $GITHUB_REPOSITORY@$GITHUB_SHA"
 
       - name: Push changes
