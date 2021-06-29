@@ -97,7 +97,7 @@ generated at `/tmp/report/html`
 
 WordPress >= 5.4.0
 
-PHP >= 7.1 
+PHP >= 7.3 
 
 ## License
 
