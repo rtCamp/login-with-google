@@ -103,5 +103,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          msg: "Code coverage report: https://static-site.rt.gw/$GITHUB_REF"
+          msg: "Code coverage report: https://static-site.rt.gw/${{ github.ref }}"
           check_for_duplicate_msg: true
