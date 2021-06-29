@@ -259,7 +259,7 @@ class PluginTest extends TestCase {
 		);
 
 		WP_Mock::expectActionAdded( 'init', [ $this->testee, 'load_translations' ] );
-		WP_Mock::expectFilter( 'rtcamp.gh_login_modules', $this->testee->active_modules );
+		WP_Mock::expectFilter( 'rtcamp.google_login_modules', $this->testee->active_modules );
 
 		$this->testee->run();
 		$this->assertConditionsMet();
