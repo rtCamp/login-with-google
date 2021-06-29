@@ -397,7 +397,6 @@ class LoginTest extends TestCase {
 	}
 
 	/**
-	 * @group failing
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticationCapturesExceptions() {
@@ -466,6 +465,8 @@ class LoginTest extends TestCase {
 	/**
 	 * @covers ::register
 	 * @covers ::can_register_with_email
+	 *
+	 * @group failing
 	 */
 	public function testRegisterWithWhitelistedDomains() {
 		$this->settingsMock->registration_enabled = true;
@@ -474,7 +475,7 @@ class LoginTest extends TestCase {
 			'domain.com',
 		];
 
-		$this->settingsMock->whitelisted_domains = implode( PHP_EOL, $this->settingsMock->whitelisted_domains );
+		$this->settingsMock->whitelisted_domains = implode( ',', $this->settingsMock->whitelisted_domains );
 
 		$this->wpMockFunction(
 			'get_option',

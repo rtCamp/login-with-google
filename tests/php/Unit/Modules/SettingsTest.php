@@ -277,7 +277,7 @@ class SettingsTest extends TestCase {
 		$this->testee->whitelisted_domains = 'https://example1.com,https://example2.com';
 
 		$this->wpMockFunction(
-			'esc_textarea',
+			'esc_attr',
 			[
 				'https://example1.com,https://example2.com',
 			],
@@ -287,7 +287,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'esc_html',
 			[
-				__( 'Add each domain on new line', 'login-with-google' )
+				__( 'Add each domain comma separated', 'login-with-google' )
 			],
 			1,
 		);
