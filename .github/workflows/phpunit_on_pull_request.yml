@@ -77,11 +77,12 @@ jobs:
 
       - name: Move report into correct location
         run: |
+          ls -lah
           branch=$(echo ${GITHUB_REF#refs/heads/})
           repo=$(echo ${GITHUB_REPOSITORY#rtCamp/})
           rm -rf "$repo/$branch"
           mkdir -p "$repo/$branch"
-          rsync -avhP /tmp/report/html/ "$repo/$branch/"
+          rsync -avhP tmp/report/html/ "$repo/$branch/"
           rm -rf code-coverage-report
 
       - name: Commit files
