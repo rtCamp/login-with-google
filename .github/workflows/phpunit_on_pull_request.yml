@@ -78,12 +78,10 @@ jobs:
 
       - name: Move report into correct location
         run: |
-          branch=$(echo ${GITHUB_REF#refs/heads/})
           repo=$(echo ${GITHUB_REPOSITORY#rtCamp/})
-          rm -rf "$repo/$branch"
-          mkdir -p "$repo/$branch"
-          rsync -avhP /tmp/report/html/ "$repo/$branch/"
-          rm -rf code-coverage-report
+          rm -rf "$repo/$GITHUB_REF"
+          mkdir -p "$repo/$GITHUB_REF"
+          rsync -avhP /tmp/report/html/ "$repo/$GITHUB_REF/"
 
       - name: Commit files
         run: |
@@ -99,3 +97,11 @@ jobs:
           github_token: ${{ secrets.RTBOT_TOKEN }}
           branch: main
           repository: rtCamp/static-site.rt.gw
+
+      - name: Comment URL on PR
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg: "Code coverage report: https://static-site.rt.gw/$GITHUB_REF"
+          check_for_duplicate_msg: true
