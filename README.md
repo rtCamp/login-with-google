@@ -55,10 +55,12 @@ file.
 
 Refer following list of constants.
 
-1. `WP_GOOGLE_LOGIN_CLIENT_ID` : Configure client ID for the app.
-2. `WP_GOOGLE_LOGIN_SECRET`: Client secret for the app.
-3. `WP_GOOGLE_LOGIN_USER_REGISTRATION`: Enable/disable user registration.
-4. `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS`: Comma separated whitelisted domains.
+|                                   | Type    | Description                                                                                                                                                                 |
+|-----------------------------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| WP_GOOGLE_LOGIN_CLIENT_ID         | String  | Google client ID of your application.                                                                                                                                       |
+| WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                              |
+| WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. |
+| WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                   |
 
 These constants can also be configured 
 via [wp-cli](https://developer.wordpress.org/cli/commands/config/). 
@@ -83,6 +85,32 @@ You can add the google login button to any page/post using shortcode: `google_lo
 | force_display  | Whether to display button when user is already logged in      | yes/no | no                 |
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
+## Contribute
+
+### Reporting a bug 🐞
+
+Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes.
+
+If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
+
+### Creating a pull request
+
+Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/login-with-google/issues).
+
+Once you're ready to send a pull request, please run through the following checklist:
+
+1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
+
+1. Fork this repository.
+
+1. Create a branch from `develop` for each issue you'd like to address and commit your changes.
+
+1. Push the code changes from your local clone to your fork.
+
+1. Open a pull request and that's it! We'll with feedback as soon as possible (Isn't collaboration a great thing? 😌)
+
+1. Once your pull request has passed final code review and tests, it will be merged into `develop` and be in the pipeline for the next release. Props to you! 🎉
+
 
 ## Unit testing
 
@@ -103,3 +131,7 @@ PHP >= 7.3
 
 This library is released under
 ["GPL 2.0 or later" License](LICENSE).
+
+## BTW, We're Hiring!
+
+<a href="https://rtcamp.com/"><img src="https://rtcamp.com/wp-content/uploads/2019/04/github-banner@2x.png" alt="Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions"></a>
