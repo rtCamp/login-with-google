@@ -5,6 +5,9 @@
 1. [Overview](#overview)
 2. [Installation](#installation)
 3. [Usage Instructions](#usage-instructions)
+   
+   [Plugin Constants](#plugin-constants)
+
 4. [Shortcode](#shortcode)
 5. [Minimum Requirements](#minimum-requirements)
 6. [License](#license)
@@ -44,6 +47,22 @@ website, you enter `myorg.com` in whitelisted domains. Users with google
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
    
+
+### Plugin Constants
+
+Above mentioned settings can also be configured via PHP constants by defining them in wp-config.php
+file.
+
+Refer following list of constants.
+
+1. `WP_GOOGLE_LOGIN_CLIENT_ID` : Configure client ID for the app.
+2. `WP_GOOGLE_LOGIN_SECRET`: Client secret for the app.
+3. `WP_GOOGLE_LOGIN_USER_REGISTRATION`: Enable/disable user registration.
+4. `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS`: Comma separated whitelisted domains.
+
+These constants can also be configured 
+via [wp-cli](https://developer.wordpress.org/cli/commands/config/)
+
 ## Shortcode
 
 You can add the google login button to any page/post using shortcode: `google_login` 
