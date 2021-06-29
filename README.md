@@ -61,7 +61,10 @@ Refer following list of constants.
 4. `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS`: Comma separated whitelisted domains.
 
 These constants can also be configured 
-via [wp-cli](https://developer.wordpress.org/cli/commands/config/)
+via [wp-cli](https://developer.wordpress.org/cli/commands/config/). 
+
+**Note:** If you have defined the constant in wp-config.php file, corresponding settings field will be disable 
+(locked for editing) on the settings page.
 
 ## Shortcode
 

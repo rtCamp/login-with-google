@@ -139,7 +139,7 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function client_id_field(): void { ?>
-		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" />
+		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
 		<p class="description">
 			<?php
 			echo wp_kses_post(
@@ -162,7 +162,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function client_secret_field(): void {
 		?>
-		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" />
+		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
 		<?php
 	}
 
@@ -178,7 +178,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function user_registration(): void {
 		?>
-		<label style='display:block;margin-top:6px;'><input type='checkbox'
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'registration_enabled' ); ?> type='checkbox'
 															name='wp_google_login_settings[registration_enabled]'
 															id="user-registration" <?php echo esc_attr( checked( $this->registration_enabled ) ); ?>
 															value='1'>
@@ -210,7 +210,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-        <input type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+        <input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
         <p class="description">
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
         </p>
@@ -250,4 +250,26 @@ class Settings implements ModuleInterface {
 		</div>
 		<?php
 	}
+
+	/**
+	 * Outputs the disabled attribute if field needs to
+     * be disabled.
+     *
+     * @param string $id Input ID.
+     *
+     * @return void
+	 */
+	private function disabled( string $id ): void {
+	    if ( empty( $id ) ) {
+	        return;
+	    }
+
+	    $constant_name = array_search( $id, $this->getters, true );
+
+	    if ( false !== $constant_name ) {
+	        if ( defined( $constant_name ) ) {
+	            echo esc_attr( 'disabled="disabled"' );
+            }
+        }
+    }
 }
