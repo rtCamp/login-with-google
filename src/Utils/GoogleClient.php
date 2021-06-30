@@ -132,12 +132,29 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function authorization_url(): string {
+		$plugin_scope = [
+			'email',
+			'profile',
+			'openid',
+		];
+
+		$scope = apply_filters_deprecated(
+			'wp_google_login_scopes',
+			[
+				$plugin_scope
+			],
+			'1.0.15',
+			'rtcamp.google_scope'
+		);
+
+		$scope = apply_filters( 'rtcamp.google_scope', $scope );
+
 		return self::AUTHORIZE_URL . '?' . http_build_query(
 				[
 					'client_id'     => $this->client_id,
 					'redirect_uri'  => $this->gt_redirect_url(),
 					'state'         => $this->state(),
-					'scope'         => 'email profile openid',
+					'scope'         => implode( ' ', $scope ),
 					'access_type'   => 'online',
 					'response_type' => 'code',
 				]

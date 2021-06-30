@@ -465,8 +465,6 @@ class LoginTest extends TestCase {
 	/**
 	 * @covers ::register
 	 * @covers ::can_register_with_email
-	 *
-	 * @group failing
 	 */
 	public function testRegisterWithWhitelistedDomains() {
 		$this->settingsMock->registration_enabled = true;
