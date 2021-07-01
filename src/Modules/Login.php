@@ -242,7 +242,7 @@ class Login implements ModuleInterface {
 	 */
 	public function state_redirect( array $state ): array {
 		$redirect_to          = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_STRING );
-		$state['redirect_to'] = $redirect_to;
+		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', admin_url() );
 
 		return $state;
 	}
