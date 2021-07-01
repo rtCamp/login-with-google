@@ -4,13 +4,13 @@ Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.0
 Tested up to: 5.7
-Requires PHP: 7.0
-Stable tag: 1.0.14
+Requires PHP: 7.3
+Stable tag: 1.0.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
- 
+
 Minimal plugin that allows WordPress users to log in using Google.
- 
+
 == Description ==
 
 Minimal plugin that allows WordPress users to log in using Google.
@@ -51,7 +51,7 @@ Add your domain name, without any schema prefix and `www,` as the value of `WP_G
 = Hooks =
 
 Action `wp_google_login_token`
-This action provides access token received after Google login.  
+This action provides access token received after Google login.
 **Parameters:**
 
 * `token` (Array): Converted token using `fetchAccessTokenWithAuthCode` method of `Google_Client` class.
@@ -75,24 +75,24 @@ This filter will provide 1 parameter `scopes` in callback, which contains array 
 [Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions](https://rtcamp.com/)
 
 == Installation ==
- 
+
 1. Upload `plugin-name.php` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Follow "Setup" instructions in ReadMe to configure credentials from Google Developers Console.
- 
+
 == Frequently Asked Questions ==
- 
+
 = Reporting a bug 🐞 =
- 
-Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes. 
+
+Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes.
 
 If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce the issue, if possible.
- 
+
 = Creating a pull request =
- 
+
 Want to contribute a new feature? Start a conversation by [logging an issue](https://github.com/rtCamp/login-with-google/issues).
 
-Once you're ready to send a pull request, please run through the following checklist: 
+Once you're ready to send a pull request, please run through the following checklist:
 
 1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
 
@@ -115,14 +115,21 @@ Once you're ready to send a pull request, please run through the following check
 - Execute `phpunit` in terminal from repository to run all test cases.
 
 - Execute `phpunit ./tests/inc/test-class.php` in terminal with file path to run specific tests.
- 
+
 == Screenshots ==
- 
+
 1. Login screen with Google option added.
 2. Plugin settings screen.
 3. Settings within Google Developer Console.
- 
+
 == Changelog ==
+
+= 1.0.15 =
+* Feature: Custom GoogleClient class for OAuth.
+* Feature: Shortcode support.
+* Code: Rewrite of code.
+* Fix: Identification of state value, whether it is relevant to plugin.
+* Remove: Google OAuth library from composer.
 
 = 1.0.14 =
 * Revert Login with GitHub state fix.
@@ -141,7 +148,7 @@ Once you're ready to send a pull request, please run through the following check
 
 = 1.0.9 =
 * Initial release.
- 
+
 == Upgrade Notice ==
 
 = 1.0.10 =
