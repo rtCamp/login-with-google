@@ -620,7 +620,7 @@ class LoginTest extends TestCase {
 	/**
 	 * @covers ::state_redirect
 	 */
-	public function testStateRedirect() {
+	public function testStateRedirectWithRedirectTo() {
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
@@ -634,6 +634,32 @@ class LoginTest extends TestCase {
 
 		$this->assertIsArray( $state_data );
 		$this->assertContains( 'https://example.com/state-page', $state_data );
+	}
+
+	/**
+	 * @covers ::state_redirect
+	 */
+	public function testStateRedirectWithoutRedirectTo() {
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'redirect_to',
+				FILTER_SANITIZE_STRING
+			]
+		)->andReturn( null );
+
+		$this->wpMockFunction(
+			'admin_url',
+			[],
+			1,
+			'https://example.com/login'
+		);
+
+		WP_Mock::expectFilter( 'rtcamp.google_default_redirect', 'https://example.com/login' );
+		$state_data = $this->testee->state_redirect( [] );
+		$this->assertIsArray( $state_data );
+		$this->assertContains( 'https://example.com/login', $state_data );
 	}
 
 	/**

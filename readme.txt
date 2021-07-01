@@ -50,14 +50,6 @@ Add your domain name, without any schema prefix and `www,` as the value of `WP_G
 
 = Hooks =
 
-Action `wp_google_login_token`
-This action provides access token received after Google login.
-**Parameters:**
-
-* `token` (Array): Converted token using `fetchAccessTokenWithAuthCode` method of `Google_Client` class.
-* `user_info` (Array): Details of user after login.
-* `client` (Object): `Google_Client` object in use.
-
 Filter `wp_google_login_scopes`
 This filter can be used to filter existing scope used in Google Sign in.
 You can ask for additional permission while user logs in.
