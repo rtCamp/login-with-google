@@ -20,6 +20,7 @@ use Pimple\Container as PimpleContainer;
 use InvalidArgumentException;
 use RtCamp\GoogleLogin\Modules\Assets;
 use RtCamp\GoogleLogin\Modules\Login;
+use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Modules\Shortcode;
@@ -136,6 +137,17 @@ class Container implements ContainerInterface {
 		 */
 		$this->container['shortcode'] = function ( PimpleContainer $c ) {
 			return new Shortcode( $c['gh_client'], $c['assets'] );
+		};
+
+		/**
+		 * One Tap Login Service.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return OneTapLogin
+		 */
+		$this->container['one_tap_login'] = function ( PimpleContainer $c ) {
+			return new OneTapLogin( $c['settings'] );
 		};
 
 		/**

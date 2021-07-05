@@ -11,5 +11,6 @@ mix.options( {
 } );
 
 mix.copy( 'src/images', 'build/images' )
+	.copy( 'src/js/onetap.js', 'build/js' )
 	.js( 'src/js/login.js', 'build/js' )
 	.sass( 'src/scss/login.scss', 'build/css' );

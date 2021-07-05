@@ -21,6 +21,7 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * @property string|null client_id
  * @property string|null client_secret
  * @property bool|null registration_enabled
+ * @property bool|null one_tap_login
  *
  * @package RtCamp\GoogleLogin\Modules
  */
@@ -43,6 +44,7 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
 		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
+		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
 	];
 
 	/**
@@ -124,6 +126,15 @@ class Settings implements ModuleInterface {
 		);
 
 		add_settings_field(
+			'wp_google_one_tap_login',
+			__( 'Enable One Tap Login', 'login-with-google' ),
+			[ $this, 'one_tap_login' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'one-tap-login' ]
+		);
+
+		add_settings_field(
 			'wp_google_whitelisted_domain',
 			__( 'Whitelisted Domains', 'login-with-google' ),
 			[ $this, 'whitelisted_domains' ],
@@ -195,6 +206,22 @@ class Settings implements ModuleInterface {
 			);
 			?>
 		</p>
+		<?php
+	}
+
+	/**
+	 * Toggle One Tap Login functionality.
+	 *
+	 * @return void
+	 */
+	public function one_tap_login(): void { ?>
+        <label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+                    type='checkbox'
+                    name='wp_google_login_settings[one_tap_login]'
+                    id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
+                    value='1'>
+			<?php esc_html_e( 'Enable One Tap Login', 'login-with-google' ); ?>
+        </label>
 		<?php
 	}
 
