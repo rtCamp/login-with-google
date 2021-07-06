@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin\Modules;
 
-use Mockery\Exception;
+use Exception;
 use RtCamp\GoogleLogin\Utils\Helper;
 use RtCamp\GoogleLogin\Interfaces\Module;
 use RtCamp\GoogleLogin\Utils\TokenVerifier;
@@ -42,7 +42,8 @@ class OneTapLogin implements Module {
 	/**
 	 * OneTapLogin constructor.
 	 *
-	 * @param Settings $settings Settings object.
+	 * @param Settings      $settings Settings object.
+	 * @param TokenVerifier $verifier Token verifier object.
 	 */
 	public function __construct( Settings $settings, TokenVerifier $verifier ) {
 		$this->settings       = $settings;
@@ -68,6 +69,7 @@ class OneTapLogin implements Module {
 			add_action( 'login_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
 			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
+			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
 		}
 	}
 
@@ -122,19 +124,57 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function validate_token(): void {
-	    try {
-		    $token    = Helper::filter_input( INPUT_POST, 'token', FILTER_SANITIZE_STRING );
-		    $verified = $this->token_verifier->verify_token( $token );
+		try {
+			$token    = Helper::filter_input( INPUT_POST, 'token', FILTER_SANITIZE_STRING );
+			$verified = $this->token_verifier->verify_token( $token );
 
-		    if ( ! $verified ) {
-		        throw new Exception( __( 'Cannot verify the credentials', 'login-with-google' ) );
-            }
+			if ( ! $verified ) {
+				throw new Exception( __( 'Cannot verify the credentials', 'login-with-google' ) );
+			}
 
-		    wp_send_json_success();
-		    die;
+			/**
+             * Do something when token has been verified successfully.
+             *
+			 * If we are here that means ID token has been verified.
+             *
+             * @since 1.0.16
+			 */
+			do_action( 'rtcamp.id_token_verified' );
 
-	    } catch ( Exception $e ) {
-	        wp_send_json_error( $e->getMessage() );
+			wp_send_json_success(
+				[
+					'redirect' => admin_url(),
+				]
+			);
+			die;
+
+		} catch ( Exception $e ) {
+			wp_send_json_error( $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Authenticate the user in WordPress.
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function authenticate(): void {
+	    $user = $this->token_verifier->current_user();
+
+	    if ( is_null( $user ) ) {
+	        throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
         }
+
+	    if ( email_exists( $user->email ) ) {
+	        $wp_user_obj = get_user_by( 'email', $user->email );
+		    wp_clear_auth_cookie();
+		    wp_set_current_user( $wp_user_obj->ID, $wp_user_obj->user_login );
+		    wp_set_auth_cookie( $wp_user_obj->ID );
+
+		    return;
+	    }
+
+		throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
 	}
 }

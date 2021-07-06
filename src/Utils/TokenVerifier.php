@@ -12,8 +12,9 @@ declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin\Utils;
 
+use Exception;
 use RtCamp\GoogleLogin\Modules\Settings;
-use WP_User;
+use stdClass;
 
 /**
  * Class TokenVerifier
@@ -47,7 +48,7 @@ class TokenVerifier {
 	/**
 	 * User who needs to be authenticated.
 	 *
-	 * @var WP_User
+	 * @var stdClass
 	 */
 	private $current_user;
 
@@ -88,19 +89,23 @@ class TokenVerifier {
 	 * @param $token
 	 *
 	 * @return bool
+	 * @throws Exception
 	 */
 	public function verify_token( $token ): bool {
 		$this->token = $token;
 
-		if ( ! $this->is_valid_jwt() ) {
-			return false;
-		}
+		try {
+			$this->is_valid_jwt();
+			$this->is_valid_signature();
+			$this->valid_data();
 
-		if ( ! $this->is_valid_signature() ) {
-			return false;
-		}
+			return true;
+		} catch ( Exception $e ) {
 
-		return true;
+			do_action( 'rtcamp.login_with_google_exception', $e );
+
+			throw $e;
+		}
 	}
 
 	/**
@@ -123,6 +128,18 @@ class TokenVerifier {
 	 */
 	public function base64_decode_url( string $string) {
 		return base64_decode(str_replace(['-','_'], ['+','/'], $string));
+	}
+
+	/**
+	 * Retrieve current user's data.
+	 *
+	 * Current user is Google user, not WP user.
+	 *
+	 * @return stdClass|null
+	 */
+	public function current_user(): ?stdClass {
+
+		return $this->current_user;
 	}
 
 	/**
@@ -153,12 +170,13 @@ class TokenVerifier {
 	 * Checks whether received token is valid JWT token or not.
 	 *
 	 * @return array|null Decoded informational array with Header|Payload|Signature form.
+	 * @throws Exception
 	 */
 	private function is_valid_jwt(): ?array {
 		$parts = explode( '.', $this->token );
 
 		if ( ! is_array( $parts ) || 3 !== sizeof( $parts ) ) {
-			return null;
+			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
 		}
 
 		list( $header, $payload, $obtained_signature ) = $parts;
@@ -166,7 +184,7 @@ class TokenVerifier {
 		$payload = $this->base64_decode_url( $payload );
 
 		if ( ! $header || ! $payload ) {
-			return null;
+			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
 		}
 
 		return [
@@ -179,9 +197,10 @@ class TokenVerifier {
 	/**
 	 * Verifies the signature in token.
 	 *
-	 * @return bool
+	 * @return void
+	 * @throws Exception Failed signature verification.
 	 */
-	private function is_valid_signature(): bool {
+	private function is_valid_signature(): void {
 		list( $header, $payload, $obtained_signature ) = $this->is_valid_jwt();
 		$parsed_header = json_decode( $header );
 		$parsed_header = wp_parse_args(
@@ -194,7 +213,7 @@ class TokenVerifier {
 		);
 
 		if ( ! $parsed_header['kid'] || ! $parsed_header['alg'] ) {
-			return false;
+			throw new Exception( __( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
 		}
 
 		$pubkey_pem           = $this->get_public_key( $parsed_header['kid'] );
@@ -202,13 +221,48 @@ class TokenVerifier {
 		$data                 = $this->base64_encode_url( $header ) . '.' . $this->base64_encode_url( $payload );
 		$calculated_signature = openssl_verify( $data, $this->base64_decode_url( $obtained_signature ), $decryption_key, self::get_supported_algorithm( $parsed_header['alg'] ) );
 
-		if ( 1 === $calculated_signature ) {
-			$this->current_user = $payload;
+		if ( 1 === (int) $calculated_signature ) {
+			$this->current_user = json_decode( $payload );
 
-			return true;
+			return;
 		}
 
-		return false;
+		throw new Exception( __( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
+	}
+
+	/**
+	 * Check the validity of data.
+	 *
+	 * @throws Exception If user is not set.
+	 */
+	private function valid_data(): void {
+		if ( is_null( $this->current_user ) ) {
+			throw new Exception( __( 'No user present to validate', 'login-with-google' ) );
+		}
+
+		if ( $this->settings->client_id !== $this->current_user->aud ) {
+			throw new Exception( __( 'Invalid data found for authentication', 'login-with-google' ) );
+		}
+
+		if ( ! in_array( $this->current_user->iss, [ 'accounts.google.com', 'https://accounts.google.com' ], true ) ) {
+			throw new Exception( __( 'Invalid source found for authentication', 'login-with-google' ) );
+		}
+
+		if ( $this->current_user->exp < strtotime( 'now' ) ) {
+			throw new Exception( __( 'User data is stale! Please try again.', 'login-with-google' ) );
+		}
+
+		$whitelisted_domains = $this->settings->whitelisted_domains;
+
+		if ( ! empty( $whitelisted_domains ) ) {
+			$whitelisted_domains = explode( ',', $this->settings->whitelisted_domains );
+			$whitelisted_domains = array_map( 'strtolower', $whitelisted_domains );
+			$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
+
+			if ( ! in_array( $this->current_user->hd, $whitelisted_domains ) ) {
+				throw new Exception( __( 'Cannot login with this email.', 'login-with-google' ) );
+			}
+		}
 	}
 
 }
