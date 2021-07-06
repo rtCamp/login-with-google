@@ -85,7 +85,7 @@ class Shortcode implements ModuleInterface {
 	 *
 	 * @return string
 	 */
-	public function callback( array $attrs = [] ): string {
+	public function callback( $attrs = [] ): string {
 		$attrs = shortcode_atts(
 			[
 				'button_text'   => __( 'Login with google', 'login-with-google' ),

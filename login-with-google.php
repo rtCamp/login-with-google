@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Login with Google
  * Description: Allow users to login/register via Google.
- * Version: 1.0.15
+ * Version: 1.1
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: login-with-google

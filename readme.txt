@@ -5,7 +5,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 7.3
-Stable tag: 1.0.15
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,10 @@ This filter will provide 1 parameter `scopes` in callback, which contains array 
 * `WP_GOOGLE_LOGIN_USER_REGISTRATION` (boolean) (optional): Set `true` If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.
 * `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` (string) (optional): Domain names, if you want to restrict login with your custom domain. By default, it will allow all domains. You can whitelist multiple domains.
 
+= Shortcode =
+
+The plugin makes available the `[google_login]` shortcode with optional attributes: `[google_login button_text="Login with Google" force_display="no" redirect_to="https://example.url/page"]`
+
 = BTW, We're Hiring! =
 
 [Join us at rtCamp, we specialize in providing high performance enterprise WordPress solutions](https://rtcamp.com/)
@@ -116,12 +120,11 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
-= 1.0.15 =
-* Feature: Custom GoogleClient class for OAuth.
-* Feature: Shortcode support.
-* Code: Rewrite of code.
-* Fix: Identification of state value, whether it is relevant to plugin.
-* Remove: Google OAuth library from composer.
+= 1.1 =
+* Feature: Add shortcode `[google_login]` with optional attributes: `[google_login button_text="Login with Google" force_display="no" redirect_to="https://example.url/page"]`.
+* Feature: Replace third-party oAuth client with custom GoogleClient class.
+* Fix: Identification of state value, whether a given oAuth login is relevant to this plugin.
+* Remove: Google oAuth library from composer.
 
 = 1.0.14 =
 * Revert Login with GitHub state fix.
@@ -143,5 +146,7 @@ Once you're ready to send a pull request, please run through the following check
 
 == Upgrade Notice ==
 
-= 1.0.10 =
-* Fix issue where JS/CSS were not loding.
+* Feature: Add shortcode `[google_login]` with optional attributes: `[google_login button_text="Login with Google" force_display="no" redirect_to="https://example.url/page"]`.
+* Feature: Replace third-party oAuth client with custom GoogleClient class.
+* Fix: Identification of state value, whether a given oAuth login is relevant to this plugin.
+* Remove: Google oAuth library from composer.
