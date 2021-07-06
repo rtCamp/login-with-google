@@ -24,6 +24,7 @@ use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Modules\Shortcode;
+use RtCamp\GoogleLogin\Utils\TokenVerifier;
 
 /**
  * Class Container
@@ -140,6 +141,19 @@ class Container implements ContainerInterface {
 		};
 
 		/**
+		 * Define Token Verifier Service.
+		 *
+		 * Useful in verifying JWT Auth token.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return TokenVerifier
+		 */
+		$this->container['token_verifier'] = function ( PimpleContainer $c ) {
+			return new TokenVerifier( $c['settings'] );
+		};
+
+		/**
 		 * One Tap Login Service.
 		 *
 		 * @param PimpleContainer $c Pimple container object.
@@ -147,7 +161,7 @@ class Container implements ContainerInterface {
 		 * @return OneTapLogin
 		 */
 		$this->container['one_tap_login'] = function ( PimpleContainer $c ) {
-			return new OneTapLogin( $c['settings'] );
+			return new OneTapLogin( $c['settings'], $c['token_verifier'] );
 		};
 
 		/**
