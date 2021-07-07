@@ -96,12 +96,12 @@ class OneTapLogin implements Module {
 	 *
 	 * @return void
 	 */
-	public function one_tap_prompt(): void {?>
-		<div id="g_id_onload"
-		     data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
-		     data-login_uri="<?php echo wp_login_url(); ?>"
-		     data-callback="LoginWithGoogleDataCallBack"
-		</div>
+	public function one_tap_prompt(): void { ?>
+        <div id="g_id_onload"
+             data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
+             data-login_uri="<?php echo wp_login_url(); ?>"
+             data-callback="LoginWithGoogleDataCallBack"
+        </div>
 		<?php
 	}
 
@@ -118,7 +118,7 @@ class OneTapLogin implements Module {
 
 		$data = [
 			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-            'redirect' => $this->google_client->state(),
+            'state'    => $this->google_client->state(),
 		];
 
 		wp_register_script(
@@ -160,9 +160,17 @@ class OneTapLogin implements Module {
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
+			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_STRING );
+			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
+
+			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
+				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
+			}
+
 			wp_send_json_success(
 				[
-					'redirect' => admin_url(),
+					'redirect' => $redirect_to,
 				]
 			);
 			die;
