@@ -33,6 +33,11 @@ class Authenticator {
 	 */
 	private $settings;
 
+	/**
+	 * Authenticator constructor.
+	 *
+	 * @param Settings $settings Settings instance.
+	 */
 	public function __construct( Settings $settings ) {
 		$this->settings = $settings;
 	}
@@ -46,6 +51,7 @@ class Authenticator {
 	 * @param stdClass $user User data object returned by Google.
 	 *
 	 * @return WP_User
+	 * @throws InvalidArgumentException For invalid registrations.
 	 */
 	public function authenticate( stdClass $user ): WP_User {
 		if ( ! property_exists( $user, 'email' ) ) {
@@ -112,6 +118,8 @@ class Authenticator {
 
 	/**
 	 * Set auth cookies for WordPress login.
+	 *
+	 * @param WP_User $user WP User object.
 	 *
 	 * @return void
 	 */

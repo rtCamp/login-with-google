@@ -111,6 +111,7 @@ class Login implements ModuleInterface {
 	 * @param WP_User|null $user User object. Default is null.
 	 *
 	 * @return WP_User|WP_Error
+	 * @throws Exception During authentication.
 	 */
 	public function authenticate( $user = null ) {
 		if ( $user instanceof WP_User ) {
@@ -123,8 +124,8 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
-		$state          = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
-		$decoded_state  = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
+		$state         = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
 
 		if ( ! is_array( $decoded_state ) || empty( $decoded_state['provider'] ) || 'google' !== $decoded_state['provider'] ) {
 			return $user;
@@ -155,7 +156,7 @@ class Login implements ModuleInterface {
 	/**
 	 * Add extra meta information about user.
 	 *
-	 * @param int      $uid  User ID.
+	 * @param int $uid  User ID.
 	 *
 	 * @return void
 	 */
@@ -187,7 +188,7 @@ class Login implements ModuleInterface {
 	 * @return array
 	 */
 	public function state_redirect( array $state ): array {
-		$redirect_to          = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_STRING );
+		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_STRING );
 		/**
 		 * Filter the default redirect URL in case redirect_to param is not available.
 		 * Default to admin URL.
@@ -214,7 +215,7 @@ class Login implements ModuleInterface {
 		$state = base64_decode( $state );
 		$state = $state ? json_decode( $state ) : null;
 
-		if ( ( $state instanceof stdClass ) && ! empty( $state->provider ) && 'google' === $state->provider && ! empty ( $state->redirect_to ) ) {
+		if ( ( $state instanceof stdClass ) && ! empty( $state->provider ) && 'google' === $state->provider && ! empty( $state->redirect_to ) ) {
 			wp_safe_redirect( $state->redirect_to );
 			exit;
 		}

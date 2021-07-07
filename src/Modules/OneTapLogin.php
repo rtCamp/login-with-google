@@ -35,20 +35,22 @@ class OneTapLogin implements Module {
 	private $settings;
 
 	/**
-     * Token verifier.
-     *
+	 * Token verifier.
+	 *
 	 * @var TokenVerifier
 	 */
 	private $token_verifier;
 
 	/**
+	 * Google client instance.
+	 *
 	 * @var GoogleClient
 	 */
 	private $google_client;
 
 	/**
-     * Authenticator service.
-     *
+	 * Authenticator service.
+	 *
 	 * @var Authenticator
 	 */
 	private $authenticator;
@@ -97,50 +99,55 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_prompt(): void { ?>
-        <div id="g_id_onload"
-             data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
-             data-login_uri="<?php echo wp_login_url(); ?>"
-             data-callback="LoginWithGoogleDataCallBack"
-        </div>
+		<div id="g_id_onload"
+			 data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
+			 data-login_uri="<?php echo esc_html( wp_login_url() ); ?>"
+			 data-callback="LoginWithGoogleDataCallBack"
+		</div>
 		<?php
 	}
 
 	/**
 	 * Enqueue one-tap related scripts.
-     *
-     * @return void
+	 *
+	 * @return void
 	 */
 	public function one_tap_scripts(): void {
-	    wp_enqueue_script(
-	            'login-with-google-one-tap',
-            'https://accounts.google.com/gsi/client'
-        );
+		wp_enqueue_script(
+			'login-with-google-one-tap',
+			'https://accounts.google.com/gsi/client',
+			[],
+			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
+			true
+		);
 
 		$data = [
-			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-            'state'    => $this->google_client->state(),
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'state'   => $this->google_client->state(),
 		];
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
 			trailingslashit( plugin()->url ) . 'assets/build/js/onetap.js',
 			[],
-			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' )
+			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
+			true
 		);
 
 		wp_add_inline_script(
-		        'login-with-google-one-tap-js',
-            'var TempAccessOneTap=' . json_encode( $data ),
-            'before'
-        );
+			'login-with-google-one-tap-js',
+			'var TempAccessOneTap=' . json_encode( $data ), //phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
+			'before'
+		);
 
 		wp_enqueue_script( 'login-with-google-one-tap-js' );
-    }
+	}
 
 	/**
 	 * Validate the ID token.
 	 *
 	 * @return void
+	 * @throws Exception Credential verification failure exception.
 	 */
 	public function validate_token(): void {
 		try {
@@ -152,11 +159,11 @@ class OneTapLogin implements Module {
 			}
 
 			/**
-             * Do something when token has been verified successfully.
-             *
+			 * Do something when token has been verified successfully.
+			 *
 			 * If we are here that means ID token has been verified.
-             *
-             * @since 1.0.16
+			 *
+			 * @since 1.0.16
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
@@ -184,7 +191,7 @@ class OneTapLogin implements Module {
 	 * Authenticate the user in WordPress.
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws Exception Authentication exception.
 	 */
 	public function authenticate(): void {
 		$user = $this->token_verifier->current_user();

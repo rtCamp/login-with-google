@@ -214,14 +214,15 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function one_tap_login(): void { ?>
-        <label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-                    type='checkbox'
-                    name='wp_google_login_settings[one_tap_login]'
-                    id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
-                    value='1'>
+	public function one_tap_login(): void { 
+		?>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='checkbox'
+					name='wp_google_login_settings[one_tap_login]'
+					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
+					value='1'>
 			<?php esc_html_e( 'Enable One Tap Login', 'login-with-google' ); ?>
-        </label>
+		</label>
 		<?php
 	}
 
@@ -237,11 +238,11 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-        <input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
-        <p class="description">
+		<input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+		<p class="description">
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
-        </p>
-        <?php
+		</p>
+		<?php
 	}
 
 	/**
@@ -280,23 +281,23 @@ class Settings implements ModuleInterface {
 
 	/**
 	 * Outputs the disabled attribute if field needs to
-     * be disabled.
-     *
-     * @param string $id Input ID.
-     *
-     * @return void
+	 * be disabled.
+	 *
+	 * @param string $id Input ID.
+	 *
+	 * @return void
 	 */
 	private function disabled( string $id ): void {
-	    if ( empty( $id ) ) {
-	        return;
-	    }
+		if ( empty( $id ) ) {
+			return;
+		}
 
-	    $constant_name = array_search( $id, $this->getters, true );
+		$constant_name = array_search( $id, $this->getters, true );
 
-	    if ( false !== $constant_name ) {
-	        if ( defined( $constant_name ) ) {
-	            echo esc_attr( 'disabled="disabled"' );
-            }
-        }
-    }
+		if ( false !== $constant_name ) {
+			if ( defined( $constant_name ) ) {
+				echo esc_attr( 'disabled="disabled"' );
+			}
+		}
+	}
 }

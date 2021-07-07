@@ -86,12 +86,12 @@ class TokenVerifier {
 	/**
 	 * Verify if a token is valid or not.
 	 *
-	 * @param $token
+	 * @param string $token Received ID token from Google.
 	 *
 	 * @return bool
-	 * @throws Exception
+	 * @throws Exception Token verification failure exception.
 	 */
-	public function verify_token( $token ): bool {
+	public function verify_token( string $token ): bool {
 		$this->token = $token;
 
 		try {
@@ -116,7 +116,7 @@ class TokenVerifier {
 	 * @return array|string|string[]
 	 */
 	public function base64_encode_url( $string ) {
-		return str_replace(['+','/','='], ['-','_',''], base64_encode($string));
+		return str_replace( [ '+', '/', '=' ], [ '-', '_', '' ], base64_encode( $string ) );
 	}
 
 	/**
@@ -126,8 +126,8 @@ class TokenVerifier {
 	 *
 	 * @return false|string
 	 */
-	public function base64_decode_url( string $string) {
-		return base64_decode(str_replace(['-','_'], ['+','/'], $string));
+	public function base64_decode_url( string $string ) {
+		return base64_decode( str_replace( [ '-', '_' ], [ '+', '/' ], $string ) );
 	}
 
 	/**
@@ -154,6 +154,7 @@ class TokenVerifier {
 			return null;
 		}
 
+		//phpcs:disable WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		$certs = wp_remote_get( self::CERTS_URL );
 
 		if ( 200 !== wp_remote_retrieve_response_code( $certs ) ) {
@@ -170,18 +171,18 @@ class TokenVerifier {
 	 * Checks whether received token is valid JWT token or not.
 	 *
 	 * @return array|null Decoded informational array with Header|Payload|Signature form.
-	 * @throws Exception
+	 * @throws Exception ID token invalid.
 	 */
 	private function is_valid_jwt(): ?array {
 		$parts = explode( '.', $this->token );
 
-		if ( ! is_array( $parts ) || 3 !== sizeof( $parts ) ) {
+		if ( ! is_array( $parts ) || 3 !== count( $parts ) ) {
 			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
 		}
 
 		list( $header, $payload, $obtained_signature ) = $parts;
-		$header  = $this->base64_decode_url( $header );
-		$payload = $this->base64_decode_url( $payload );
+		$header                                        = $this->base64_decode_url( $header );
+		$payload                                       = $this->base64_decode_url( $payload );
 
 		if ( ! $header || ! $payload ) {
 			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
@@ -202,8 +203,8 @@ class TokenVerifier {
 	 */
 	private function is_valid_signature(): void {
 		list( $header, $payload, $obtained_signature ) = $this->is_valid_jwt();
-		$parsed_header = json_decode( $header );
-		$parsed_header = wp_parse_args(
+		$parsed_header                                 = json_decode( $header );
+		$parsed_header                                 = wp_parse_args(
 			(array) $parsed_header,
 			[
 				'kid' => null,
