@@ -22,6 +22,7 @@ use RtCamp\GoogleLogin\Modules\Assets;
 use RtCamp\GoogleLogin\Modules\Login;
 use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
+use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Modules\Shortcode;
 use RtCamp\GoogleLogin\Utils\TokenVerifier;
@@ -96,7 +97,7 @@ class Container implements ContainerInterface {
 		 * @return Login
 		 */
 		$this->container['login_flow'] = function( PimpleContainer $c ) {
-			return new Login( $c['gh_client'], $c['settings'] );
+			return new Login( $c['gh_client'], $c['authenticator'] );
 		};
 
 		/**
@@ -161,7 +162,18 @@ class Container implements ContainerInterface {
 		 * @return OneTapLogin
 		 */
 		$this->container['one_tap_login'] = function ( PimpleContainer $c ) {
-			return new OneTapLogin( $c['settings'], $c['token_verifier'] );
+			return new OneTapLogin( $c['settings'], $c['token_verifier'], $c['gh_client'], $c['authenticator'] );
+		};
+
+		/**
+		 * Authenticator utility.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return Authenticator
+		 */
+		$this->container['authenticator'] = function ( PimpleContainer $c ) {
+			return new Authenticator( $c['settings'] );
 		};
 
 		/**
@@ -171,7 +183,6 @@ class Container implements ContainerInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'rtcamp.gh_login_services', $this );
-
+		do_action( 'rtcamp.google_login_services', $this );
 	}
 }

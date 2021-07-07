@@ -251,18 +251,6 @@ class TokenVerifier {
 		if ( $this->current_user->exp < strtotime( 'now' ) ) {
 			throw new Exception( __( 'User data is stale! Please try again.', 'login-with-google' ) );
 		}
-
-		$whitelisted_domains = $this->settings->whitelisted_domains;
-
-		if ( ! empty( $whitelisted_domains ) ) {
-			$whitelisted_domains = explode( ',', $this->settings->whitelisted_domains );
-			$whitelisted_domains = array_map( 'strtolower', $whitelisted_domains );
-			$whitelisted_domains = array_map( 'trim', $whitelisted_domains );
-
-			if ( ! in_array( $this->current_user->hd, $whitelisted_domains ) ) {
-				throw new Exception( __( 'Cannot login with this email.', 'login-with-google' ) );
-			}
-		}
 	}
 
 }

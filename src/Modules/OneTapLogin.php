@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Modules;
 
 use Exception;
+use RtCamp\GoogleLogin\Utils\Authenticator;
+use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Utils\Helper;
 use RtCamp\GoogleLogin\Interfaces\Module;
 use RtCamp\GoogleLogin\Utils\TokenVerifier;
@@ -40,14 +42,30 @@ class OneTapLogin implements Module {
 	private $token_verifier;
 
 	/**
+	 * @var GoogleClient
+	 */
+	private $google_client;
+
+	/**
+     * Authenticator service.
+     *
+	 * @var Authenticator
+	 */
+	private $authenticator;
+
+	/**
 	 * OneTapLogin constructor.
 	 *
 	 * @param Settings      $settings Settings object.
 	 * @param TokenVerifier $verifier Token verifier object.
+	 * @param GoogleClient  $client   Google client instance.
+	 * @param Authenticator $authenticator Authenticator service instance.
 	 */
-	public function __construct( Settings $settings, TokenVerifier $verifier ) {
+	public function __construct( Settings $settings, TokenVerifier $verifier, GoogleClient $client, Authenticator $authenticator ) {
 		$this->settings       = $settings;
 		$this->token_verifier = $verifier;
+		$this->google_client  = $client;
+		$this->authenticator  = $authenticator;
 	}
 
 	/**
@@ -99,7 +117,8 @@ class OneTapLogin implements Module {
         );
 
 		$data = [
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+            'redirect' => $this->google_client->state(),
 		];
 
 		wp_register_script(
@@ -160,21 +179,13 @@ class OneTapLogin implements Module {
 	 * @throws Exception
 	 */
 	public function authenticate(): void {
-	    $user = $this->token_verifier->current_user();
+		$user = $this->token_verifier->current_user();
 
-	    if ( is_null( $user ) ) {
-	        throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
-        }
+		if ( is_null( $user ) ) {
+			throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
+		}
 
-	    if ( email_exists( $user->email ) ) {
-	        $wp_user_obj = get_user_by( 'email', $user->email );
-		    wp_clear_auth_cookie();
-		    wp_set_current_user( $wp_user_obj->ID, $wp_user_obj->user_login );
-		    wp_set_auth_cookie( $wp_user_obj->ID );
-
-		    return;
-	    }
-
-		throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
+		$wp_user = $this->authenticator->authenticate( $user );
+		$this->authenticator->set_auth_cookies( $wp_user );
 	}
 }
