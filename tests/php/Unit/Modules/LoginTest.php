@@ -18,6 +18,7 @@ use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Modules\Login as Testee;
 use RtCamp\GoogleLogin\Tests\TestCase;
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
+use RtCamp\GoogleLogin\Utils\Authenticator;
 
 /**
  * Class LoginTest
@@ -35,7 +36,7 @@ class LoginTest extends TestCase {
 	/**
 	 * @var Settings
 	 */
-	private $settingsMock;
+	private $authenticatorMock;
 
 	/**
 	 * @var Testee
@@ -48,10 +49,10 @@ class LoginTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GoogleClient::class );
-		$this->settingsMock = $this->createMock( Settings::class );
+		$this->ghClientMock      = $this->createMock( GoogleClient::class );
+		$this->authenticatorMock = $this->createMock( Authenticator::class );
 
-		$this->testee = new Testee( $this->ghClientMock, $this->settingsMock );
+		$this->testee = new Testee( $this->ghClientMock, $this->authenticatorMock );
 	}
 
 	/**
@@ -74,10 +75,9 @@ class LoginTest extends TestCase {
 	public function testInit() {
 		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
 		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->testee, 'register' ] );
+		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ], 10, 2 );
-		WP_Mock::expectFilterAdded( 'rtcamp.google_user_profile', [ $this->testee, 'user_login' ] );
+		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ] );
 		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 		WP_Mock::expectActionAdded( 'wp_login', [ $this->testee, 'login_redirect' ] );
 
@@ -289,109 +289,14 @@ class LoginTest extends TestCase {
 		                   ->method( 'user' )
 		                   ->willReturn( $user );
 
-		WP_Mock::expectFilter( 'rtcamp.google_user_profile', $user );
-
-		$this->wpMockFunction(
-			'email_exists',
-			[
-				'fakeemail@domain.com'
-			],
-			1,
-			true
-		);
 
 		$userMock = Mockery::mock( 'WP_User' );
-
-		$this->wpMockFunction(
-			'get_user_by',
-			[
-				'email',
-				'fakeemail@domain.com'
-			],
-			1,
-			$userMock
-		);
+		$this->authenticatorMock->expects( $this->once() )
+		                        ->method( 'authenticate' )
+		                        ->willReturn( $userMock );
 
 		$returned = $this->testee->authenticate();
 		$this->assertSame( $returned, $userMock );
-
-		$this->assertConditionsMet();
-	}
-
-	/**
-	 * @covers ::authenticate
-	 */
-	public function testAuthenticationWhenUserDoesNotExist() {
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
-				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
-			]
-		)->andReturn( 'abc' );
-
-		$helperMock->expects( 'filter_input' )->once()->withArgs(
-			[
-				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
-			]
-		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
-
-		$this->ghClientMock->expects( $this->never() )
-		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
-
-		$this->wpMockFunction(
-			'wp_verify_nonce',
-			[
-				'testnonce',
-				'login_with_google',
-			],
-			1,
-			true
-		);
-
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'set_access_token' )
-		                   ->with( 'abc' );
-
-		$user = (object) [
-			'email' => 'fakeemail@domain.com',
-		];
-
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'user' )
-		                   ->willReturn( $user );
-
-		WP_Mock::expectFilter( 'rtcamp.google_user_profile', $user );
-
-		$this->wpMockFunction(
-			'email_exists',
-			[
-				'fakeemail@domain.com'
-			],
-			1,
-			false
-		);
-
-		$userMock = Mockery::mock( 'WP_User' );
-
-		$this->wpMockFunction(
-			'get_user_by',
-			[
-				'email',
-				'fakeemail@domain.com'
-			],
-			0,
-			$userMock
-		);
-
-		WP_Mock::expectFilter( 'rtcamp.google_register_user', $user );
-
-		$returned = $this->testee->authenticate();
-		$this->assertSame( $returned, $user );
 
 		$this->assertConditionsMet();
 	}
@@ -444,125 +349,6 @@ class LoginTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::register
-	 */
-	public function testRegisterThrowsExceptionWhenRegistrationIsDisabled() {
-		$this->settingsMock->registration_enabled = false;
-
-		$this->wpMockFunction(
-			'get_option',
-			[],
-			1,
-			false
-		);
-
-		$user = new \stdClass();
-
-		$this->expectException( Exception::class );
-		$this->testee->register( $user );
-	}
-
-	/**
-	 * @covers ::register
-	 * @covers ::can_register_with_email
-	 */
-	public function testRegisterWithWhitelistedDomains() {
-		$this->settingsMock->registration_enabled = true;
-		$this->settingsMock->whitelisted_domains  = [
-			'example.com',
-			'domain.com',
-		];
-
-		$this->settingsMock->whitelisted_domains = implode( ',', $this->settingsMock->whitelisted_domains );
-
-		$this->wpMockFunction(
-			'get_option',
-			[],
-			0,
-			false
-		);
-
-		$user = new \stdClass();
-		$user->email = 'login@example.com';
-		$user->login = 'login';
-
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'unique_username' )->once()->withArgs(
-			[
-				'login',
-			]
-		)->andReturn( 'login122' );
-
-		$this->wpMockFunction(
-			'wp_generate_password',
-			[
-				18,
-			],
-			1,
-			'123456'
-		);
-
-		$this->wpMockFunction(
-			'wp_insert_user',
-			[
-				[
-					'user_login' => 'login122',
-					'user_pass'  => '123456',
-					'user_email' => 'login@example.com',
-				],
-			],
-			1,
-			20
-		);
-
-		WP_Mock::expectAction( 'rtcamp.google_user_created', 20, $user );
-
-		$wp_user = Mockery::mock( 'WP_User' );
-
-		$this->wpMockFunction(
-			'get_user_by',
-			[
-				'id',
-				20,
-			],
-			1,
-			$wp_user
-		);
-
-		$userObject = $this->testee->register( $user );
-
-		$this->assertSame( $wp_user, $userObject );
-	}
-
-	/**
-	 * @covers ::register
-	 * @covers ::can_register_with_email
-	 */
-	public function testRegisterThrowsExceptionForInvalidDomains() {
-		$this->settingsMock->registration_enabled = true;
-		$this->settingsMock->whitelisted_domains  = [
-			'example.com',
-			'domain.com',
-		];
-
-		$this->settingsMock->whitelisted_domains = implode( PHP_EOL, $this->settingsMock->whitelisted_domains );
-
-		$this->wpMockFunction(
-			'get_option',
-			[],
-			0,
-			false
-		);
-
-		$user = new \stdClass();
-		$user->email = 'login@other.com';
-		$user->login = 'login';
-
-		$this->expectException( Exception::class );
-		$this->testee->register( $user );
-	}
-
-	/**
 	 * @covers ::user_meta
 	 */
 	public function testUserMeta() {
@@ -593,7 +379,7 @@ class LoginTest extends TestCase {
 			true
 		);
 
-		$this->testee->user_meta( 20, $user );
+		$this->testee->user_meta( 20 );
 		$this->assertConditionsMet();
 	}
 
@@ -677,48 +463,5 @@ class LoginTest extends TestCase {
 
 		$data = $this->testee->login_redirect();
 		$this->assertNull( $data );
-	}
-
-	/**
-	 * @covers ::user_login
-	 */
-	public function testUserLoginWithoutDefault() {
-		$user = new \stdClass();
-		$user->url = 'https://example.com';
-
-		$expected = $this->testee->user_login( $user );
-		$this->assertSame( $expected->url, 'https://example.com' );
-
-		$login = ! empty( $expected->login ) ?? false;
-		$this->assertfalse( $login );
-	}
-
-	/**
-	 * @covers ::user_login
-	 */
-	public function testUserLoginWithDefault() {
-		$user = new \stdClass();
-		$user->email = 'someone@example.com';
-
-		$this->wpMockFunction(
-			'sanitize_user',
-			[
-				'someone',
-				true,
-			],
-			1,
-			'someone'
-		);
-
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'unique_username' )->once()->withArgs(
-			[
-				'someone',
-			]
-		)->andReturn( 'someone1' );
-
-		$expected = $this->testee->user_login( $user );
-
-		$this->assertEquals( $expected->login, 'someone1' );
 	}
 }
