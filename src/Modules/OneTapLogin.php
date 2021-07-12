@@ -90,6 +90,15 @@ class OneTapLogin implements Module {
 			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
 			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
 			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
+			add_action(
+				'init',
+				function () {
+					if ( ! is_user_logged_in() ) {
+						add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
+						add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
+					}
+				} 
+			);
 		}
 	}
 

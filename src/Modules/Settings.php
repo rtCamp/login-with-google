@@ -22,6 +22,7 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * @property string|null client_secret
  * @property bool|null registration_enabled
  * @property bool|null one_tap_login
+ * @property string    one_tap_login_screen
  *
  * @package RtCamp\GoogleLogin\Modules
  */
@@ -45,6 +46,7 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
 		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
+		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
 	];
 
 	/**
@@ -54,7 +56,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function __get( string $name ) {
 		if ( in_array( $name, $this->getters, true ) ) {
-			$constant_name = array_search( $name, $this->getters );
+			$constant_name = array_search( $name, $this->getters, true );
 
 			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
@@ -132,6 +134,15 @@ class Settings implements ModuleInterface {
 			'login-with-google',
 			'wp_google_login_section',
 			[ 'label_for' => 'one-tap-login' ]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login_screen',
+			__( 'One Tap Login Locations', 'login-with-google' ),
+			[ $this, 'one_tap_login_screens' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'one-tap-login-screen' ]
 		);
 
 		add_settings_field(
@@ -214,7 +225,7 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function one_tap_login(): void { 
+	public function one_tap_login(): void {
 		?>
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
 					type='checkbox'
@@ -222,6 +233,33 @@ class Settings implements ModuleInterface {
 					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
 					value='1'>
 			<?php esc_html_e( 'Enable One Tap Login', 'login-with-google' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * One tap login screens.
+	 *
+	 * It can be enabled only for wp-login.php OR sitewide.
+	 *
+	 * @return void
+	 */
+	public function one_tap_login_screens(): void {
+		$default = $this->one_tap_login_screen ?? '';
+		?>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='radio'
+					name='wp_google_login_settings[one_tap_login_screen]'
+					id="one-tap-login-screen-login" <?php echo esc_attr( checked( $this->one_tap_login_screen, $default ) ); ?>
+					value='login'>
+			<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
+		</label>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='radio'
+					name='wp_google_login_settings[one_tap_login_screen]'
+					id="one-tap-login-screen-sitewide" <?php echo esc_attr( checked( $this->one_tap_login_screen, 'sitewide' ) ); ?>
+					value='sitewide'>
+			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
 		</label>
 		<?php
 	}
