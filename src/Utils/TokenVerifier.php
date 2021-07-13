@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace RtCamp\GoogleLogin\Utils;
 
+use Requests_Utility_CaseInsensitiveDictionary;
 use Exception;
 use RtCamp\GoogleLogin\Modules\Settings;
 use stdClass;
@@ -154,6 +155,13 @@ class TokenVerifier {
 			return null;
 		}
 
+		$transient_key = 'lwg_pk_' . $key_id;
+		$cached_pk     = $this->get_transient( $transient_key );
+
+		if ( ! empty( $cached_pk ) ) {
+			return (string) $cached_pk;
+		}
+
 		//phpcs:disable WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		$certs = wp_remote_get( self::CERTS_URL );
 
@@ -161,10 +169,28 @@ class TokenVerifier {
 			return null;
 		}
 
-		$keys = wp_remote_retrieve_body( $certs );
-		$keys = json_decode( $keys );
+		$headers = wp_remote_retrieve_headers( $certs );
+		$keys    = wp_remote_retrieve_body( $certs );
+		$keys    = json_decode( $keys );
 
-		return property_exists( $keys, $key_id ) ? $keys->{$key_id} : null;
+		if ( property_exists( $keys, $key_id ) ) {
+			$max_age = is_object( $headers ) && is_a( $headers, Requests_Utility_CaseInsensitiveDictionary::class ) ? $this->get_max_age( $headers ) : 0;
+
+			/**
+			 * Cache public key in transient.
+			 *
+			 * We will cache it for 5 mins less than the actual expiration time,
+			 * so that it should be cleared on time.
+			 */
+			if ( $max_age ) {
+				$max_age = $max_age - 300;
+				$this->set_transient( $transient_key, $keys->{$key_id}, max( 0, $max_age ) );
+			}
+
+			return $keys->{$key_id};
+		}
+
+		return null;
 	}
 
 	/**
@@ -254,4 +280,55 @@ class TokenVerifier {
 		}
 	}
 
+	/**
+	 * Get max age to cache the response from Cache-Control header.
+	 *
+	 * @param Requests_Utility_CaseInsensitiveDictionary $headers List of response headers.
+	 *
+	 * @return int
+	 */
+	private function get_max_age( Requests_Utility_CaseInsensitiveDictionary $headers ): int {
+		if ( ! $headers->offsetExists( 'cache-control' ) ) {
+			return 0;
+		}
+
+		$cache_control = $headers->offsetGet( 'cache-control' );
+		$cache_control = explode( ',', $cache_control );
+		$cache_control = array_map( 'trim', $cache_control );
+		$cache_control = preg_grep( '/max-age=(\d+)?/', $cache_control );
+
+		if ( is_array( $cache_control ) && 1 === count( $cache_control ) ) {
+			$max_age = array_pop( $cache_control );
+			$max_age = explode( '=', $max_age );
+			$max_age = $max_age[1];
+
+			return intval( $max_age );
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Set the public key in transient.
+	 *
+	 * @param string $key    Transient key.
+	 * @param string $value  Transient value.
+	 * @param int    $expire Transient expiration time in seconds.
+	 *
+	 * @return void
+	 */
+	private function set_transient( string $key, string $value, int $expire = 0 ): void {
+		set_transient( $key, $value, $expire );
+	}
+
+	/**
+	 * Retrieve the transient.
+	 *
+	 * @param string $key Transient key.
+	 *
+	 * @return mixed
+	 */
+	private function get_transient( string $key ) {
+		return get_transient( $key );
+	}
 }
