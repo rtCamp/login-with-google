@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Tests\Unit\Utils;
 
 use RtCamp\GoogleLogin\Modules\Settings;
+use RtCamp\GoogleLogin\Tests\PrivateAccess;
 use RtCamp\GoogleLogin\Tests\TestCase;
 use RtCamp\GoogleLogin\Utils\TokenVerifier as Testee;
 
@@ -21,6 +22,9 @@ use RtCamp\GoogleLogin\Utils\TokenVerifier as Testee;
  * @package RtCamp\GoogleLogin\Tests\Unit\Utils
  */
 class TokenVerifierTest extends TestCase {
+
+	use PrivateAccess;
+
 	/**
 	 * Object under test.
 	 *
@@ -171,6 +175,7 @@ class TokenVerifierTest extends TestCase {
 
 	/**
 	 * @covers ::get_public_key
+	 * @covers ::get_max_age
 	 */
 	public function testPublicKeyRetrievalFromResponse() {
 		$this->wpMockFunction(
@@ -241,6 +246,43 @@ class TokenVerifierTest extends TestCase {
 
 		$pk = $this->testee->get_public_key( 'my_public_key' );
 		$this->assertSame( 'thisissomerandomkey', $pk );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::set_transient
+	 */
+	public function testSetTransient() {
+		$this->wpMockFunction(
+			'set_transient',
+			[
+				'key',
+				'val',
+				200
+			]
+		);
+
+		$this->call_private_method( $this->testee, 'set_transient', [ 'key', 'val', 200 ] );
+
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::set_transient
+	 */
+	public function testGetTransient() {
+		$this->wpMockFunction(
+			'get_transient',
+			[
+				'key',
+			],
+			1,
+			'val'
+		);
+
+		$val = $this->call_private_method( $this->testee, 'get_transient', [ 'key' ] );
+
+		$this->assertSame( 'val', $val );
 		$this->assertConditionsMet();
 	}
 }
