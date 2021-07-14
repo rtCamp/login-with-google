@@ -88,9 +88,9 @@ class TokenVerifierTest extends TestCase {
 	 */
 	public function testBase64DecodeURL() {
 		$str    = 'c29tZStyYW5kb20vc3RyaW5nPQ';
-		$result = $this->testee->base64_encode_url( $str );
+		$result = $this->testee->base64_decode_url( $str );
 
-		$this->assertSame( 'YzI5dFpTdHlZVzVrYjIwdmMzUnlhVzVuUFE', $result );
+		$this->assertSame( 'some+random/string=', $result );
 	}
 
 	/**
@@ -131,5 +131,116 @@ class TokenVerifierTest extends TestCase {
 		$pk = $this->testee->get_public_key( 'my_public_key' );
 
 		$this->assertSame( 'abcd', $pk );
+	}
+
+	/**
+	 * @covers ::get_public_key
+	 */
+	public function testPublicKeyIsNullForNon200Response() {
+		$this->wpMockFunction(
+			'get_transient',
+			[
+				'lwg_pk_my_public_key'
+			],
+			1,
+			null
+		);
+
+		$this->wpMockFunction(
+			'wp_remote_get',
+			[
+				$this->testee::CERTS_URL
+			],
+			1,
+			'certificate'
+		);
+
+		$this->wpMockFunction(
+			'wp_remote_retrieve_response_code',
+			[
+				'certificate',
+			],
+			1,
+			400
+		);
+
+		$pk = $this->testee->get_public_key( 'my_public_key' );
+
+		$this->assertNull( $pk );
+	}
+
+	/**
+	 * @covers ::get_public_key
+	 */
+	public function testPublicKeyRetrievalFromResponse() {
+		$this->wpMockFunction(
+			'get_transient',
+			[
+				'lwg_pk_my_public_key'
+			],
+			1,
+			null
+		);
+
+		$this->wpMockFunction(
+			'wp_remote_get',
+			[
+				$this->testee::CERTS_URL
+			],
+			1,
+			'certificate'
+		);
+
+		$this->wpMockFunction(
+			'wp_remote_retrieve_response_code',
+			[
+				'certificate',
+			],
+			1,
+			200
+		);
+
+		$headers = \Mockery::mock( \Requests_Utility_CaseInsensitiveDictionary::class );
+		$headers->expects( 'offsetExists' )->withArgs( [ 'cache-control' ] )->andReturn( true );
+		$headers->expects( 'offsetGet' )->withArgs( [ 'cache-control' ] )->andReturn( 'public, max-age=600' );
+
+		$body = [
+			'my_public_key' => 'thisissomerandomkey',
+		];
+
+		$body = json_encode( $body );
+
+		$this->wpMockFunction(
+			'wp_remote_retrieve_headers',
+			[
+				'certificate',
+			],
+			1,
+			$headers
+		);
+
+		$this->wpMockFunction(
+			'wp_remote_retrieve_body',
+			[
+				'certificate',
+			],
+			1,
+			$body
+		);
+
+		$this->wpMockFunction(
+			'set_transient',
+			[
+				'lwg_pk_my_public_key',
+				'thisissomerandomkey',
+				300
+			],
+			1,
+			true
+		);
+
+		$pk = $this->testee->get_public_key( 'my_public_key' );
+		$this->assertSame( 'thisissomerandomkey', $pk );
+		$this->assertConditionsMet();
 	}
 }
