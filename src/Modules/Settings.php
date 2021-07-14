@@ -232,7 +232,7 @@ class Settings implements ModuleInterface {
 					name='wp_google_login_settings[one_tap_login]'
 					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
 					value='1'>
-			<?php esc_html_e( 'Enable One Tap Login', 'login-with-google' ); ?>
+			<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
 		</label>
 		<?php
 	}
@@ -246,6 +246,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function one_tap_login_screens(): void {
 		$default = $this->one_tap_login_screen ?? '';
+		// phpcs:disable
 		?>
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
 					type='radio'
@@ -261,7 +262,24 @@ class Settings implements ModuleInterface {
 					value='sitewide'>
 			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
 		</label>
+        <script type="text/javascript">
+            jQuery(document).ready(function () {
+                var toggle = function () {
+                    var enabled = jQuery("#one-tap-login").is(":checked");
+                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
+                    if (enabled) {
+                        tr_elem.show();
+                        return;
+                    }
+
+                    tr_elem.hide();
+                };
+                jQuery("#one-tap-login").on('change', toggle);
+                toggle();
+            });
+        </script>
 		<?php
+		// phpcs:enable
 	}
 
 	/**
