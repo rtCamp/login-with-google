@@ -46,6 +46,13 @@ class AuthenticatorTest extends TestCase {
 	}
 
 	/**
+	 * @covers ::__construct
+	 */
+	public function testInstance() {
+		$this->assertInstanceOf( Testee::class, $this->testee );
+	}
+
+	/**
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticateException() {
