@@ -120,7 +120,7 @@ class Settings implements ModuleInterface {
 
 		add_settings_field(
 			'wp_google_allow_registration',
-			__( 'Create new user', 'login-with-google' ),
+			__( 'Create New User', 'login-with-google' ),
 			[ $this, 'user_registration' ],
 			'login-with-google',
 			'wp_google_login_section',
