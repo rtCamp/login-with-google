@@ -162,12 +162,12 @@ class AuthenticatorTest extends TestCase {
 	 * @covers ::register
 	 */
 	public function testRegisterThrowsExceptionForInvalidEmailDomain() {
-		$user = (object) [
+		$user                                     = (object) [
 			'email' => 'test@example.com',
 			'login' => 'test',
 		];
-
-		$this->settingsMock->whitelisted_domains = 'somedomain.com';
+		$this->settingsMock->registration_enabled = true;
+		$this->settingsMock->whitelisted_domains  = 'somedomain.com';
 
 		$this->expectException( \Exception::class );
 		$this->testee->register( $user );
@@ -229,6 +229,41 @@ class AuthenticatorTest extends TestCase {
 		$received = $this->testee->register( $user );
 
 		$this->assertSame( $wp_user, $received );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::set_auth_cookies
+	 */
+	public function testSetAuthCookies() {
+		$wp_user             = Mockery::mock( \WP_User::class );
+		$wp_user->ID         = 100;
+		$wp_user->user_login = 'test';
+
+		$this->wpMockFunction(
+			'wp_clear_auth_cookie',
+			[],
+			1
+		);
+
+		$this->wpMockFunction(
+			'wp_set_current_user',
+			[
+				100,
+				'test',
+			],
+			1
+		);
+
+		$this->wpMockFunction(
+			'wp_set_auth_cookie',
+			[
+				100
+			],
+			1
+		);
+
+		$this->testee->set_auth_cookies( $wp_user );
 		$this->assertConditionsMet();
 	}
 }
