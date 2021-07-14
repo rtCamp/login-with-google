@@ -1,0 +1,135 @@
+<?php
+/**
+ * Tests for token verifier.
+ *
+ * @package RtCamp\GoogleLogin
+ */
+
+declare(strict_types=1);
+
+namespace RtCamp\GoogleLogin\Tests\Unit\Utils;
+
+use RtCamp\GoogleLogin\Modules\Settings;
+use RtCamp\GoogleLogin\Tests\TestCase;
+use RtCamp\GoogleLogin\Utils\TokenVerifier as Testee;
+
+/**
+ * Class TokenVerifierTest
+ *
+ * @coversDefaultClass \RtCamp\GoogleLogin\Utils\TokenVerifier
+ *
+ * @package RtCamp\GoogleLogin\Tests\Unit\Utils
+ */
+class TokenVerifierTest extends TestCase {
+	/**
+	 * Object under test.
+	 *
+	 * @var \RtCamp\GoogleLogin\Utils\TokenVerifier
+	 */
+	private $testee;
+
+	/**
+	 * @var Settings
+	 */
+	private $settingsMock;
+
+	/**
+	 * @return void
+	 */
+	public function setUp(): void {
+		$this->settingsMock = $this->createMock( Settings::class );
+		$this->testee       = new Testee( $this->settingsMock );
+	}
+
+	/**
+	 * @covers ::__construct
+	 */
+	public function testInstance() {
+		$this->assertInstanceOf( Testee::class, $this->testee );
+	}
+
+	public function testCertsURL() {
+		$this->assertSame( 'https://www.googleapis.com/oauth2/v1/certs', $this->testee::CERTS_URL );
+	}
+
+	/**
+	 * @covers ::get_supported_algorithm
+	 */
+	public function testGetSupportedAlgorithmDefault() {
+		\WP_Mock::expectFilter( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, '' );
+		$expected = OPENSSL_ALGO_SHA256;
+		$algo = $this->testee::get_supported_algorithm();
+
+		$this->assertSame( $expected, $algo );
+	}
+
+	/**
+	 * @covers ::get_supported_algorithm
+	 */
+	public function testGetSHA256Algo() {
+		$expected = OPENSSL_ALGO_SHA256;
+		$algo = $this->testee::get_supported_algorithm( 'RS256' );
+
+		$this->assertSame( $expected, $algo );
+	}
+
+	/**
+	 * @covers ::base64_encode_url
+	 */
+	public function testBase64EncodeURL() {
+		$str    = 'some+random/string=';
+		$result = $this->testee->base64_encode_url( $str );
+
+		$this->assertSame( 'c29tZStyYW5kb20vc3RyaW5nPQ', $result );
+	}
+
+	/**
+	 * @covers ::base64_decode_url
+	 */
+	public function testBase64DecodeURL() {
+		$str    = 'c29tZStyYW5kb20vc3RyaW5nPQ';
+		$result = $this->testee->base64_encode_url( $str );
+
+		$this->assertSame( 'YzI5dFpTdHlZVzVrYjIwdmMzUnlhVzVuUFE', $result );
+	}
+
+	/**
+	 * @covers ::current_user
+	 */
+	public function testCurrentUser() {
+		$wp_user = (object) [
+			'name' => 'Test',
+		];
+		$this->setTesteeProperty( $this->testee, 'current_user', $wp_user );
+		$result = $this->testee->current_user();
+
+		$this->assertSame( $wp_user, $result );
+	}
+
+	/**
+	 * @covers ::get_public_key
+	 */
+	public function testPublicKeyIsNull() {
+		$pk = $this->testee->get_public_key( null );
+
+		$this->assertNull( $pk );
+	}
+
+	/**
+	 * @covers ::get_public_key
+	 */
+	public function testPublicKeyCachedValue() {
+		$this->wpMockFunction(
+			'get_transient',
+			[
+				'lwg_pk_my_public_key'
+			],
+			1,
+			'abcd'
+		);
+
+		$pk = $this->testee->get_public_key( 'my_public_key' );
+
+		$this->assertSame( 'abcd', $pk );
+	}
+}
