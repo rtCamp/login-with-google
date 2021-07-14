@@ -167,9 +167,7 @@ class AuthenticatorTest extends TestCase {
 			'login' => 'test',
 		];
 
-		$this->settingsMock->whitelisted_domains = [
-			'somedomain.com',
-		];
+		$this->settingsMock->whitelisted_domains = 'somedomain.com';
 
 		$this->expectException( \Exception::class );
 		$this->testee->register( $user );
@@ -177,6 +175,7 @@ class AuthenticatorTest extends TestCase {
 
 	/**
 	 * @covers ::register
+	 * @covers ::can_register_with_email
 	 */
 	public function testRegisterReturnsUserObject() {
 		$user = (object) [
