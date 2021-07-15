@@ -268,7 +268,7 @@ class TokenVerifierTest extends TestCase {
 	}
 
 	/**
-	 * @covers ::set_transient
+	 * @covers ::get_transient
 	 */
 	public function testGetTransient() {
 		$this->wpMockFunction(
