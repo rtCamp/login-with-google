@@ -184,7 +184,7 @@ class TokenVerifier {
 			 */
 			if ( $max_age ) {
 				$max_age = $max_age - 300;
-				$this->set_transient( $transient_key, $keys->{$key_id}, max( 0, $max_age ) );
+				$this->set_transient( $transient_key, $keys->{$key_id}, max( 5, $max_age ) );
 			}
 
 			return $keys->{$key_id};
