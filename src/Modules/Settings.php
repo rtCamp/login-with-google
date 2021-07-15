@@ -246,7 +246,6 @@ class Settings implements ModuleInterface {
 	 */
 	public function one_tap_login_screens(): void {
 		$default = $this->one_tap_login_screen ?? '';
-		// phpcs:disable
 		?>
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
 					type='radio'
@@ -262,6 +261,9 @@ class Settings implements ModuleInterface {
 					value='sitewide'>
 			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
 		</label>
+		<?php
+		// phpcs:disable
+		?>
         <script type="text/javascript">
             jQuery(document).ready(function () {
                 var toggle = function () {
