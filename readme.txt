@@ -126,13 +126,9 @@ Once you're ready to send a pull request, please run through the following check
 
 = Unit testing =
 
-- Setup local unit test environment by running script from terminal
+- Clone the plugin from [repository](https://github.com/rtCamp/login-with-google).
 
-`./bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]`
-
-- Execute `phpunit` in terminal from repository to run all test cases.
-
-- Execute `phpunit ./tests/inc/test-class.php` in terminal with file path to run specific tests.
+- Run `composer install && composer tests:unit` to run unit tests.
 
 == Screenshots ==
 
