@@ -94,8 +94,9 @@ class OneTapLogin implements Module {
 				'init',
 				function () {
 					if ( ! is_user_logged_in() ) {
-						add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-						add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
+					    $hook_prefix = ( 'sitewide' === $this->settings->one_tap_login_screen ) ? 'wp' : 'login';
+						add_action( $hook_prefix . '_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
+						add_action( $hook_prefix . '_footer', [ $this, 'one_tap_prompt' ], 10000 );
 					}
 				} 
 			);
