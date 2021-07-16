@@ -21,6 +21,8 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * @property string|null client_id
  * @property string|null client_secret
  * @property bool|null registration_enabled
+ * @property bool|null one_tap_login
+ * @property string    one_tap_login_screen
  *
  * @package RtCamp\GoogleLogin\Modules
  */
@@ -43,6 +45,8 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
 		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
+		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
+		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
 	];
 
 	/**
@@ -52,7 +56,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function __get( string $name ) {
 		if ( in_array( $name, $this->getters, true ) ) {
-			$constant_name = array_search( $name, $this->getters );
+			$constant_name = array_search( $name, $this->getters, true );
 
 			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
@@ -116,11 +120,29 @@ class Settings implements ModuleInterface {
 
 		add_settings_field(
 			'wp_google_allow_registration',
-			__( 'Create new user', 'login-with-google' ),
+			__( 'Create New User', 'login-with-google' ),
 			[ $this, 'user_registration' ],
 			'login-with-google',
 			'wp_google_login_section',
 			[ 'label_for' => 'user-registration' ]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login',
+			__( 'Enable One Tap Login', 'login-with-google' ),
+			[ $this, 'one_tap_login' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'one-tap-login' ]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login_screen',
+			__( 'One Tap Login Locations', 'login-with-google' ),
+			[ $this, 'one_tap_login_screens' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'one-tap-login-screen' ]
 		);
 
 		add_settings_field(
@@ -199,6 +221,70 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
+	 * Toggle One Tap Login functionality.
+	 *
+	 * @return void
+	 */
+	public function one_tap_login(): void {
+		?>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='checkbox'
+					name='wp_google_login_settings[one_tap_login]'
+					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
+					value='1'>
+			<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
+		</label>
+		<?php
+	}
+
+	/**
+	 * One tap login screens.
+	 *
+	 * It can be enabled only for wp-login.php OR sitewide.
+	 *
+	 * @return void
+	 */
+	public function one_tap_login_screens(): void {
+		$default = $this->one_tap_login_screen ?? '';
+		?>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='radio'
+					name='wp_google_login_settings[one_tap_login_screen]'
+					id="one-tap-login-screen-login" <?php echo esc_attr( checked( $this->one_tap_login_screen, $default ) ); ?>
+					value='login'>
+			<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
+		</label>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
+					type='radio'
+					name='wp_google_login_settings[one_tap_login_screen]'
+					id="one-tap-login-screen-sitewide" <?php echo esc_attr( checked( $this->one_tap_login_screen, 'sitewide' ) ); ?>
+					value='sitewide'>
+			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
+		</label>
+		<?php
+		// phpcs:disable
+		?>
+        <script type="text/javascript">
+            jQuery(document).ready(function () {
+                var toggle = function () {
+                    var enabled = jQuery("#one-tap-login").is(":checked");
+                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
+                    if (enabled) {
+                        tr_elem.show();
+                        return;
+                    }
+
+                    tr_elem.hide();
+                };
+                jQuery("#one-tap-login").on('change', toggle);
+                toggle();
+            });
+        </script>
+		<?php
+		// phpcs:enable
+	}
+
+	/**
 	 * Whitelisted domains for registration.
 	 *
 	 * Only emails belonging to these domains would be preferred
@@ -210,11 +296,11 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-        <input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
-        <p class="description">
+		<input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+		<p class="description">
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
-        </p>
-        <?php
+		</p>
+		<?php
 	}
 
 	/**
@@ -253,23 +339,23 @@ class Settings implements ModuleInterface {
 
 	/**
 	 * Outputs the disabled attribute if field needs to
-     * be disabled.
-     *
-     * @param string $id Input ID.
-     *
-     * @return void
+	 * be disabled.
+	 *
+	 * @param string $id Input ID.
+	 *
+	 * @return void
 	 */
 	private function disabled( string $id ): void {
-	    if ( empty( $id ) ) {
-	        return;
-	    }
+		if ( empty( $id ) ) {
+			return;
+		}
 
-	    $constant_name = array_search( $id, $this->getters, true );
+		$constant_name = array_search( $id, $this->getters, true );
 
-	    if ( false !== $constant_name ) {
-	        if ( defined( $constant_name ) ) {
-	            echo esc_attr( 'disabled="disabled"' );
-            }
-        }
-    }
+		if ( false !== $constant_name ) {
+			if ( defined( $constant_name ) ) {
+				echo esc_attr( 'disabled="disabled"' );
+			}
+		}
+	}
 }

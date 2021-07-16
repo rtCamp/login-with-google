@@ -323,8 +323,6 @@ class GoogleClientTest extends TestCase {
 
 	/**
 	 * @covers ::authorization_url
-	 *
-	 * @group failing
 	 */
 	public function testAuthorizationURL() {
 		$scope = [ 'email', 'profile', 'openid' ];

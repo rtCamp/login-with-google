@@ -109,7 +109,7 @@ class Shortcode implements ModuleInterface {
 
 		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 		remove_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
-		$template           = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
+		$template = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 
 		return Helper::render_template( $template, $attrs, false );
 	}
@@ -118,9 +118,9 @@ class Shortcode implements ModuleInterface {
 	 * Check if the current single post or page contains
 	 * shortcode. If it does, enqueue the relevant style.
 	 *
-	 * @param string $output Shortcode output
-	 * @param string $tag Shortcode tag being processed.
-	 * @param array|string  $attrs Shortcode attributes.
+	 * @param string       $output Shortcode output.
+	 * @param string       $tag Shortcode tag being processed.
+	 * @param array|string $attrs Shortcode attributes.
 	 *
 	 * @return string
 	 */

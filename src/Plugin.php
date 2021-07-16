@@ -73,6 +73,7 @@ class Plugin {
 		'login_flow',
 		'assets',
 		'shortcode',
+		'one_tap_login',
 	];
 
 	/**

@@ -133,7 +133,7 @@ class SettingsTest extends TestCase {
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'array' ),
 				],
-				'times' => 4
+				'times' => 6
 			]
 		);
 

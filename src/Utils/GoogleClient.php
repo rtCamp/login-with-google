@@ -141,7 +141,7 @@ class GoogleClient {
 		$scope = apply_filters_deprecated(
 			'wp_google_login_scopes',
 			[
-				$plugin_scope
+				$plugin_scope,
 			],
 			'1.0.15',
 			'rtcamp.google_scope'
@@ -150,15 +150,15 @@ class GoogleClient {
 		$scope = apply_filters( 'rtcamp.google_scope', $scope );
 
 		return self::AUTHORIZE_URL . '?' . http_build_query(
-				[
-					'client_id'     => $this->client_id,
-					'redirect_uri'  => $this->gt_redirect_url(),
-					'state'         => $this->state(),
-					'scope'         => implode( ' ', $scope ),
-					'access_type'   => 'online',
-					'response_type' => 'code',
-				]
-			);
+			[
+				'client_id'     => $this->client_id,
+				'redirect_uri'  => $this->gt_redirect_url(),
+				'state'         => $this->state(),
+				'scope'         => implode( ' ', $scope ),
+				'access_type'   => 'online',
+				'response_type' => 'code',
+			]
+		);
 	}
 
 	/**
@@ -207,7 +207,7 @@ class GoogleClient {
 				trailingslashit( self::API_BASE ) . 'oauth2/v2/userinfo?access_token=' . $this->access_token,
 				[
 					'headers' => [
-						'Accept'        => 'application/json',
+						'Accept' => 'application/json',
 					],
 				]
 			);
