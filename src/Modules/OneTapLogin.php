@@ -136,12 +136,15 @@ class OneTapLogin implements Module {
 		$data = [
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'state'   => $this->google_client->state(),
+            'homeurl' => get_option( 'home', '' ),
 		];
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
 			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
-			[],
+			[
+                'wp-i18n',
+            ],
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);

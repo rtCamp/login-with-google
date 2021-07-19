@@ -13,6 +13,20 @@ window.LoginWithGoogleDataCallBack = function( response ) {
                     return;
                 }
 
+                try {
+
+                    var redirect_to = new URL( response.data.redirect );
+                    var homeurl = new URL( TempAccessOneTap.homeurl );
+
+                    if ( redirect_to.host !== homeurl.host ) {
+                        throw new URIError( wp.i18n.__( 'Invalid URL for Redirection', 'login-with-google' ) );
+                    }
+
+                } catch ( e ) {
+                    console.log( e.message );
+                    return;
+                }
+
                 window.location = response.data.redirect;
             }
         }
