@@ -20,9 +20,12 @@ use Pimple\Container as PimpleContainer;
 use InvalidArgumentException;
 use RtCamp\GoogleLogin\Modules\Assets;
 use RtCamp\GoogleLogin\Modules\Login;
+use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
+use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Modules\Shortcode;
+use RtCamp\GoogleLogin\Utils\TokenVerifier;
 
 /**
  * Class Container
@@ -94,7 +97,7 @@ class Container implements ContainerInterface {
 		 * @return Login
 		 */
 		$this->container['login_flow'] = function( PimpleContainer $c ) {
-			return new Login( $c['gh_client'], $c['settings'] );
+			return new Login( $c['gh_client'], $c['authenticator'] );
 		};
 
 		/**
@@ -139,13 +142,47 @@ class Container implements ContainerInterface {
 		};
 
 		/**
+		 * Define Token Verifier Service.
+		 *
+		 * Useful in verifying JWT Auth token.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return TokenVerifier
+		 */
+		$this->container['token_verifier'] = function ( PimpleContainer $c ) {
+			return new TokenVerifier( $c['settings'] );
+		};
+
+		/**
+		 * One Tap Login Service.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return OneTapLogin
+		 */
+		$this->container['one_tap_login'] = function ( PimpleContainer $c ) {
+			return new OneTapLogin( $c['settings'], $c['token_verifier'], $c['gh_client'], $c['authenticator'] );
+		};
+
+		/**
+		 * Authenticator utility.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return Authenticator
+		 */
+		$this->container['authenticator'] = function ( PimpleContainer $c ) {
+			return new Authenticator( $c['settings'] );
+		};
+
+		/**
 		 * Define any additional services.
 		 *
 		 * @param ContainerInterface $container Container object.
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'rtcamp.gh_login_services', $this );
-
+		do_action( 'rtcamp.google_login_services', $this );
 	}
 }
