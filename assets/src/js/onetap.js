@@ -17,6 +17,5 @@ window.LoginWithGoogleDataCallBack = function( response ) {
             }
         }
     };
-    console.log(response);
     xhr.send( 'action=validate_id_token&token=' + response.credential + '&state=' + TempAccessOneTap.state );
 };

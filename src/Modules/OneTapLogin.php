@@ -123,6 +123,8 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
+	    $filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+
 		wp_enqueue_script(
 			'login-with-google-one-tap',
 			'https://accounts.google.com/gsi/client',
@@ -138,7 +140,7 @@ class OneTapLogin implements Module {
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
-			trailingslashit( plugin()->url ) . 'assets/build/js/onetap.js',
+			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
 			[],
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
