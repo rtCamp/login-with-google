@@ -5,7 +5,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.7
 Requires PHP: 7.3
-Stable tag: 1.1
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,9 @@ Ultra minimal plugin to let your users login to WordPress applications using the
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ````
+
+### Browser support
+[These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
 
 ### How to enable automatic user registration
 
@@ -138,6 +141,9 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.2 =
+* Feature: One-Tap Login setting for supported browsers.
+
 = 1.1 =
 * Feature: Add shortcode `[google_login]` with optional attributes: `[google_login button_text="Login with Google" force_display="no" redirect_to="https://example.url/page"]`.
 * Feature: Replace third-party oAuth client with custom GoogleClient class.
@@ -164,7 +170,5 @@ Once you're ready to send a pull request, please run through the following check
 
 == Upgrade Notice ==
 
-* Feature: Add shortcode `[google_login]` with optional attributes: `[google_login button_text="Login with Google" force_display="no" redirect_to="https://example.url/page"]`.
-* Feature: Replace third-party oAuth client with custom GoogleClient class.
-* Fix: Identification of state value, whether a given oAuth login is relevant to this plugin.
-* Remove: Google oAuth library from composer.
+= 1.2 =
+* Feature: One-Tap Login setting for supported browsers.

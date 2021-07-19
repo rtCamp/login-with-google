@@ -25,6 +25,9 @@ passwords. Just one click and land into the site!
 3. Upload the directory to `wp-content/plugins` directory.
 4. Activate the plugin from WordPress dashboard.
 
+## Browser support
+[These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
+
 ## Usage Instructions
 
 1. You will need to register a new application at https://console.cloud.google.com/apis/dashboard
