@@ -23,7 +23,7 @@ window.LoginWithGoogleDataCallBack = function( response ) {
                     }
 
                 } catch ( e ) {
-                    console.log( e.message );
+                    alert( e.message );
                     return;
                 }
 
