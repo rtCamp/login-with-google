@@ -113,7 +113,7 @@ class OneTapLogin implements Module {
 			 data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
 			 data-login_uri="<?php echo esc_html( wp_login_url() ); ?>"
 			 data-callback="LoginWithGoogleDataCallBack"
-		</div>
+		></div>
 		<?php
 	}
 
