@@ -332,6 +332,17 @@ class GoogleClientTest extends TestCase {
 		$ghClient->expects( $this->once() )->method( 'state' )->willReturn( 'abcd' );
 		$ghClient->client_id = 'cid';
 
+		$client_args = [
+			'client_id'     => 'cid',
+			'redirect_uri'  => '',
+			'state'         => 'abcd',
+			'scope'         => implode( ' ', $scope ),
+			'access_type'   => 'online',
+			'response_type' => 'code',
+		];
+
+		WP_Mock::expectFilter( 'rtcamp.google_client_args', $client_args );
+
 		$expected = 'https://accounts.google.com/o/oauth2/auth?client_id=cid&redirect_uri=&state=abcd&scope=email+profile+openid&access_type=online&response_type=code';
 
 		$this->assertSame( $expected, $ghClient->authorization_url() );

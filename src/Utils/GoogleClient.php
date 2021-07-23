@@ -147,18 +147,32 @@ class GoogleClient {
 			'rtcamp.google_scope'
 		);
 
+		/**
+		 * Filter the scopes.
+		 *
+		 * @param array $scope List of scopes.
+		 */
 		$scope = apply_filters( 'rtcamp.google_scope', $scope );
 
-		return self::AUTHORIZE_URL . '?' . http_build_query(
-			[
-				'client_id'     => $this->client_id,
-				'redirect_uri'  => $this->gt_redirect_url(),
-				'state'         => $this->state(),
-				'scope'         => implode( ' ', $scope ),
-				'access_type'   => 'online',
-				'response_type' => 'code',
-			]
-		);
+		$client_args = [
+			'client_id'     => $this->client_id,
+			'redirect_uri'  => $this->gt_redirect_url(),
+			'state'         => $this->state(),
+			'scope'         => implode( ' ', $scope ),
+			'access_type'   => 'online',
+			'response_type' => 'code',
+		];
+
+		/**
+		 * Filter the arguments for sending in query.
+		 *
+		 * This is useful in cases for example: choosing the correct prompt.
+		 *
+		 * @param array $client_args List of query arguments to send to Google OAuth.
+		 */
+		$client_args = apply_filters( 'rtcamp.google_client_args', $client_args );
+
+		return self::AUTHORIZE_URL . '?' . http_build_query( $client_args );
 	}
 
 	/**
