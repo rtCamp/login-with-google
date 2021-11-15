@@ -33,6 +33,15 @@ class Google_Auth {
 	protected $_redirect_to = '';
 
 	/**
+	 * @var \WP_User
+	 */
+	protected $_user = false;
+	
+	/**
+	 * @var boolean
+	 */
+	protected $_is_logged = false;
+	/**
 	 * Google_Auth constructor.
 	 */
 	protected function __construct() {
@@ -41,7 +50,7 @@ class Google_Auth {
 
 		$this->_client = $this->_get_client();
 
-		add_filter( 'authenticate', [ $this, 'authenticate_user' ] );
+		$this->_is_logged = add_filter( 'authenticate', [ $this, 'authenticate_user' ] );		
 		add_filter( 'login_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'registration_redirect', [ $this, 'get_login_redirect' ] );
 		add_filter( 'allowed_redirect_hosts', [ $this, 'maybe_whitelist_subdomain' ] );
@@ -396,6 +405,8 @@ class Google_Auth {
 		// We found the user.
 		if ( ! empty( $user ) && $user instanceof \WP_User ) {
 
+			$this->_user = $user;
+
 			if ( ! $is_mu_site ) {
 				return $user;
 			}
@@ -428,6 +439,7 @@ class Google_Auth {
 		if ( empty( $user ) || ! $user instanceof \WP_User ) {
 			$user_id = $this->_create_user( $user_info );
 			$user    = get_user_by( 'id', $user_id );
+			$this->_user = $user;
 		}
 
 		if ( $is_mu_site ) {
@@ -446,7 +458,14 @@ class Google_Auth {
 	 *
 	 * @return string Redirect to URL.
 	 */
-	public function get_login_redirect( $redirect_to ) {
+	public function get_login_redirect( $redirect_to, $requested_redirect_to, $user ) {
+		if($this->_user instanceof \WP_User && $this->_is_logged){ 
+			/**
+			 * This hook provides access to user after login from this plugin.
+			 * @param \WP_User $user logged in.
+			 */
+			do_action('wp_google_login_user_loggedin', $user);
+		}
 		return ( ! empty( $this->_redirect_to ) ) ? $this->_redirect_to : $redirect_to;
 	}
 
