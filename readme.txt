@@ -5,7 +5,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.8.1
 Requires PHP: 7.3
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,6 +140,9 @@ Once you're ready to send a pull request, please run through the following check
 3. Settings within Google Developer Console.
 
 == Changelog ==
+
+= 1.2.2 =
+* Maintenance release.
 
 = 1.2.1 =
 * Feature: Provide filter for client arguments: rtcamp.google_client_args
