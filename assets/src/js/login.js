@@ -19,12 +19,21 @@ const wpGoogleLogin = {
 	 * Callback function when content is load.
 	 * To render the google login button at after login form.
 	 *
+	 * Set cookie if "Login with Google" button displayed to bypass page cache
+	 * Do not set on wp login or registration page.
+	 *
 	 * @return void
 	 */
 	onContentLoaded() {
 
 		// Form either can be login or register form.
 		this.form = document.getElementById( 'loginform' ) || document.getElementById( 'registerform' );
+
+		// Set cookie if "Login with Google" button displayed to bypass page cache
+		// Do not set on wp login or registration page.
+		if ( document.querySelector( '.wp_google_login' ) && null === this.form ) {
+			document.cookie = 'wp-login-with-google=1;path=' + window.location.pathname + ';';
+		}
 
 		if ( null === this.form ) {
 			return;
