@@ -46,7 +46,7 @@ class Settings {
 		if ( current_user_can( 'manage_options' ) ) {
 			add_filter( 'plugin_action_links', [ $this, 'plugin_action_links' ], 10, 2 );
 		}
-		add_options_page( __( 'Log in with Google', 'login-with-google' ), __( 'Log in with Google', 'login-with-google' ), 'manage_options', 'login-with-google', [
+		add_options_page( _x( 'Log in with Google', 'Tab Title', 'login-with-google' ), _x( 'Log in with Google', 'Admin Menu', 'login-with-google' ), 'manage_options', 'login-with-google', [
 			$this,
 			'options_page'
 		] );

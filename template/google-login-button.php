@@ -7,7 +7,7 @@
  * @package login-with-google
  */
 
-$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'login-with-google' );
+$button_text = ( ! empty( $button_text ) ) ? $button_text : _x( 'Log in with Google', 'Login Button', 'login-with-google' );
 
 if ( empty( $login_url ) ) {
 	return;
