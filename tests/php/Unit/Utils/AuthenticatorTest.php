@@ -186,8 +186,10 @@ class AuthenticatorTest extends TestCase {
 	 */
 	public function testRegisterReturnsUserObject() {
 		$user = (object) [
-			'email' => 'test@example.com',
-			'login' => 'test',
+			'email'       => 'test@example.com',
+			'login'       => 'test',
+			'given_name'  => 'Test',
+			'family_name' => 'User',
 		];
 
 		$this->settingsMock->registration_enabled = true;
@@ -213,6 +215,8 @@ class AuthenticatorTest extends TestCase {
 					'user_login' => 'test',
 					'user_pass'  => 'thisisrandompass',
 					'user_email' => 'test@example.com',
+					'first_name' => 'Test',
+					'last_name'  => 'User',
 				]
 			],
 			1,
