@@ -95,8 +95,8 @@ class Authenticator {
 						'user_login' => Helper::unique_username( $user->login ),
 						'user_pass'  => wp_generate_password( 18 ),
 						'user_email' => $user->email,
-						'first_name' => $user->given_name,
-						'last_name'  => $user->family_name,
+						'first_name' => $user->given_name ?? '',
+						'last_name'  => $user->family_name ?? '',
 					]
 				);
 
