@@ -186,6 +186,130 @@ class AuthenticatorTest extends TestCase {
 	 */
 	public function testRegisterReturnsUserObject() {
 		$user = (object) [
+			'email' => 'test@example.com',
+			'login' => 'test',
+		];
+
+		$this->settingsMock->registration_enabled = true;
+		$this->settingsMock->whitelisted_domains  = 'example.com,somedomain.com';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'unique_username' )
+		           ->once()
+		           ->withArgs( ['test'] )
+		           ->andReturn( 'test' );
+
+		$this->wpMockFunction(
+			'wp_generate_password',
+			[ 18 ],
+			1,
+			'thisisrandompass'
+		);
+
+		$this->wpMockFunction(
+			'wp_insert_user',
+			[
+				[
+					'user_login' => 'test',
+					'user_pass'  => 'thisisrandompass',
+					'user_email' => 'test@example.com',
+					'first_name' => '',
+					'last_name'  => '',
+				]
+			],
+			1,
+			100
+		);
+
+		WP_Mock::expectAction( 'rtcamp.google_user_created', 100, $user );
+
+		$wp_user = Mockery::mock( \WP_User::class );
+
+		$this->wpMockFunction(
+			'get_user_by',
+			[
+				'id',
+				100,
+			],
+			1,
+			$wp_user
+		);
+
+		$received = $this->testee->register( $user );
+
+		$this->assertSame( $wp_user, $received );
+		$this->assertConditionsMet();
+	}
+
+
+	/**
+	 * @covers ::register
+	 * @covers ::can_register_with_email
+	 */
+	public function testRegisterReturnsUserObjectWithFirstNameOnly() {
+		$user = (object) [
+			'email'      => 'test@example.com',
+			'login'      => 'test',
+			'given_name' => 'Test',
+		];
+
+		$this->settingsMock->registration_enabled = true;
+		$this->settingsMock->whitelisted_domains  = 'example.com,somedomain.com';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'unique_username' )
+			->once()
+			->withArgs( ['test'] )
+			->andReturn( 'test' );
+
+		$this->wpMockFunction(
+			'wp_generate_password',
+			[ 18 ],
+			1,
+			'thisisrandompass'
+		);
+
+		$this->wpMockFunction(
+			'wp_insert_user',
+			[
+				[
+					'user_login' => 'test',
+					'user_pass'  => 'thisisrandompass',
+					'user_email' => 'test@example.com',
+					'first_name' => 'Test',
+					'last_name'  => '',
+				]
+			],
+			1,
+			100
+		);
+
+		WP_Mock::expectAction( 'rtcamp.google_user_created', 100, $user );
+
+		$wp_user = Mockery::mock( \WP_User::class );
+
+		$this->wpMockFunction(
+			'get_user_by',
+			[
+				'id',
+				100,
+			],
+			1,
+			$wp_user
+		);
+
+		$received = $this->testee->register( $user );
+
+		$this->assertSame( $wp_user, $received );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::register
+	 * @covers ::can_register_with_email
+	 */
+	public function testRegisterReturnsUserObjectWithFirstLastName() {
+		$user = (object) [
 			'email'       => 'test@example.com',
 			'login'       => 'test',
 			'given_name'  => 'Test',
@@ -197,9 +321,9 @@ class AuthenticatorTest extends TestCase {
 
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'unique_username' )
-		           ->once()
-		           ->withArgs( ['test'] )
-		           ->andReturn( 'test' );
+			->once()
+			->withArgs( ['test'] )
+			->andReturn( 'test' );
 
 		$this->wpMockFunction(
 			'wp_generate_password',
