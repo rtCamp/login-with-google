@@ -55,6 +55,13 @@ class PluginTest extends TestCase {
 	}
 
 	/**
+	 * @covers ::__construct
+	 */
+	public function testConstruct() {
+		$this->assertSame( $this->containerMock, $this->getTesteeProperty( 'container', $this->testee ) );
+	}
+
+	/**
 	 * Test run method of Plugin class.
 	 *
 	 * @covers ::run

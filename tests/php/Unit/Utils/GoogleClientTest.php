@@ -347,4 +347,27 @@ class GoogleClientTest extends TestCase {
 
 		$this->assertSame( $expected, $ghClient->authorization_url() );
 	}
+
+	/**
+	 * @covers ::state
+	 */
+	public function testState()
+	{
+		$data = [
+			'nonce'		=> 'random_hash',
+			'provider'	=> 'google',
+		];
+
+		$this->wpMockFunction( 'wp_create_nonce', [ 'login_with_google' ], 1, 'random_hash' );
+		$this->wpMockFunction(
+			'wp_json_encode',
+			[ $data ],
+			1,
+			json_encode($data)
+		);
+
+		$state = $this->testee->state();
+
+		$this->assertIsString($state);
+	}
 }

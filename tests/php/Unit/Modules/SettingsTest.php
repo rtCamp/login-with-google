@@ -315,4 +315,63 @@ class SettingsTest extends TestCase {
 		$this->assertConditionsMet();
 	}
 
+	/**
+	 * @covers ::one_tap_login
+	 */
+	public function testOneTapLogin() {
+		define( 'WP_GOOGLE_ONE_TAP_LOGIN', true );
+
+		$this->wpMockFunction( 'checked', [ true ], 1, 'checked' );
+		$this->wpMockFunction( 'esc_attr', [ 'checked' ], 1, 'checked' );
+		$this->wpMockFunction( 'esc_attr', [ 'disabled="disabled"' ], 1, 'disabled="disabled"' );
+		$this->wpMockFunction(
+			'esc_html_e',
+			[ 'One Tap Login', 'login-with-google' ],
+			1,
+			'One Tap Login'
+		);
+
+		ob_start();
+		$this->testee->one_tap_login();
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertIsString( $html );
+
+		$this->assertStringContainsString( 'checked', $html );
+	}
+
+	/**
+	 * @covers ::one_tap_login_screens
+	 */
+	public function testOneTapLoginScreen() {
+		define( 'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN', 'login' );
+
+		$this->wpMockFunction( 'checked', [ 'login', 'login' ], 1, 'checked' );
+		$this->wpMockFunction( 'checked', [ 'login', 'sitewide' ], 1, 'checked' );
+		$this->wpMockFunction( 'esc_attr', [ 'checked' ], 2, 'checked' );
+		$this->wpMockFunction( 'esc_attr', [ 'disabled="disabled"' ], 2, 'disabled="disabled"' );
+		$this->wpMockFunction(
+			'esc_html_e',
+			[ 'Enable One Tap Login Only on Login Screen', 'login-with-google' ],
+			1,
+			'Enable One Tap Login Only on Login Screen'
+		);
+		$this->wpMockFunction(
+			'esc_html_e',
+			[ 'Enable One Tap Login Site-wide', 'login-with-google' ],
+			1,
+			'Enable One Tap Login Site-wide'
+		);
+
+		ob_start();
+		$this->testee->one_tap_login_screens();
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertIsString( $html );
+
+		$this->assertStringContainsString( 'checked', $html );
+	}
+
 }
