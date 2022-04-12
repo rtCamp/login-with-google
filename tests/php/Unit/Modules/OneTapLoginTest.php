@@ -87,7 +87,6 @@ class OneTapLoginTest extends TestCase {
 	 * @covers ::init
 	 */
 	public function testInit() {
-
 		$this->set_private_property(
 			$this->testee,
 			'settings',
@@ -273,7 +272,6 @@ class OneTapLoginTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticate() {
-
 		$user = (object) [
 			'name'  => 'Test',
 			'email' => 'test@example.com',

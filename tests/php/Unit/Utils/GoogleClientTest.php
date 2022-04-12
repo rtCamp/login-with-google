@@ -351,8 +351,7 @@ class GoogleClientTest extends TestCase {
 	/**
 	 * @covers ::state
 	 */
-	public function testState()
-	{
+	public function testState() {
 		$data = [
 			'nonce'		=> 'random_hash',
 			'provider'	=> 'google',

@@ -7,6 +7,7 @@ declare( strict_types=1 );
 
 namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
+use RtCamp\GoogleLogin\Tests\PrivateAccess;
 use WP_Mock;
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 use RtCamp\GoogleLogin\Tests\TestCase;
@@ -20,6 +21,8 @@ use RtCamp\GoogleLogin\Modules\Settings as Testee;
  * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class SettingsTest extends TestCase {
+	use PrivateAccess;
+
 	/**
 	 * Object in test.
 	 *
@@ -317,6 +320,7 @@ class SettingsTest extends TestCase {
 
 	/**
 	 * @covers ::one_tap_login
+	 * @covers ::disabled
 	 */
 	public function testOneTapLogin() {
 		define( 'WP_GOOGLE_ONE_TAP_LOGIN', true );
@@ -343,6 +347,7 @@ class SettingsTest extends TestCase {
 
 	/**
 	 * @covers ::one_tap_login_screens
+	 * @covers ::disabled
 	 */
 	public function testOneTapLoginScreen() {
 		define( 'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN', 'login' );
@@ -373,5 +378,4 @@ class SettingsTest extends TestCase {
 
 		$this->assertStringContainsString( 'checked', $html );
 	}
-
 }
