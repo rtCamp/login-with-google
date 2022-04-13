@@ -189,13 +189,6 @@ class OneTapLoginTest extends TestCase {
 			->willReturn( false );
 
 		$this->wpMockFunction(
-			'__',
-			[ 'Cannot verify the credentials', 'login-with-google' ],
-			1,
-			'Cannot verify the credentials'
-		);
-
-		$this->wpMockFunction(
 			'wp_send_json_error',
 			[ 'Cannot verify the credentials' ],
 			1,
