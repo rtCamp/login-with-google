@@ -1,6 +1,9 @@
 {
-    "/build/js/login.js": "/build/js/login.js",
-    "/build/css/login.css": "/build/css/login.css",
+    "/js//build/js/login.js": "/js//build/js/login.js",
+    "/js//build/js/login.asset.php": "/js//build/js/login.asset.php",
+    "/js/main.js": "/js/main.js",
+    "/js/main.asset.php": "/js/main.asset.php",
+    "/build/images/google_light.png": "/build/images/google_light.png",
     "/build/js/onetap.js": "/build/js/onetap.js",
     "/build/js/onetap.min.js": "/build/js/onetap.min.js"
 }

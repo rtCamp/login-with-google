@@ -1,1 +1,35 @@
-window.LoginWithGoogleDataCallBack=function(e){var t=new XMLHttpRequest;t.open("POST",TempAccessOneTap.ajaxurl,!0),t.setRequestHeader("Content-Type","application/x-www-form-urlencoded"),t.onreadystatechange=function(){if(t.readyState===XMLHttpRequest.DONE&&200===t.status){var e=JSON.parse(t.responseText);if(!e.success)return void alert(e.data);try{var a=new URL(e.data.redirect),n=new URL(TempAccessOneTap.homeurl);if(a.host!==n.host)throw new URIError(wp.i18n.__("Invalid URL for Redirection","login-with-google"))}catch(e){return void alert(e.message)}window.location=e.data.redirect}},t.send("action=validate_id_token&token="+e.credential+"&state="+TempAccessOneTap.state)};
+window.LoginWithGoogleDataCallBack = function( response ) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', TempAccessOneTap.ajaxurl, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState === XMLHttpRequest.DONE) {
+            var status = xhr.status;
+            if ( status === 200 ) {
+                var response = JSON.parse( xhr.responseText );
+
+                if ( ! response.success ) {
+                    alert( response.data );
+                    return;
+                }
+
+                try {
+
+                    var redirect_to = new URL( response.data.redirect );
+                    var homeurl = new URL( TempAccessOneTap.homeurl );
+
+                    if ( redirect_to.host !== homeurl.host ) {
+                        throw new URIError( wp.i18n.__( 'Invalid URL for Redirection', 'login-with-google' ) );
+                    }
+
+                } catch ( e ) {
+                    alert( e.message );
+                    return;
+                }
+
+                window.location = response.data.redirect;
+            }
+        }
+    };
+    xhr.send( 'action=validate_id_token&token=' + response.credential + '&state=' + TempAccessOneTap.state );
+};
