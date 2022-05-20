@@ -1,12 +1,60 @@
-<?xml version="1.0"?>
-<ruleset name="WP Google Login ruleset">
-	<rule ref="WordPressVIPMinimum"/>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
-		<type>warning</type>
+<?xml version="1.0" ?>
+<ruleset name="Login with github">
+    <config name="minimum_supported_wp_version" value="5.4.2" />
+	<!-- Check for PHP cross-version compatibility. -->
+	<config name="testVersion" value="7.1-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+    <file>src</file>
+    <file>login-with-google.php</file>
+
+    <!-- Show progress and sniff codes in all reports. -->
+    <arg value="ps"/>
+
+    <!-- A path to strip from the front of file paths inside reports. -->
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <rule ref="WordPress-Core">
+        <exclude name="WordPress.PHP.DisallowShortTernary" />
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+    </rule>
+
+    <rule ref="WordPress-Docs">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
+    <!-- For PSR-4 autoloading. -->
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
 	</rule>
-	<exclude-pattern>*/node_modules/*</exclude-pattern>
-	<exclude-pattern>*/vendor/*</exclude-pattern>
-	<exclude-pattern>*/assets/build/*</exclude-pattern>
-	<exclude-pattern>*/tests/*</exclude-pattern>
+
+    <rule ref="WordPress-VIP-Go">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+
+    <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="login-with-google" />
+            </property>
+        </properties>
+    </rule>
+
+	<!-- Allow namespaced hook names in dot notation. -->
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="."/>
+		</properties>
+	</rule>
+
+    <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis" />
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>/lib/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/.github/*</exclude-pattern>
+    <exclude-pattern>*/.scripts/*</exclude-pattern>
 </ruleset>
