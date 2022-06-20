@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bb70991464087a65b2506ed702f5f98a",
+    "content-hash": "f7ba96024d066cde09aa540a937a3d40",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -1432,11 +1432,11 @@
                 }
             },
             "autoload": {
-                "classmap": [
-                    "src/"
-                ],
                 "files": [
                     "src/Framework/Assert/Functions.php"
+                ],
+                "classmap": [
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2621,7 +2621,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.4"
+        "php": ">=7.1"
     },
     "platform-dev": [],
     "plugin-api-version": "1.1.0"
