@@ -145,8 +145,7 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( null );
 
@@ -167,8 +166,7 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->never()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( null );
 
@@ -193,16 +191,14 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( 'test_code' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
+				'state'
 			]
 		)->andReturn( $state );
 
@@ -223,16 +219,14 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
+				'state'
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
 
@@ -250,16 +244,14 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
+				'state'
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
@@ -309,16 +301,14 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'code',
-				FILTER_SANITIZE_STRING
+				'code'
 			]
 		)->andReturn( 'abc' );
 
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
+				'state'
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
@@ -411,8 +401,7 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'redirect_to',
-				FILTER_SANITIZE_STRING
+				'redirect_to'
 			]
 		)->andReturn( 'https://example.com/state-page' );
 
@@ -430,8 +419,7 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'redirect_to',
-				FILTER_SANITIZE_STRING
+				'redirect_to'
 			]
 		)->andReturn( null );
 
@@ -456,8 +444,7 @@ class LoginTest extends TestCase {
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
 				INPUT_GET,
-				'state',
-				FILTER_SANITIZE_STRING
+				'state'
 			]
 		)->andReturn( [] );
 
