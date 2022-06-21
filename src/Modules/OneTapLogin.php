@@ -94,11 +94,11 @@ class OneTapLogin implements Module {
 				'init',
 				function () {
 					if ( ! is_user_logged_in() ) {
-					    $hook_prefix = ( 'sitewide' === $this->settings->one_tap_login_screen ) ? 'wp' : 'login';
+						$hook_prefix = ( 'sitewide' === $this->settings->one_tap_login_screen ) ? 'wp' : 'login';
 						add_action( $hook_prefix . '_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 						add_action( $hook_prefix . '_footer', [ $this, 'one_tap_prompt' ], 10000 );
 					}
-				} 
+				}
 			);
 		}
 	}
@@ -109,11 +109,7 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_prompt(): void { ?>
-		<div id="g_id_onload"
-			 data-client_id="<?php echo esc_html( $this->settings->client_id ); ?>"
-			 data-login_uri="<?php echo esc_html( wp_login_url() ); ?>"
-			 data-callback="LoginWithGoogleDataCallBack"
-		></div>
+		<div id="g_id_onload" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
 		<?php
 	}
 
@@ -123,7 +119,7 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
-	    $filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
 
 		wp_enqueue_script(
 			'login-with-google-one-tap',
@@ -136,15 +132,15 @@ class OneTapLogin implements Module {
 		$data = [
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'state'   => $this->google_client->state(),
-            'homeurl' => get_option( 'home', '' ),
+			'homeurl' => get_option( 'home', '' ),
 		];
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
 			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
 			[
-                'wp-i18n',
-            ],
+				'wp-i18n',
+			],
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);

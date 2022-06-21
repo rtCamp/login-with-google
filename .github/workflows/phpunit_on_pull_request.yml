@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Install dependencies
         if: steps.check_files.outputs.files_exists == 'true'
-        run: COMPOSER_ROOT_VERSION=dev-master composer install --prefer-dist --no-progress --no-suggest
+        run: COMPOSER_ROOT_VERSION=dev-master composer install --prefer-dist --no-progress --ignore-platform-reqs
 
       - name: Setup problem matcher to provide annotations for PHPUnit
         if: steps.check_files.outputs.files_exists == 'true'
