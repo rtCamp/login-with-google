@@ -60,12 +60,11 @@ class Authenticator {
 
 		if ( email_exists( $user->email ) ) {
 			$user_wp = get_user_by( 'email', $user->email );
-			$uid = $user_wp->data->ID;
 
 			/**
 			 * Fires once the user has been authenticated.
 			 */
-			do_action( 'rtcamp.google_user_login', $uid, $user );
+			do_action( 'rtcamp.google_user_login', $user_wp->data->ID, $user );
 
 			return $user_wp;
 		}
