@@ -64,7 +64,7 @@ class Authenticator {
 			/**
 			 * Fires once the user has been authenticated.
 			 */
-			do_action( 'rtcamp.google_user_login', $user_wp->data->ID, $user );
+			do_action( 'rtcamp.google_user_login', $user_wp, $user );
 
 			return $user_wp;
 		}
