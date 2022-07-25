@@ -149,7 +149,7 @@ class Login implements ModuleInterface {
 				 *
 				 * @param WP_User $user WP User object.
 				 *
-				 * @since 1.2.2
+				 * @since 1.2.3
 				 */
 				do_action( 'rtcamp.google_user_authenticated', $user );
 
