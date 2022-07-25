@@ -63,8 +63,12 @@ class Authenticator {
 
 			/**
 			 * Fires once the user has been authenticated.
+			 *
+			 * @param WP_User $user_wp WP User data object.
+			 * @param stdClass $user User data object returned by Google.
+			 * @since 1.2.3
 			 */
-			do_action( 'rtcamp.google_user_login', $user_wp, $user );
+			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user );
 
 			return $user_wp;
 		}
