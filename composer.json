@@ -40,6 +40,11 @@
         "phpunit/phpunit": "9.5",
         "10up/wp_mock": "0.4.2"
     },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
     "autoload": {
         "psr-4": {
             "RtCamp\\GoogleLogin\\": "src/"
