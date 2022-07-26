@@ -59,7 +59,19 @@ class Authenticator {
 		}
 
 		if ( email_exists( $user->email ) ) {
-			return get_user_by( 'email', $user->email );
+			$user_wp = get_user_by( 'email', $user->email );
+
+			/**
+			 * Fires once the user has been authenticated.
+			 *
+			 * @since 1.2.3
+			 *
+			 * @param WP_User $user_wp WP User data object.
+			 * @param stdClass $user User data object returned by Google.
+			 */
+			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user );
+
+			return $user_wp;
 		}
 
 		/**
