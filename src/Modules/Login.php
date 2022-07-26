@@ -80,7 +80,8 @@ class Login implements ModuleInterface {
 	 */
 	public function init(): void {
 		add_action( 'login_form', [ $this, 'login_button' ] );
-		add_action( 'authenticate', [ $this, 'authenticate' ] );
+		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
+		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
 		add_action( 'rtcamp.google_register_user', [ $this->authenticator, 'register' ] );
 		add_action( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_action( 'rtcamp.google_user_created', [ $this, 'user_meta' ] );
@@ -142,6 +143,15 @@ class Login implements ModuleInterface {
 
 			if ( $user instanceof WP_User ) {
 				$this->authenticated = true;
+
+				/**
+				 * Fires once the user has been authenticated via Google OAuth.
+				 *
+				 * @since 1.2.3
+				 *
+				 * @param WP_User $user WP User object.
+				 */
+				do_action( 'rtcamp.google_user_authenticated', $user );
 
 				return $user;
 			}
