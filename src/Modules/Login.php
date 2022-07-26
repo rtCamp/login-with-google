@@ -147,9 +147,9 @@ class Login implements ModuleInterface {
 				/**
 				 * Fires once the user has been authenticated via Google OAuth.
 				 *
-				 * @param WP_User $user WP User object.
-				 *
 				 * @since 1.2.3
+				 *
+				 * @param WP_User $user WP User object.
 				 */
 				do_action( 'rtcamp.google_user_authenticated', $user );
 
