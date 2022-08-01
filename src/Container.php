@@ -19,6 +19,7 @@ use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
 use Pimple\Container as PimpleContainer;
 use InvalidArgumentException;
 use RtCamp\GoogleLogin\Modules\Assets;
+use RtCamp\GoogleLogin\Modules\Block;
 use RtCamp\GoogleLogin\Modules\Login;
 use RtCamp\GoogleLogin\Modules\OneTapLogin;
 use RtCamp\GoogleLogin\Modules\Settings;
@@ -175,6 +176,18 @@ class Container implements ContainerInterface {
 		$this->container['authenticator'] = function ( PimpleContainer $c ) {
 			return new Authenticator( $c['settings'] );
 		};
+
+		/**
+		 * Define Block service to add gutenberg block.
+		 *
+		 * @param PimpleContainer $c Pimple container object.
+		 *
+		 * @return Block
+		 */
+		$this->container['google_login_block'] = function ( PimpleContainer $c ) {
+			return new Block( $c['assets'], $c['gh_client'] );
+		};
+
 
 		/**
 		 * Define any additional services.
