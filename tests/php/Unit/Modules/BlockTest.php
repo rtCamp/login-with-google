@@ -141,8 +141,8 @@ class BlockTest extends TestCase {
 			[
 				'google-login/login-button',
 				[
-					'editor_style'    => 'google-login',
-					'style'           => 'google-login',
+					'editor_style'    => 'login-with-google',
+					'style'           => 'login-with-google',
 					'render_callback' => [ $this->testee, 'render_login_button' ],
 					'attributes'      => [
 						'buttonText'   => [
