@@ -118,7 +118,7 @@ class BlockTest extends TestCase {
 		$this->assetMock->expects( $this->once() )->method( 'register_script' )
 		                 ->with(
 			                 'google-login-block',
-			                 'js/dist/button.js',
+			                 'build/js/block-button.js',
 			                 [
 				                 'wp-blocks',
 				                 'wp-element',
