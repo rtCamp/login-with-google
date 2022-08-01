@@ -45,7 +45,7 @@ class BlockTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GoogleLogin::class );
+		$this->ghClientMock = $this->createMock( GoogleClient::class );
 		$this->assetMock       = $this->createMock( Assets::class );
 		$this->testee           = new Testee( $this->assetMock, $this->ghClientMock );
 	}
