@@ -21,17 +21,19 @@ if ( empty( $login_url ) ) {
 }
 
 ?>
-<div class="wp_google_login__button-container">
-    <a class="wp_google_login__button"
-		<?php
-		if ( ! is_user_logged_in() ) {
-			printf( ' href="%s"', esc_url( $login_url ) );
-		} else {
-			printf( ' data-disabled="true"' );
-		}
-		?>
-    >
-        <span class="wp_google_login__google-icon"></span>
-		<?php echo esc_html( $button_text ); ?>
-    </a>
+<div class="wp_google_login">
+    <div class="wp_google_login__button-container">
+        <a class="wp_google_login__button"
+            <?php
+            if ( ! is_user_logged_in() ) {
+                printf( ' href="%s"', esc_url( $login_url ) );
+            } else {
+                printf( ' data-disabled="true"' );
+            }
+            ?>
+        >
+            <span class="wp_google_login__google-icon"></span>
+            <?php echo esc_html( $button_text ); ?>
+        </a>
+    </div>
 </div>
