@@ -81,11 +81,7 @@ $white_color: #FFFFFF;
 		margin-right: 10px;
 	}
 }
-.wp_google_login__button-container {
 
-	a[data-disabled="true"] {
-		pointer-events: none;
-		background-color: gray;
-	}
-
+.wp-block-google-login-login-button {
+	display: inline-block;
 }

@@ -13,13 +13,12 @@ if ( isset( $custom_btn_text ) && $custom_btn_text ) {
 }
 
 if ( is_user_logged_in() ) {
-	$button_text = __( 'Logged In', 'login-with-google' );
+	$button_text = __( 'Log out', 'login-with-google' );
 }
 
 if ( empty( $login_url ) ) {
 	return;
 }
-
 ?>
 <div class="wp_google_login">
     <div class="wp_google_login__button-container">
@@ -28,7 +27,7 @@ if ( empty( $login_url ) ) {
             if ( ! is_user_logged_in() ) {
                 printf( ' href="%s"', esc_url( $login_url ) );
             } else {
-                printf( ' data-disabled="true"' );
+                printf( ' href="%s"', esc_url( wp_logout_url( get_permalink() ) ) );
             }
             ?>
         >

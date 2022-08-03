@@ -30,7 +30,7 @@ registerBlockType('google-login/login-button', {
     };
 
     const checkboxAttributes = {
-      label: __('Display even when user is logged-in', 'login-with-google'),
+      label: __('Display Logout', 'login-with-google'),
       checked: attributes.forceDisplay,
       onChange: (val) => {
         setAttributes({ forceDisplay: val });
@@ -48,7 +48,7 @@ registerBlockType('google-login/login-button', {
         </InspectorControls>
         <div className="wp_google_login__button-container">
 					<span className="wp_google_login__button">
-						<span className="wp_gogle_login__google-icon"></span>
+						<span className="wp_google_login__google-icon"></span>
 						<RichText {...buttonTextAttributes} />
 					</span>
         </div>
