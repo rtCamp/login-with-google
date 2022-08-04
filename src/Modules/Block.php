@@ -8,7 +8,7 @@
  * Particularly useful in FSE.
  *
  * @package RtCamp\GoogleLogin
- * @since 1.0.0
+ * @since 1.2.3
  */
 
 declare( strict_types=1 );
@@ -88,7 +88,9 @@ class Block implements Module {
 	}
 
 	/**
-	 * Enqueue block editor assets
+     * Enqueue block editor assets.
+     *
+	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
 		$this->assets->register_login_styles();
@@ -139,7 +141,7 @@ class Block implements Module {
 	 * This will output the Login with Google
 	 * button if user is not logged in currently.
 	 *
-	 * @param $attributes
+	 * @param string $attributes Block attributes.
 	 *
 	 * @return string
 	 */
@@ -150,10 +152,10 @@ class Block implements Module {
 		 *
 		 * @param bool $display flag to display button. Default false.
 		 *
-		 * @since 1.0.0
+		 * @since 1.2.3
 		 */
 		$force_display = $attributes['forceDisplay'] ?? false;
-		if ( ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) || $force_display ) {
+		if (  $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
 				[
 					'login_url'           => $this->client->authorization_url(),

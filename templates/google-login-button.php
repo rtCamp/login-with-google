@@ -12,27 +12,24 @@ if ( isset( $custom_btn_text ) && $custom_btn_text ) {
 	$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'login-with-google' );
 }
 
-if ( is_user_logged_in() ) {
-	$button_text = __( 'Log out', 'login-with-google' );
-}
-
 if ( empty( $login_url ) ) {
 	return;
+}
+
+if ( is_user_logged_in() ) {
+	$button_text = __( 'Log out', 'login-with-google' );
+	$login_url   = wp_logout_url( get_permalink() );
 }
 ?>
 <div class="wp_google_login">
     <div class="wp_google_login__button-container">
         <a class="wp_google_login__button"
-            <?php
-            if ( ! is_user_logged_in() ) {
-                printf( ' href="%s"', esc_url( $login_url ) );
-            } else {
-                printf( ' href="%s"', esc_url( wp_logout_url( get_permalink() ) ) );
-            }
-            ?>
+			<?php
+			printf( ' href="%s"', esc_url( $login_url ) );
+			?>
         >
             <span class="wp_google_login__google-icon"></span>
-            <?php echo esc_html( $button_text ); ?>
+			<?php echo esc_html( $button_text ); ?>
         </a>
     </div>
 </div>
