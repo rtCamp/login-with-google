@@ -88,8 +88,8 @@ class Block implements Module {
 	}
 
 	/**
-     * Enqueue block editor assets.
-     *
+	 * Enqueue block editor assets.
+	 *
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() {
