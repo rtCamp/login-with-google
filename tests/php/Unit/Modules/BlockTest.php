@@ -238,5 +238,79 @@ class BlockTest extends TestCase {
 
 		$this->assertConditionsMet();
 	}
+
+	/**
+	 * @covers ::render_login_button, ::markup
+	 */
+	public function testRenderLoginButtonLogout() {
+		$mockAttributes = [
+			'login_url'       => '#',
+			'custom_btn_text' => 'test',
+			'force_display'   => true,
+		];
+
+		$this->wpMockFunction(
+			'is_user_logged_in',
+			[],
+			1,
+			false
+		);
+
+		$this->wpMockFunction(
+			'wp_parse_args',
+			[],
+			1,
+			$mockAttributes
+		);
+
+		$this->wpMockFunction(
+			'wp_kses_post',
+			[],
+			1,
+			''
+		);
+
+		$path = dirname( __DIR__, 4 ) . '/templates/';
+
+		$this->wpMockFunction(
+			'RtCamp\GoogleLogin\plugin',
+			[],
+			1,
+			function () use ( $path ) {
+				return (object) [
+					'template_dir' => $path,
+				];
+			}
+		);
+
+		WP_Mock::userFunction(
+			'trailingslashit',
+			[
+				'times'      => 1,
+				'args'       => [ $path ],
+				'return_arg' => 0,
+			]
+		);
+
+
+		$helperMock = \Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'render_template' )->once()->withArgs(
+			[
+				$path . 'google-login-button.php',
+				$mockAttributes,
+				false,
+			]
+		)->andReturn( '' );
+
+		$markup = $this->testee->render_login_button(
+			[
+				$path . '/google-login-button.php',
+				$mockAttributes,
+				false,
+			]
+		);
+
+		$this->assertConditionsMet();
+	}
 }
 
