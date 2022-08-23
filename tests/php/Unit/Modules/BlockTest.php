@@ -242,7 +242,7 @@ class BlockTest extends TestCase {
 	/**
 	 * @covers ::render_login_button, ::markup
 	 */
-	public function testRenderLoginButtonLogout() {
+	public function testRenderLogoutButton() {
 		$mockAttributes = [
 			'login_url'       => '#',
 			'custom_btn_text' => 'test',
