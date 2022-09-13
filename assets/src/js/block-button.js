@@ -51,6 +51,9 @@ registerBlockType('google-login/login-button', {
 
 		const checkboxAttributes = {
 			label: __('Display Logout', 'login-with-google'),
+			help: __(
+				'If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’',
+				'login-with-google'),
 			checked: attributes.forceDisplay,
 			onChange: (val) => {
 				setAttributes({forceDisplay: val});
