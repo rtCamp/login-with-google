@@ -24,6 +24,13 @@ use function RtCamp\GoogleLogin\plugin;
 class Assets implements ModuleInterface {
 
 	/**
+	 * Handle for login button style.
+	 *
+	 * @var string
+	 */
+	const LOGIN_BUTTON_STYLE_HANDLE = 'login-with-google';
+
+	/**
 	 * Module name.
 	 *
 	 * @return string
@@ -49,11 +56,11 @@ class Assets implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_login_styles(): void {
-		$this->register_style( 'login-with-google', 'build/css/login.css' );
+		$this->register_style( self::LOGIN_BUTTON_STYLE_HANDLE, 'build/css/login.css' );
 	}
 
 	/**
-	 * Enqueue the login stylesheet.
+	 * Enqueue the login style.
 	 *
 	 * @return void
 	 */
@@ -61,7 +68,7 @@ class Assets implements ModuleInterface {
 		/**
 		 * If style is not registered, register it.
 		 */
-		if ( ! wp_style_is( 'login-with-google', 'registered' ) ) {
+		if ( ! wp_style_is( self::LOGIN_BUTTON_STYLE_HANDLE, 'registered' ) ) {
 			$this->register_login_styles();
 		}
 
@@ -70,7 +77,7 @@ class Assets implements ModuleInterface {
 		}
 
 		wp_enqueue_script( 'login-with-google-script' );
-		wp_enqueue_style( 'login-with-google' );
+		wp_enqueue_style( self::LOGIN_BUTTON_STYLE_HANDLE );
 	}
 
 	/**
