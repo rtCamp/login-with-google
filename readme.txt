@@ -147,6 +147,7 @@ Once you're ready to send a pull request, please run through the following check
 * Add: Added hook after user authentication.
 * Add: Added hook after user is logged-in.
 * Fix: set login cookie with shortcode display.
+* Fix: Redirection back to login page issue.
 * Updated npm packages and laravel-mix.
 
 = 1.2.2 =
@@ -190,4 +191,5 @@ Once you're ready to send a pull request, please run through the following check
 * Add: Added hook after user authentication.
 * Add: Added hook after user is logged-in.
 * Fix: set login cookie with shortcode display.
+* Fix: Redirection back to login page issue.
 * Updated npm packages and laravel-mix.
