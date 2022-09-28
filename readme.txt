@@ -5,7 +5,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.0
 Tested up to: 5.8.1
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,9 +141,10 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
-= 1.2.3 =
+= 1.3.0 =
 * Feature: Gutenberg block for Login button.
 * Feature: Save user first name and last name on registration.
+* Add: PHP 8.0 compatibility.
 * Add: Added hook after user authentication.
 * Add: Added hook after user is logged-in.
 * Fix: set login cookie with shortcode display.
@@ -185,9 +186,10 @@ Once you're ready to send a pull request, please run through the following check
 
 == Upgrade Notice ==
 
-= 1.2.3 =
+= 1.3.0 =
 * Feature: Gutenberg block for Login button.
 * Feature: Save user first name and last name on registration.
+* Add: PHP 8.0 compatibility.
 * Add: Added hook after user authentication.
 * Add: Added hook after user is logged-in.
 * Fix: set login cookie with shortcode display.
