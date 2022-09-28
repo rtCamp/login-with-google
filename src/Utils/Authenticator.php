@@ -64,7 +64,7 @@ class Authenticator {
 			/**
 			 * Fires once the user has been authenticated.
 			 *
-			 * @since 1.2.3
+			 * @since 1.3.0
 			 *
 			 * @param WP_User $user_wp WP User data object.
 			 * @param stdClass $user User data object returned by Google.

@@ -147,7 +147,7 @@ class Login implements ModuleInterface {
 				/**
 				 * Fires once the user has been authenticated via Google OAuth.
 				 *
-				 * @since 1.2.3
+				 * @since 1.3.0
 				 *
 				 * @param WP_User $user WP User object.
 				 */
