@@ -2,13 +2,13 @@
 /**
  * Plugin Name: Login with Google
  * Description: Allow users to login/register via Google.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: login-with-google
  * Domain Path: /languages
  * License: GPLv2+
- * Requires at least: 5.4.2
+ * Requires at least: 5.5
  * Requires PHP: 7.3
  *
  * @package RtCamp\GoogleLogin
