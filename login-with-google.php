@@ -9,7 +9,7 @@
  * Domain Path: /languages
  * License: GPLv2+
  * Requires at least: 5.5
- * Requires PHP: 7.3
+ * Requires PHP: 7.4
  *
  * @package RtCamp\GoogleLogin
  * @since 1.0.0
