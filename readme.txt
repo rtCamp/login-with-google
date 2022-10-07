@@ -137,6 +137,9 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.3.1 =
+* Maintenance release: Updated minimum requirements.
+
 = 1.3.0 =
 * Feature: Gutenberg block for Login button.
 * Feature: Save user first name and last name on registration.
@@ -182,12 +185,5 @@ Once you're ready to send a pull request, please run through the following check
 
 == Upgrade Notice ==
 
-= 1.3.0 =
-* Feature: Gutenberg block for Login button.
-* Feature: Save user first name and last name on registration.
-* Add: PHP 8.0 compatibility.
-* Add: Added hook after user authentication.
-* Add: Added hook after user is logged-in.
-* Fix: set login cookie with shortcode display.
-* Fix: Redirection back to login page issue.
-* Updated npm packages and laravel-mix.
+= 1.3.1 =
+* Maintenance release: Updated minimum requirements.
