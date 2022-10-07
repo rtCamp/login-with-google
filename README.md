@@ -151,9 +151,9 @@ generated at `/tmp/report/html`
 
 ## Minimum Requirements
 
-WordPress >= 5.4.0
+WordPress >= 5.5.0
 
-PHP >= 7.3 
+PHP >= 7.4
 
 ## License
 

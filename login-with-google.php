@@ -30,15 +30,15 @@ $hooks = [
 ];
 
 /**
- * PHP 7.3+ is required in order to use the plugin.
+ * PHP 7.4+ is required in order to use the plugin.
  */
-if ( version_compare( PHP_VERSION, '7.3', '<' ) ) {
+if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 	foreach ( $hooks as $hook ) {
 		add_action(
 			$hook,
 			function () {
 				$message = __(
-					'Login with google Plugin requires PHP version 7.3 or higher. <br />Please ask your server administrator to update your environment to latest PHP version',
+					'Login with google Plugin requires PHP version 7.4 or higher. <br />Please ask your server administrator to update your environment to latest PHP version',
 					'login-with-google'
 				);
 
