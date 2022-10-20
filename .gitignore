@@ -1,4 +1,26 @@
-.idea
-node_modules/
+### WordPress ###
+
+# Core
+/wordpress/
+
+# macOS/IDE
 .DS_Store
+.idea
+
+# Log files
+*.log
+/tests/logs
+
+# Packages
+vendor/
+node_modules/
+
+# Enviroment
+.env
+
+# Build
+build/
+dist/
+
+# Cache
 .phpunit.result.cache
