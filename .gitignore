@@ -21,6 +21,9 @@ node_modules/
 # Build
 build/
 dist/
+assets/css/
+assets/js/
+assets/images/
 
 # Cache
 .phpunit.result.cache
