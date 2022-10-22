@@ -7,7 +7,7 @@
  * Author URI: https://rtcamp.com
  * Text Domain: login-with-google
  * Domain Path: /languages
- * License: GPLv2+
+ * License: GPLv2 or later
  * Requires at least: 5.5
  * Requires PHP: 7.4
  *
