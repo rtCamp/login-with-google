@@ -1,2 +1,2 @@
-assets/webpack.mix.js
-assets/build
+assets/*
+!assets/src/
