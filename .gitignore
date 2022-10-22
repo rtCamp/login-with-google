@@ -27,3 +27,9 @@ assets/images/
 
 # Cache
 .phpunit.result.cache
+
+# Configs
+/phpcs.xml
+
+# WP ENV
+/.wp-env.override.json
