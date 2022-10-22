@@ -1,0 +1,54 @@
+{
+	"name": "login-with-google",
+	"private": true,
+	"description": "WordPress plugin to let users login with google.",
+	"author": "rtCamp and contributors",
+	"license": "GPL-2.0-or-later",
+	"keywords": [
+		"auth",
+		"google-login",
+		"wordpress",
+		"wordpress-plugin"
+	],
+	"homepage": "https://github.com/rtCamp/login-with-google#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rtCamp/login-with-google.git"
+	},
+	"bugs": {
+		"url": "https://github.com/rtCamp/login-with-google/issues"
+	},
+	"dependencies": {
+		"@wordpress/block-editor": "^10.3.0",
+		"@wordpress/blocks": "^11.19.0",
+		"@wordpress/components": "^21.3.0",
+		"@wordpress/dom-ready": "^3.20.0",
+		"@wordpress/i18n": "^4.20.0"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.19.6",
+		"@wordpress/babel-preset-default": "^7.4.0",
+		"@wordpress/browserslist-config": "^5.3.0",
+		"@wordpress/prettier-config": "^2.3.0",
+		"@wordpress/scripts": "^24.4.0",
+		"copy-webpack-plugin": "^11.0.0",
+		"cross-env": "^7.0.3",
+		"css-minimizer-webpack-plugin": "^4.2.2",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^2.7.1",
+		"webpack-remove-empty-scripts": "^1.0.1"
+	},
+	"scripts": {
+		"build:dev": "cross-env NODE_ENV=development npm-run-all 'build:!(dev|prod)'",
+		"build:prod": "cross-env NODE_ENV=production npm-run-all 'build:!(dev|prod)'",
+		"build:clean": "./bin/clean-build.js",
+		"build:js": "wp-scripts build",
+		"lint:pkg-json": "wp-scripts lint-pkg-json --ignorePath .gitignore"
+	},
+	"npmpackagejsonlint": {
+		"extends": "@wordpress/npm-package-json-lint-config",
+		"rules": {
+			"require-version": "off"
+		}
+	}
+}
