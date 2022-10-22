@@ -1,19 +1,17 @@
 /**
- * JS for Login with Google Block.
- *
- * @package login-with-google
+ * WordPress dependencies
  */
-
-const {registerBlockType} = wp.blocks;
-const {__} = wp.i18n;
-const {InspectorControls, RichText, useBlockProps} = wp.blockEditor;
-const {Panel, PanelBody, CheckboxControl} = wp.components;
+import {
+	InspectorControls,
+	RichText,
+	useBlockProps,
+} from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
+import { registerBlockType } from '@wordpress/blocks';
+import { Panel, PanelBody, CheckboxControl } from '@wordpress/components';
 
 /**
- * Register block type.
- *
- * @param metadata ( object )
- * @param settings ( object )
+ * Register Google login button block.
  */
 registerBlockType('google-login/login-button', {
 	title: __('Log in with Google', 'login-with-google'),
@@ -32,18 +30,17 @@ registerBlockType('google-login/login-button', {
 	/**
 	 * Describes the structure of the block in the context of the editor.
 	 *
-	 * @param {Object} props Props.
-	 *
-	 * @return {Object} Block elements.
+	 * @param {Object}   props               Block properties.
+	 * @param {Object}   props.attributes    Block attributes.
+	 * @param {Function} props.setAttributes Function to set block attributes.
+	 * @param {Function} props.className     Class name.
 	 */
-	edit: (props) => {
-		const {attributes, setAttributes} = props;
-
+	edit: ({ attributes, setAttributes, className }) => {
 		const buttonTextAttributes = {
 			format: 'string',
-			className: props.className,
+			className,
 			onChange: (value) => {
-				setAttributes({buttonText: value});
+				setAttributes({ buttonText: value });
 			},
 			value: attributes.buttonText,
 			placeholder: __('Log in with Google', 'login-with-google'),
@@ -53,10 +50,11 @@ registerBlockType('google-login/login-button', {
 			label: __('Display Logout', 'login-with-google'),
 			help: __(
 				'If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’',
-				'login-with-google'),
+				'login-with-google'
+			),
 			checked: attributes.forceDisplay,
 			onChange: (val) => {
-				setAttributes({forceDisplay: val});
+				setAttributes({ forceDisplay: val });
 			},
 		};
 

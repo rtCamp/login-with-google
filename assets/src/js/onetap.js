@@ -1,35 +1,50 @@
-window.LoginWithGoogleDataCallBack = function( response ) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', TempAccessOneTap.ajaxurl, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-        if(xhr.readyState === XMLHttpRequest.DONE) {
-            var status = xhr.status;
-            if ( status === 200 ) {
-                var response = JSON.parse( xhr.responseText );
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
 
-                if ( ! response.success ) {
-                    alert( response.data );
-                    return;
-                }
+/**
+ * One Tap Login.
+ *
+ * @param {Object} response Response from Google.
+ */
+window.LoginWithGoogleDataCallBack = function (response) {
+	const { ajaxurl, homeurl, state } = TempAccessOneTap;
 
-                try {
+	fetch(ajaxurl, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: new URLSearchParams({
+			action: 'validate_id_token',
+			token: response.credential,
+			state,
+		}),
+	})
+		.then((res) => res.json())
+		.then((res) => {
+			if (!res.success) {
+				// eslint-disable-next-line no-alert
+				alert(res.data);
+				return;
+			}
 
-                    var redirect_to = new URL( response.data.redirect );
-                    var homeurl = new URL( TempAccessOneTap.homeurl );
+			try {
+				const getRedirectTo = new URL(res.data.redirect);
+				const getHomeUrl = new URL(homeurl);
 
-                    if ( redirect_to.host !== homeurl.host ) {
-                        throw new URIError( wp.i18n.__( 'Invalid URL for Redirection', 'login-with-google' ) );
-                    }
+				if (getRedirectTo.host !== getHomeUrl.host) {
+					throw new URIError(
+						__('Invalid URL for Redirection', 'login-with-google')
+					);
+				}
+			} catch (e) {
+				// eslint-disable-next-line no-alert
+				alert(e.message);
+				return;
+			}
 
-                } catch ( e ) {
-                    alert( e.message );
-                    return;
-                }
-
-                window.location = response.data.redirect;
-            }
-        }
-    };
-    xhr.send( 'action=validate_id_token&token=' + response.credential + '&state=' + TempAccessOneTap.state );
+			window.location = res.data.redirect;
+		});
 };
