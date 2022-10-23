@@ -96,14 +96,14 @@ class Block implements Module {
 		$this->assets->register_login_styles();
 		$this->assets->register_script(
 			self::SCRIPT_HANDLE,
-			'build/js/block-button.js',
+			'js/block-button.js',
 			[
 				'wp-blocks',
 				'wp-element',
 				'wp-editor',
 				'wp-components',
 			],
-			filemtime( trailingslashit( plugin()->assets_dir ) . 'build/js/block-button.js' ),
+			filemtime( trailingslashit( plugin()->assets_dir ) . 'js/block-button.js' ),
 			false
 		);
 

@@ -56,7 +56,7 @@ class Assets implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_login_styles(): void {
-		$this->register_style( self::LOGIN_BUTTON_STYLE_HANDLE, 'build/css/login.css' );
+		$this->register_style( self::LOGIN_BUTTON_STYLE_HANDLE, 'css/login.css' );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class Assets implements ModuleInterface {
 		}
 
 		if ( ! wp_script_is( 'login-with-google-script', 'registered' ) ) {
-			$this->register_script( 'login-with-google-script', 'build/js/login.js' );
+			$this->register_script( 'login-with-google-script', 'js/login.js' );
 		}
 
 		wp_enqueue_script( 'login-with-google-script' );
@@ -84,7 +84,7 @@ class Assets implements ModuleInterface {
 	 * Register a new script.
 	 *
 	 * @param  string           $handle    Name of the script. Should be unique.
-	 * @param  string|bool      $file      script file, path of the script relative to the assets/build/ directory.
+	 * @param  string|bool      $file      script file, path of the script relative to the assets/ directory.
 	 * @param  array            $deps      Optional. An array of registered script handles this script depends on. Default empty array.
 	 * @param  string|bool|null $ver       Optional. String specifying script version number, if not set, filetime will be used as version number.
 	 * @param  bool             $in_footer Optional. Whether to enqueue the script before </body> instead of in the <head>.
@@ -102,7 +102,7 @@ class Assets implements ModuleInterface {
 	 * Register a CSS stylesheet.
 	 *
 	 * @param string           $handle Name of the stylesheet. Should be unique.
-	 * @param string|bool      $file   style file, path of the script relative to the assets/build/ directory.
+	 * @param string|bool      $file   style file, path of the script relative to the assets/ directory.
 	 * @param array            $deps   Optional. An array of registered stylesheet handles this stylesheet depends on. Default empty array.
 	 * @param string|bool|null $ver    Optional. String specifying script version number, if not set, filetime will be used as version number.
 	 * @param string           $media  Optional. The media for which this stylesheet has been defined.
