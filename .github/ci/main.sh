@@ -22,10 +22,6 @@ function start_services() {
     ee stack status --nginx --mysql --php74
 }
 
-# Remove cache plugins
-function remove_cache_plugins () {
-    rm -r "$GITHUB_WORKSPACE/plugins/wp-redis"
-}
 
 # Create, setup and populate learn.rtcamp.com base site with data
 function create_and_configure_base_site () {
@@ -93,7 +89,6 @@ function maybe_install_node_dep() {
 
 function main() {
     start_services
-    remove_cache_plugins
     create_and_configure_base_site
     activate_theme
     maybe_install_node_dep
