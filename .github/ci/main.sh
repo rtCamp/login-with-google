@@ -26,7 +26,7 @@ function start_services() {
 # Create, setup and populate learn.rtcamp.com base site with data
 function create_and_configure_base_site () {
 
-    ee site create $SITE_NAME --wp --letsencrypt=wildcard --dns=dns_cf --force --php74 
+    ee site create $SITE_NAME --wp --php74 -le 
     cd $SITE_ROOT/wp-content/plugins/
     mkdir login-with-google
     rsync -azh $GITHUB_WORKSPACE/ $SITE_ROOT/wp-content/plugins/login-with-google
