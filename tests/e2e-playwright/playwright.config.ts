@@ -26,7 +26,7 @@
          new URL( './config/global-setup.ts', 'file:' + __filename ).href
      ),
      use: {
-         baseURL: 'https://qa-team.rt.gw/',
+         baseURL: 'http://login-with-google.com',
          headless: true,
          viewport: {
              width: 960,

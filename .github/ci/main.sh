@@ -6,7 +6,7 @@ set -ex
 ######################## VARS ########################
 SITE_NAME='login-with-google.com'
 SITE_ROOT="/var/www/$SITE_NAME/htdocs"
-SITE_URL="https://$SITE_NAME/"
+SITE_URL="http://$SITE_NAME/"
 function ee() { wo "$@"; }
 #####################################################
 
@@ -24,7 +24,7 @@ function start_services() {
 
 
 # Create, setup and populate learn.rtcamp.com base site with data
-function create_and_configure_base_site () {
+function create_and_configure_site () {
 
     ee site create $SITE_NAME --wp --php74 
     cd $SITE_ROOT/wp-content/plugins/
@@ -33,6 +33,7 @@ function create_and_configure_base_site () {
     echo "127.0.0.1 $SITE_NAME" >> /etc/hosts
     ls
     wp plugin activate login-with-google --allow-root
+    wp user create automation automation@example.com --role=administrator --user_pass=automation --allow-root
 }
 
 function activate_theme(){
@@ -89,7 +90,7 @@ function maybe_install_node_dep() {
 
 function main() {
     start_services
-    create_and_configure_base_site
+    create_and_configure_site
     activate_theme
     maybe_install_node_dep
     install_playwright_package

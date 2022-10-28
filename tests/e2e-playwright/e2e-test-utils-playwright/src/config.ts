@@ -1,12 +1,12 @@
 const WP_ADMIN_USER = {
-	username: 'cool-wilson',
-	password: 'GOEZZtOOwpZsxrhPTz',
+	username: 'automation',
+	password: 'automation',
 } as const;
 
 const {
 	WP_USERNAME = WP_ADMIN_USER.username,
 	WP_PASSWORD = WP_ADMIN_USER.password,
-	WP_BASE_URL = 'https://qa-team.rt.gw/',
+	WP_BASE_URL = 'http://login-with-google.com',
 } = process.env;
 
 export { WP_ADMIN_USER, WP_USERNAME, WP_PASSWORD, WP_BASE_URL };
