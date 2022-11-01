@@ -22,8 +22,6 @@ test.describe("Verify the new user registration ", () => {
 
     await page.click( '#wp-submit' );
 
-    await page.screenshot({ path: "uploads/non.png", fullPage: true });
-
     await admin.visitAdminPage("/");
 
     await page.hover('role=link[name="Settings"i]');
@@ -65,8 +63,7 @@ test.describe("Verify the new user registration ", () => {
 
     await page.click(".wp_google_login__button");
 
-    await page.screenshot({ path: "uploads/login.png", fullPage: true });
-
+    await page.waitForTimeout(1000);
     await page.type('input[type="email"]', "mylogintest5@gmail.com");
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });

@@ -21,9 +21,6 @@ test.describe("Should be able to logout and login from the added gutenberg block
 
     await page.click( '#wp-submit' );
 
-    await page.screenshot({ path: "uploads/login.png", fullPage: true });
-
-
     await admin.createNewPost();
 
     await page.type("h1[aria-label='Add title']", "Test block");
@@ -83,9 +80,7 @@ test.describe("Should be able to logout and login from the added gutenberg block
 
     await page.click(".wp_google_login__button");
 
-    await page.screenshot({ path: "uploads/login.png", fullPage: true });
-
-
+    await page.waitForTimeout(1000);
     await page.type('input[type="email"]', "mylogintest5@gmail.com");
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });

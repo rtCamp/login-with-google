@@ -15,22 +15,13 @@ test.describe("Add Client ID and secrete in settings", () => {
       "Log in with Google Settings"
     );
 
-    await page.focus("#client-id");
-    await page.keyboard.down("Control");
-    await page.keyboard.press("A");
-    await page.keyboard.up("Control");
-    await page.keyboard.press("Backspace");
-    await page.type(
-      "#client-id",
-      "278082871881-qp9srgor0iqvl1aq200ctf1sdb49bli1.apps.googleusercontent.com"
-    );
-
-    await page.focus("#client-secret");
-    await page.keyboard.down("Control");
-    await page.keyboard.press("A");
-    await page.keyboard.up("Control");
-    await page.keyboard.press("Backspace");
-    await page.type("#client-secret", "Y3O4gbY4JnateqAj10GxL_6t");
+    await page.click("#client-id", {clickCount: 3})     
+    await page.keyboard.press('Backspace');
+    await page.type("#client-id","278082871881-qp9srgor0iqvl1aq200ctf1sdb49bli1.apps.googleusercontent.com");
+    
+    await page.click("#client-secret", {clickCount: 3})     
+    await page.keyboard.press('Backspace');
+    await page.type("#client-id","Y3O4gbY4JnateqAj10GxL_6t");
 
     await page.click("#submit");
   });
