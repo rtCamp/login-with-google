@@ -15,10 +15,14 @@ test.describe("Verify the new user registration ", () => {
 
     await page.goto(WP_BASE_URL + '/wp-login.php' );
 
+    await page.waitForTimeout(2000);
+
     await page.type( '#user_login', WP_USERNAME )
     await page.type( '#user_pass', WP_PASSWORD )
 
     await page.click( '#wp-submit' );
+
+    await page.screenshot({ path: "uploads/non.png", fullPage: true });
 
     await admin.visitAdminPage("/");
 
@@ -46,7 +50,7 @@ test.describe("Verify the new user registration ", () => {
 
   test("Should be able to verify the unallowed registration message", async () => {
     const browser = await chromium.launch({
-      headless: false,
+      headless: true,
       args: [
         "--disable-site-isolation-trials",
         "--disable-features=site-per-process,SitePerProcess",
@@ -61,6 +65,8 @@ test.describe("Verify the new user registration ", () => {
 
     await page.click(".wp_google_login__button");
 
+    await page.screenshot({ path: "uploads/login.png", fullPage: true });
+
     await page.type('input[type="email"]', "mylogintest5@gmail.com");
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });
@@ -68,10 +74,10 @@ test.describe("Verify the new user registration ", () => {
     await page.waitForSelector("#passwordNext", { visible: true });
     await page.click("#passwordNext");
 
-    // await page.waitForTimeout(4000);
-    // expect(page.locator("#login_error")).toHaveText(
-    //   "Registration is not allowed."
-    // );
+    await page.waitForTimeout(4000);
+    expect(page.locator("#login_error")).toHaveText(
+      "Registration is not allowed."
+    );
 
   });
 });

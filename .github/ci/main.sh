@@ -34,13 +34,9 @@ function create_and_configure_site () {
     ls
     wp plugin activate login-with-google --allow-root
     wp user create automation automation@example.com --role=administrator --user_pass=automation --allow-root
-}
-
-function activate_theme(){
-    cd wp-content/themes
-    ls
     wp theme activate twentytwentyone --allow-root
 }
+
 
 # Install WPe2e dependency
 function install_playwright_package () {
@@ -91,7 +87,6 @@ function maybe_install_node_dep() {
 function main() {
     start_services
     create_and_configure_site
-    activate_theme
     maybe_install_node_dep
     install_playwright_package
     build_package

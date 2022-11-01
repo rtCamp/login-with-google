@@ -15,11 +15,14 @@ test.describe("Should be able to logout and login from the added gutenberg block
   test("Should be able to logout", async ({ page, admin }) => {
 
     await page.goto(WP_BASE_URL + '/wp-login.php' );
-
+    await page.waitForTimeout(1000);
     await page.type( '#user_login', WP_USERNAME )
     await page.type( '#user_pass', WP_PASSWORD )
 
     await page.click( '#wp-submit' );
+
+    await page.screenshot({ path: "uploads/login.png", fullPage: true });
+
 
     await admin.createNewPost();
 
@@ -63,7 +66,7 @@ test.describe("Should be able to logout and login from the added gutenberg block
 
   test("Should be able to login", async () => {
     const browser = await chromium.launch({
-      headless: false,
+      headless: true,
       args: [
         "--disable-site-isolation-trials",
         "--disable-features=site-per-process,SitePerProcess",
@@ -80,6 +83,9 @@ test.describe("Should be able to logout and login from the added gutenberg block
 
     await page.click(".wp_google_login__button");
 
+    await page.screenshot({ path: "uploads/login.png", fullPage: true });
+
+
     await page.type('input[type="email"]', "mylogintest5@gmail.com");
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });
@@ -87,9 +93,9 @@ test.describe("Should be able to logout and login from the added gutenberg block
     await page.waitForSelector("#passwordNext", { visible: true });
     await page.click("#passwordNext");
 
-    // await page.waitForTimeout(4000);
-    // expect(page.locator(".entry-title")).toHaveText(
-    //   "Test block."
-    // );
+    await page.waitForTimeout(4000);
+    expect(page.locator(".entry-title")).toHaveText(
+      "Test block."
+    );
   });
 });
