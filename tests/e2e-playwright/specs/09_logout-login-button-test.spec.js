@@ -81,10 +81,10 @@ test.describe("Should be able to logout and login from the added gutenberg block
     await page.click(".wp_google_login__button");
 
     await page.waitForTimeout(1000);
-    await page.type('input[type="email"]', "mylogintest5@gmail.com");
+    await page.type('input[type="email"]', process.env.EMAIL);
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });
-    await page.type('input[type="password"]', "qateam@123");
+    await page.type('input[type="password"]',process.env.PASSWORD);
     await page.waitForSelector("#passwordNext", { visible: true });
     await page.click("#passwordNext");
 

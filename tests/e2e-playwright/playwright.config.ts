@@ -6,6 +6,9 @@
  import { devices } from '@playwright/test';
  import type { PlaywrightTestConfig } from '@playwright/test';
  
+ require("dotenv").config();
+
+ 
  const STORAGE_STATE_PATH =
      process.env.STORAGE_STATE_PATH ||
      path.join( process.cwd(), 'artifacts/storage-states/admin.json' );
