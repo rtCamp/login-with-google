@@ -7,7 +7,9 @@ test.describe('Add Client ID and secrete in settings', () => {
   test('should be able to add the ID and secrete', async ({ page, admin }) => {
     await admin.visitAdminPage('/')
 
-    await page.hover('role=link[name="Settings"i]')
+    await page.hover('role=link[name="Settings"i]');
+
+    await page.screenshot({path: "uploads/img.png", fullPage: true});
 
     await page.click('role=link[name="Login with Google"i]')
 
