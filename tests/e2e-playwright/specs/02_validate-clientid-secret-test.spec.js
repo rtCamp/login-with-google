@@ -9,8 +9,6 @@ test.describe('Add Client ID and secrete in settings', () => {
 
     await page.hover('role=link[name="Settings"i]');
 
-    await page.screenshot({path: "uploads/img.png", fullPage: true});
-
     await page.click('role=link[name="Login with Google"i]')
 
     expect(page.locator("form[action='options.php'] h2")).toHaveText(

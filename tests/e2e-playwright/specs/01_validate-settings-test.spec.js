@@ -10,6 +10,8 @@ test.describe("Validate the login with google settings", () => {
 
     await page.screenshot({path: "uploads/img.png", fullPage: true});
 
+    await page.waitForTimeout(2000);
+
     await page.hover('role=link[name="Settings"i]');
 
     await page.click('role=link[name="Login with Google"i]');
