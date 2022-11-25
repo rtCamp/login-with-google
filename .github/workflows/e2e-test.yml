@@ -22,6 +22,9 @@ jobs:
     # The type of runner that the job will run on
     name: Run Login with google plugin test Cases
     runs-on: ubuntu-latest
+    env: 
+      GMAIL_UNAME: ${{ secrets.GMAIL_UNAME }}
+      GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
