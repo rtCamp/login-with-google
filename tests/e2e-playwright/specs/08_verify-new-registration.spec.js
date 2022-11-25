@@ -7,7 +7,7 @@ const {
   WP_BASE_URL,
   WP_USERNAME,
   WP_PASSWORD
-} = require( '@wordpress/e2e-test-utils-playwright/src/config' );
+} = require( '../e2e-test-utils-playwright/src/config' );
 
 
 test.describe("Verify the new user registration ", () => {
@@ -64,10 +64,10 @@ test.describe("Verify the new user registration ", () => {
     await page.click(".wp_google_login__button");
 
     await page.waitForTimeout(1000);
-    await page.type('input[type="email"]', process.env.EMAIL);
+    await page.type('input[type="email"]', process.env.GMAIL_UNAME);
     await page.click("#identifierNext");
     await page.waitForSelector('input[type="password"]', { visible: true });
-    await page.type('input[type="password"]', process.env.PASSWORD);
+    await page.type('input[type="password"]', process.env.GMAIL_PASS);
     await page.waitForSelector("#passwordNext", { visible: true });
     await page.click("#passwordNext");
 
