@@ -25,6 +25,11 @@ jobs:
     env: 
       GMAIL_UNAME: ${{ secrets.GMAIL_UNAME }}
       GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+      TESRESULT_TOKEN: ${{ secrets.TESRESULT_TOKEN }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+      COMMIT_SHA: ${{ github.sha }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
