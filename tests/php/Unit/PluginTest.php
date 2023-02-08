@@ -29,14 +29,14 @@ class PluginTest extends TestCase {
 	 *
 	 * @var ContainerInterface
 	 */
-	private $containerMock;
+	private $container_mock;
 
 	/**
 	 * Mock for module.
 	 *
 	 * @var ModuleInterface
 	 */
-	private $moduleMock;
+	private $module_mock;
 
 	/**
 	 * Object in test.
@@ -49,9 +49,10 @@ class PluginTest extends TestCase {
 	 * Runs before any test in class is run.
 	 */
 	public function setUp(): void {
-		$this->moduleMock    = $this->createMock( ModuleInterface::class );
-		$this->containerMock = $this->createMock( Container::class );
-		$this->testee        = new Testee( $this->containerMock );
+
+		$this->module_mock    = $this->createMock( ModuleInterface::class );
+		$this->container_mock = $this->createMock( Container::class );
+		$this->testee         = new Testee( $this->container_mock );
 	}
 
 	/**
@@ -61,22 +62,23 @@ class PluginTest extends TestCase {
 	 * @covers ::activate_modules
 	 */
 	public function testRun() {
-		$this->moduleMock->expects( $this->exactly( 6 ) )
-		                 ->method( 'init' );
 
-		$this->containerMock->expects( $this->once() )
-		                    ->method( 'define_services' );
+		$this->module_mock->expects( $this->exactly( 6 ) )
+						->method( 'init' );
+
+		$this->container_mock->expects( $this->once() )
+							->method( 'define_services' );
 
 
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -85,7 +87,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-google.php'
+				'slashedstring/login-with-google.php',
 			]
 		);
 
@@ -100,21 +102,22 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testPath() {
-		$this->moduleMock->expects( $this->exactly( 6 ) )
-		                 ->method( 'init' );
 
-		$this->containerMock->expects( $this->once() )
-		                    ->method( 'define_services' );
+		$this->module_mock->expects( $this->exactly( 6 ) )
+						->method( 'init' );
 
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+		$this->container_mock->expects( $this->once() )
+							->method( 'define_services' );
+
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -123,7 +126,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-google.php'
+				'slashedstring/login-with-google.php',
 			]
 		);
 
@@ -138,15 +141,16 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testTemplateDirPath() {
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -155,7 +159,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-google.php'
+				'slashedstring/login-with-google.php',
 			]
 		);
 
@@ -170,15 +174,15 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testPluginURL() {
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -188,9 +192,9 @@ class PluginTest extends TestCase {
 			'plugin_dir_url',
 			[
 				'args'       => [
-					'slashedstring/login-with-google.php'
+					'slashedstring/login-with-google.php',
 				],
-				'return_arg' => 0
+				'return_arg' => 0,
 			]
 		);
 
@@ -205,15 +209,15 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testAssetsDirPath() {
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -222,7 +226,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-google.php'
+				'slashedstring/login-with-google.php',
 			]
 		);
 
@@ -237,15 +241,16 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testHooksAddedOnRun() {
-		$this->containerMock->expects( $this->exactly( 6 ) )
-		                    ->method( 'get' )
-		                    ->withAnyParameters()
-		                    ->willReturn( $this->moduleMock );
+
+		$this->container_mock->expects( $this->exactly( 6 ) )
+							->method( 'get' )
+							->withAnyParameters()
+							->willReturn( $this->module_mock );
 
 		$this->wpMockFunction(
 			'trailingslashit',
 			[
-				WP_Mock\Functions::type( 'string' )
+				WP_Mock\Functions::type( 'string' ),
 			],
 			3,
 			'slashedstring/'
@@ -254,7 +259,7 @@ class PluginTest extends TestCase {
 		$this->wpMockFunction(
 			'plugin_dir_url',
 			[
-				'slashedstring/login-with-google.php'
+				'slashedstring/login-with-google.php',
 			]
 		);
 
@@ -272,11 +277,11 @@ class PluginTest extends TestCase {
 	 */
 	public function testLoadTranslation() {
 
-		$this->moduleMock->expects( $this->never() )
-		                 ->method( 'init' );
+		$this->module_mock->expects( $this->never() )
+						->method( 'init' );
 
-		$this->containerMock->expects( $this->never() )
-		                    ->method( 'define_services' );
+		$this->container_mock->expects( $this->never() )
+							->method( 'define_services' );
 
 		$this->wpMockFunction(
 			'get_locale',
@@ -301,7 +306,7 @@ class PluginTest extends TestCase {
 			[
 				'login-with-google',
 				false,
-				'path-to-test/languages/en_US'
+				'path-to-test/languages/en_US',
 			]
 		);
 
@@ -316,6 +321,6 @@ class PluginTest extends TestCase {
 	public function testContainer() {
 		$container = $this->testee->container();
 
-		$this->assertSame( $container, $this->containerMock );
+		$this->assertSame( $container, $this->container_mock );
 	}
 }

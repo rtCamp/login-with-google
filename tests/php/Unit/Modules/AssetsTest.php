@@ -45,7 +45,7 @@ class AssetsTest extends TestCase {
 			'login_enqueue_scripts',
 			[
 				$this->testee,
-				'enqueue_login_styles'
+				'enqueue_login_styles',
 			]
 		);
 
@@ -111,7 +111,7 @@ class AssetsTest extends TestCase {
 				'login-with-google',
 				'https://example.com/assets/js/login.js',
 				[
-					'some-other-script'
+					'some-other-script',
 				],
 				false,
 				true,
@@ -124,7 +124,7 @@ class AssetsTest extends TestCase {
 			'login-with-google',
 			'js/login.js',
 			[
-				'some-other-script'
+				'some-other-script',
 			]
 		);
 
