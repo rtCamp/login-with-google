@@ -195,7 +195,7 @@ class LoginTest extends TestCase {
 			'provider' => 'some_other',
 		];
 
-		$state = base64_encode( wp_json_encode( $state ) );
+		$state = base64_encode( \wp_json_encode( $state ) );
 
 		$helper_mock = Mockery::mock( 'alias:' . Helper::class );
 		$helper_mock->expects( 'filter_input' )->once()->withArgs(
