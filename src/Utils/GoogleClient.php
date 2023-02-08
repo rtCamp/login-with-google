@@ -244,7 +244,11 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function state(): string {
-		$state_data['nonce']    = wp_create_nonce( 'login_with_google' );
+
+		$state_data = [
+			'nonce' => wp_create_nonce( 'login_with_google' ),
+		];
+
 		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 		$state_data['provider'] = 'google';
 
