@@ -228,7 +228,7 @@ class TokenVerifierTest extends TestCase {
 			'my_public_key' => 'thisissomerandomkey',
 		];
 
-		$body = \wp_json_encode( $body );
+		$body = wp_json_encode( $body );
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_headers',

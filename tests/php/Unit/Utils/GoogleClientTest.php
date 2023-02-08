@@ -131,7 +131,7 @@ class GoogleClientTest extends TestCase {
 				$token = (object) [
 					'access_token' => 'AccessToken',
 				];
-				return \wp_json_encode( $token );
+				return wp_json_encode( $token );
 			}
 		);
 
@@ -279,7 +279,7 @@ class GoogleClientTest extends TestCase {
 					'email' => 'user@domain.com',
 					'login' => 'login',
 				];
-				return \wp_json_encode( $token );
+				return wp_json_encode( $token );
 			}
 		);
 
