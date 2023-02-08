@@ -196,6 +196,6 @@ class Container implements ContainerInterface {
 		 *
 		 * @since 1.0.0
 		 */
-		do_action( 'rtcamp.google_login_services', $this ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+		do_action( 'rtcamp.google_login_services', $this );
 	}
 }

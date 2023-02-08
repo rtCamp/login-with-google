@@ -176,9 +176,9 @@ class OneTapLogin implements Module {
 			 *
 			 * @since 1.0.16
 			 */
-			do_action( 'rtcamp.id_token_verified' ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+			do_action( 'rtcamp.id_token_verified' );
 
-			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
 			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_STRING );
 			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
 

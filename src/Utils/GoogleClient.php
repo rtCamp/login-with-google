@@ -123,7 +123,7 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function gt_redirect_url(): string {
-		return apply_filters( 'rtcamp.google_redirect_url', $this->redirect_uri ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+		return apply_filters( 'rtcamp.google_redirect_url', $this->redirect_uri );
 	}
 
 	/**
@@ -152,7 +152,7 @@ class GoogleClient {
 		 *
 		 * @param array $scope List of scopes.
 		 */
-		$scope = apply_filters( 'rtcamp.google_scope', $scope ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+		$scope = apply_filters( 'rtcamp.google_scope', $scope );
 
 		$client_args = [
 			'client_id'     => $this->client_id,
@@ -170,7 +170,7 @@ class GoogleClient {
 		 *
 		 * @param array $client_args List of query arguments to send to Google OAuth.
 		 */
-		$client_args = apply_filters( 'rtcamp.google_client_args', $client_args ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+		$client_args = apply_filters( 'rtcamp.google_client_args', $client_args );
 
 		return self::AUTHORIZE_URL . '?' . http_build_query( $client_args );
 	}
@@ -249,7 +249,7 @@ class GoogleClient {
 			'nonce' => wp_create_nonce( 'login_with_google' ),
 		];
 
-		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
+		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data );
 		$state_data['provider'] = 'google';
 
 		return base64_encode( wp_json_encode( $state_data ) );
