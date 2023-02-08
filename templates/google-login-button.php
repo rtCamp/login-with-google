@@ -20,7 +20,7 @@ $button_url = $login_url;
 
 if ( is_user_logged_in() ) {
 	$button_text = __( 'Log out', 'login-with-google' );
-	$button_url   = wp_logout_url( get_permalink() );
+	$button_url  = wp_logout_url( get_permalink() );
 }
 ?>
 <div class="wp_google_login">

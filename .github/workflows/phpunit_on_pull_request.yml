@@ -48,9 +48,13 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'true'
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
+      - name: Update composer packages
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: composer update
+
       - name: Run PHPUnit
         if: steps.check_files.outputs.files_exists == 'true'
-        run: composer update && composer tests:unit
+        run: vendor/bin/phpunit tests/php/Unit/ --verbose
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v2

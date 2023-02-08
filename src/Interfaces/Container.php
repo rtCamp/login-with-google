@@ -16,6 +16,7 @@ namespace RtCamp\GoogleLogin\Interfaces;
  * @package WpGuruDev\OrderExport\Interfaces
  */
 interface Container {
+
 	/**
 	 * Define services in container.
 	 *
