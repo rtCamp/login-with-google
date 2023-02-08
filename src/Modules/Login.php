@@ -151,7 +151,7 @@ class Login implements ModuleInterface {
 				 *
 				 * @param WP_User $user WP User object.
 				 */
-				do_action( 'rtcamp.google_user_authenticated', $user );
+				do_action( 'rtcamp.google_user_authenticated', $user ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 
 				return $user;
 			}
@@ -205,7 +205,7 @@ class Login implements ModuleInterface {
 		 *
 		 * @param string $admin_url Admin URL address.
 		 */
-		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', admin_url() ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 
 		return $state;
 	}

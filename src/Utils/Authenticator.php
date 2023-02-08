@@ -69,7 +69,7 @@ class Authenticator {
 			 * @param WP_User $user_wp WP User data object.
 			 * @param stdClass $user User data object returned by Google.
 			 */
-			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user );
+			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 
 			return $user_wp;
 		}
@@ -80,7 +80,7 @@ class Authenticator {
 		 * @param stdClass $user User object from google.
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'rtcamp.google_register_user', $this->maybe_create_username( $user ) );
+		return apply_filters( 'rtcamp.google_register_user', $this->maybe_create_username( $user ) ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Authenticator {
 				/**
 				 * Fires once the user has been registered successfully.
 				 */
-				do_action( 'rtcamp.google_user_created', $uid, $user );
+				do_action( 'rtcamp.google_user_created', $uid, $user ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 
 				return get_user_by( 'id', $uid );
 			}

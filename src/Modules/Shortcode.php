@@ -134,7 +134,6 @@ class Shortcode implements ModuleInterface {
 		return $output;
 	}
 
-
 	/**
 	 * Filter redirect URL as per shortcode param.
 	 *

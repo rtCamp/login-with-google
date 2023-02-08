@@ -78,7 +78,7 @@ class TokenVerifier {
 		$find_algo = array_key_exists( $algo, self::SUPPORTED_ALGORITHMS );
 
 		if ( ! $find_algo ) {
-			return apply_filters( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, $algo );
+			return apply_filters( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, $algo ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 		}
 
 		return self::SUPPORTED_ALGORITHMS[ $algo ];
@@ -103,7 +103,7 @@ class TokenVerifier {
 			return true;
 		} catch ( Exception $e ) {
 
-			do_action( 'rtcamp.login_with_google_exception', $e );
+			do_action( 'rtcamp.login_with_google_exception', $e ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Ignore as currently cannot change because of backward compatibility.
 
 			throw $e;
 		}
