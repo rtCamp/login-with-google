@@ -27,12 +27,12 @@ class ShortCodeTest extends TestCase {
 	/**
 	 * @var GoogleClient
 	 */
-	private $ghClientMock;
+	private $gh_client_mock;
 
 	/**
 	 * @var Assets
 	 */
-	private $assetMock;
+	private $asset_mock;
 
 	/**
 	 * @var Testee
@@ -45,10 +45,10 @@ class ShortCodeTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GoogleClient::class );
-		$this->assetMock    = $this->createMock( Assets::class );
+		$this->gh_client_mock = $this->createMock( GoogleClient::class );
+		$this->asset_mock     = $this->createMock( Assets::class );
 
-		$this->testee = new Testee( $this->ghClientMock, $this->assetMock );
+		$this->testee = new Testee( $this->gh_client_mock, $this->asset_mock );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class ShortCodeTest extends TestCase {
 				[
 					$this->testee,
 					'callback',
-				]
+				],
 			]
 		);
 
@@ -91,6 +91,7 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::should_display
 	 */
 	public function testCallbackWhenUserIsLoggedIn() {
+
 		$this->wpMockFunction(
 			'get_permalink',
 			[],
@@ -111,7 +112,7 @@ class ShortCodeTest extends TestCase {
 					'google_login',
 				],
 				'times'      => 1,
-				'return_arg' => 0
+				'return_arg' => 0,
 			]
 		);
 
@@ -132,6 +133,7 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::should_display
 	 */
 	public function testCallbackWhenUserIsLoggedOut() {
+
 		WP_Mock::userFunction(
 			'shortcode_atts',
 			[
@@ -145,7 +147,7 @@ class ShortCodeTest extends TestCase {
 					'google_login',
 				],
 				'times'      => 1,
-				'return_arg' => 0
+				'return_arg' => 0,
 			]
 		);
 
@@ -174,13 +176,13 @@ class ShortCodeTest extends TestCase {
 			'/some/path/templates/'
 		);
 
-		$this->ghClientMock->expects( $this->once() )
-		                   ->method( 'authorization_url' )
-		                   ->willReturn( 'https://google.com/auth/' );
+		$this->gh_client_mock->expects( $this->once() )
+							->method( 'authorization_url' )
+							->willReturn( 'https://google.com/auth/' );
 
 
-		$helperMock = Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'render_template' )->once()->withArgs(
+		$helper_mock = Mockery::mock( 'alias:' . Helper::class );
+		$helper_mock->expects( 'render_template' )->once()->withArgs(
 			[
 				'/some/path/templates/google-login-button.php',
 				[
@@ -189,7 +191,7 @@ class ShortCodeTest extends TestCase {
 					'redirect_to'   => null,
 					'login_url'     => 'https://google.com/auth/',
 				],
-				false
+				false,
 			]
 		)->andReturn( '' );
 
@@ -202,6 +204,7 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::should_display
 	 */
 	public function testScanShortcodeForSinglePage() {
+
 		$this->wpMockFunction(
 			'is_single',
 			[],
@@ -223,7 +226,7 @@ class ShortCodeTest extends TestCase {
 			false
 		);
 
-		$this->assetMock->expects( $this->once() )->method( 'enqueue_login_styles' );
+		$this->asset_mock->expects( $this->once() )->method( 'enqueue_login_styles' );
 
 		$output = $this->testee->scan_shortcode( 'Hello', 'google_login', [] );
 		$this->assertSame( 'Hello', $output );
@@ -234,6 +237,7 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::should_display
 	 */
 	public function testScanShortcodeForDifferentTag() {
+
 		$this->wpMockFunction(
 			'is_single',
 			[],
@@ -248,8 +252,7 @@ class ShortCodeTest extends TestCase {
 			false
 		);
 
-
-		$this->assetMock->expects( $this->never() )->method( 'enqueue_login_styles' );
+		$this->asset_mock->expects( $this->never() )->method( 'enqueue_login_styles' );
 
 		$output = $this->testee->scan_shortcode( 'Hello', 'other_tag', [] );
 		$this->assertSame( 'Hello', $output );
@@ -259,14 +262,15 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::redirect_url
 	 */
 	public function testRedirectURL() {
-		$url = 'https://example.com/?redirect_to=https://example.com/wp-admin';
+
+		$url                        = 'https://example.com/?redirect_to=https://example.com/wp-admin';
 		$this->testee->redirect_uri = 'https://example.com/some-page';
 
 		$this->wpMockFunction(
 			'remove_query_arg',
 			[
 				'redirect_to',
-				$url
+				$url,
 			],
 			1,
 			'https://example.com/'
@@ -280,11 +284,12 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::state_redirect
 	 */
 	public function testStateRedirectWithRedirectUrl() {
+
 		$this->testee->redirect_uri = 'https://example.com';
 
 		$state = [
 			'provider'    => 'google',
-			'redirect_to' => 'https://example.com'
+			'redirect_to' => 'https://example.com',
 		];
 
 		$expected = $this->testee->state_redirect( $state );
@@ -295,10 +300,11 @@ class ShortCodeTest extends TestCase {
 	 * @covers ::state_redirect
 	 */
 	public function testStateRedirectWithoutRedirectUrl() {
+
 		$this->testee->redirect_uri = null;
 
 		$state = [
-			'provider' => 'google'
+			'provider' => 'google',
 		];
 
 		$expected = $this->testee->state_redirect( $state );

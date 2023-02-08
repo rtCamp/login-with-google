@@ -5,6 +5,11 @@
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="WordPress.PHP.DisallowShortTernary" />
+		<!--
+			Below rule is added to ignore the hook name validation.
+			@todo: Remove once the hook name is updated to use underscores.
+		-->
+		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores" />
 	</rule>
 
 	<rule ref="WordPress-Extra" />

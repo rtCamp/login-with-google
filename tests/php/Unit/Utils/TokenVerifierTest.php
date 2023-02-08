@@ -35,24 +35,27 @@ class TokenVerifierTest extends TestCase {
 	/**
 	 * @var Settings
 	 */
-	private $settingsMock;
+	private $settings_mock;
 
 	/**
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->settingsMock = $this->createMock( Settings::class );
-		$this->testee       = new Testee( $this->settingsMock );
+
+		$this->settings_mock = $this->createMock( Settings::class );
+		$this->testee        = new Testee( $this->settings_mock );
 	}
 
 	/**
 	 * @covers ::__construct
 	 */
 	public function testInstance() {
+
 		$this->assertInstanceOf( Testee::class, $this->testee );
 	}
 
 	public function testCertsURL() {
+
 		$this->assertSame( 'https://www.googleapis.com/oauth2/v1/certs', $this->testee::CERTS_URL );
 	}
 
@@ -60,9 +63,11 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_supported_algorithm
 	 */
 	public function testGetSupportedAlgorithmDefault() {
+
 		\WP_Mock::expectFilter( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, '' );
+
 		$expected = OPENSSL_ALGO_SHA256;
-		$algo = $this->testee::get_supported_algorithm();
+		$algo     = $this->testee::get_supported_algorithm();
 
 		$this->assertSame( $expected, $algo );
 	}
@@ -71,8 +76,9 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_supported_algorithm
 	 */
 	public function testGetSHA256Algo() {
+
 		$expected = OPENSSL_ALGO_SHA256;
-		$algo = $this->testee::get_supported_algorithm( 'RS256' );
+		$algo     = $this->testee::get_supported_algorithm( 'RS256' );
 
 		$this->assertSame( $expected, $algo );
 	}
@@ -81,6 +87,7 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::base64_encode_url
 	 */
 	public function testBase64EncodeURL() {
+
 		$str    = 'some+random/string=';
 		$result = $this->testee->base64_encode_url( $str );
 
@@ -91,6 +98,7 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::base64_decode_url
 	 */
 	public function testBase64DecodeURL() {
+
 		$str    = 'c29tZStyYW5kb20vc3RyaW5nPQ';
 		$result = $this->testee->base64_decode_url( $str );
 
@@ -101,9 +109,11 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::current_user
 	 */
 	public function testCurrentUser() {
+
 		$wp_user = (object) [
 			'name' => 'Test',
 		];
+
 		$this->setTesteeProperty( $this->testee, 'current_user', $wp_user );
 		$result = $this->testee->current_user();
 
@@ -114,6 +124,7 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_public_key
 	 */
 	public function testPublicKeyIsNull() {
+
 		$pk = $this->testee->get_public_key( null );
 
 		$this->assertNull( $pk );
@@ -123,10 +134,11 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_public_key
 	 */
 	public function testPublicKeyCachedValue() {
+
 		$this->wpMockFunction(
 			'get_transient',
 			[
-				'lwg_pk_my_public_key'
+				'lwg_pk_my_public_key',
 			],
 			1,
 			'abcd'
@@ -141,10 +153,11 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_public_key
 	 */
 	public function testPublicKeyIsNullForNon200Response() {
+
 		$this->wpMockFunction(
 			'get_transient',
 			[
-				'lwg_pk_my_public_key'
+				'lwg_pk_my_public_key',
 			],
 			1,
 			null
@@ -153,7 +166,7 @@ class TokenVerifierTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_remote_get',
 			[
-				$this->testee::CERTS_URL
+				$this->testee::CERTS_URL,
 			],
 			1,
 			'certificate'
@@ -178,10 +191,11 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::get_max_age
 	 */
 	public function testPublicKeyRetrievalFromResponse() {
+
 		$this->wpMockFunction(
 			'get_transient',
 			[
-				'lwg_pk_my_public_key'
+				'lwg_pk_my_public_key',
 			],
 			1,
 			null
@@ -190,7 +204,7 @@ class TokenVerifierTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_remote_get',
 			[
-				$this->testee::CERTS_URL
+				$this->testee::CERTS_URL,
 			],
 			1,
 			'certificate'
@@ -206,6 +220,7 @@ class TokenVerifierTest extends TestCase {
 		);
 
 		$headers = \Mockery::mock( \Requests_Utility_CaseInsensitiveDictionary::class );
+
 		$headers->expects( 'offsetExists' )->withArgs( [ 'cache-control' ] )->andReturn( true );
 		$headers->expects( 'offsetGet' )->withArgs( [ 'cache-control' ] )->andReturn( 'public, max-age=600' );
 
@@ -213,7 +228,7 @@ class TokenVerifierTest extends TestCase {
 			'my_public_key' => 'thisissomerandomkey',
 		];
 
-		$body = json_encode( $body );
+		$body = wp_json_encode( $body );
 
 		$this->wpMockFunction(
 			'wp_remote_retrieve_headers',
@@ -238,13 +253,14 @@ class TokenVerifierTest extends TestCase {
 			[
 				'lwg_pk_my_public_key',
 				'thisissomerandomkey',
-				300
+				300,
 			],
 			1,
 			true
 		);
 
 		$pk = $this->testee->get_public_key( 'my_public_key' );
+
 		$this->assertSame( 'thisissomerandomkey', $pk );
 		$this->assertConditionsMet();
 	}
@@ -253,12 +269,13 @@ class TokenVerifierTest extends TestCase {
 	 * @covers ::set_transient
 	 */
 	public function testSetTransient() {
+
 		$this->wpMockFunction(
 			'set_transient',
 			[
 				'key',
 				'val',
-				200
+				200,
 			]
 		);
 
