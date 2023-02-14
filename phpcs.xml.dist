@@ -101,4 +101,7 @@
 	<exclude-pattern type="relative">^logs/*</exclude-pattern>
 	<exclude-pattern>/assets/js/*.asset.php</exclude-pattern>
 	<exclude-pattern>*/.github/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
+	<exclude-pattern>*/wp-assets/*</exclude-pattern>
 </ruleset>
