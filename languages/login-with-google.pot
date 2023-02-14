@@ -1,0 +1,115 @@
+# Copyright (C) 2021 rtCamp
+# This file is distributed under the same license as the Login with Google plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Login with Google 1.0.15\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-06-29T16:19:14+05:30\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: login-with-google\n"
+
+#. Plugin Name of the plugin
+#: src/Modules/Settings.php:228
+msgid "Login with Google"
+msgstr ""
+
+#. Description of the plugin
+msgid "Allow users to login/register via Google."
+msgstr ""
+
+#. Author of the plugin
+msgid "rtCamp"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://rtcamp.com"
+msgstr ""
+
+#: login-with-google.php:40
+msgid "Login with google Plugin requires PHP version 7.3 or higher. <br />Please ask your server administrator to update your environment to latest PHP version"
+msgstr ""
+
+#: login-with-google.php:47
+msgid "The plugin Login with google has been deactivated"
+msgstr ""
+
+#. translators: %$s is replaced with requested service name.
+#: src/Container.php:61
+msgid "Invalid Service %s Passed to the container"
+msgstr ""
+
+#: src/Modules/Login.php:172
+msgid "Registration is not allowed."
+msgstr ""
+
+#. translators: %s is replaced with email ID of user trying to register
+#: src/Modules/Login.php:199
+msgid "Cannot register with this email: %s"
+msgstr ""
+
+#: src/Modules/Settings.php:93
+msgid "Log in with Google Settings"
+msgstr ""
+
+#: src/Modules/Settings.php:101
+msgid "Client ID"
+msgstr ""
+
+#: src/Modules/Settings.php:110
+msgid "Client Secret"
+msgstr ""
+
+#: src/Modules/Settings.php:119
+msgid "Create new user"
+msgstr ""
+
+#: src/Modules/Settings.php:128
+msgid "Whitelisted Domains"
+msgstr ""
+
+#: src/Modules/Settings.php:148
+msgid "Create oAuth Client ID and Client Secret at"
+msgstr ""
+
+#: src/Modules/Settings.php:185
+msgid "Create a new user account if it does not exist already"
+msgstr ""
+
+#. translators: %1s will be replaced by page link
+#: src/Modules/Settings.php:192
+msgid "If this setting is checked, a new user will be created even if <a target=\"_blank\" href=\"%1s\">membership setting</a> is off."
+msgstr ""
+
+#: src/Modules/Settings.php:215
+msgid "Add each domain comma separated"
+msgstr ""
+
+#: src/Modules/Settings.php:227
+msgid "Login with Google settings"
+msgstr ""
+
+#: src/Modules/Shortcode.php:91
+msgid "Login with google"
+msgstr ""
+
+#: src/Utils/GoogleClient.php:98
+msgid "Access token must be set to make this API call"
+msgstr ""
+
+#: src/Utils/GoogleClient.php:173
+msgid "Could not retrieve the access token, please try again."
+msgstr ""
+
+#: src/Utils/GoogleClient.php:199
+msgid "Could not retrieve the user information, please try again."
+msgstr ""
+
+#: templates/google-login-button.php:9
+msgid "Log in with Google"
+msgstr ""

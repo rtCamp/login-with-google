@@ -1,22 +1,67 @@
 {
     "name": "rtcamp/login-with-google",
-    "description": "Minimal plugin which allows WP user to login with google.",
-    "license": "GPLv2",
+    "description": "WordPress plugin to let users login with google.",
+    "license": "GPL 2.0",
     "authors": [
+        {
+            "name": "rtCamp",
+            "email": "contact@rtcamp.com",
+            "homepage": "https://rtcamp.com/",
+            "role": "Developer"
+        },
         {
             "name": "Utkarsh Patel",
             "email": "itismeutkarsh@gmail.com"
+        },
+        {
+            "name": "Paul Clark",
+            "role": "Developer"
+        },
+        {
+            "name": "Ankit Gade",
+            "email": "ankit.gade@rtcamp.com",
+            "homepage": "https://iamank.it/",
+            "role": "Developer"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "google/apiclient": "^2.0"
+        "php": ">=7.1",
+        "pimple/pimple": "3.3.*"
     },
-     "scripts": {
-        "post-update-cmd": "Google_Task_Composer::cleanup"
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "wp-coding-standards/wpcs": "^2.3",
+        "sirbrillig/phpcs-variable-analysis": "^v2.11.3",
+        "automattic/vipwpcs": "^2.3.3",
+        "phpcompatibility/phpcompatibility-wp": "^2.1.3",
+        "phpunit/phpunit": "9.5",
+        "10up/wp_mock": "0.4.2"
     },
-    "extra": {
-        "google/apiclient-services": [
-            "Oauth2"
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "RtCamp\\GoogleLogin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RtCamp\\GoogleLogin\\Tests\\": "tests/php"
+        }
+    },
+    "scripts": {
+        "cs": "@php ./vendor/bin/phpcs",
+        "cs:fix": "@php ./vendor/bin/phpcbf",
+        "tests:unit": "@php ./vendor/bin/phpunit tests/php/Unit/",
+        "qa": [
+            "@cs",
+            "@tests"
         ]
     }
 }
