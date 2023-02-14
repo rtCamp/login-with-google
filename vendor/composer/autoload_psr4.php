@@ -6,6 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'WP_Mock\\' => array($vendorDir . '/10up/wp_mock/php/WP_Mock'),
+    'VariableAnalysis\\' => array($vendorDir . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis'),
+    'RtCamp\\GoogleLogin\\Tests\\' => array($baseDir . '/tests/php'),
     'RtCamp\\GoogleLogin\\' => array($baseDir . '/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
+    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
+    'LastCall\\DownloadsPlugin\\' => array($vendorDir . '/civicrm/composer-downloads-plugin/src'),
+    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
+    'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => array($vendorDir . '/dealerdirect/phpcodesniffer-composer-installer/src'),
 );

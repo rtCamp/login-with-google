@@ -6,5 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'TOGoS_GitIgnore_' => array($vendorDir . '/togos/gitignore/src/main/php'),
     'Pimple' => array($vendorDir . '/pimple/pimple/src'),
+    'Mockery' => array($vendorDir . '/mockery/mockery/library'),
 );

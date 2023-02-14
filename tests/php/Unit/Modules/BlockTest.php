@@ -27,12 +27,12 @@ class BlockTest extends TestCase {
 	/**
 	 * @var GoogleClient
 	 */
-	private $ghClientMock;
+	private $gh_client_mock;
 
 	/**
 	 * @var Assets
 	 */
-	private $assetMock;
+	private $assert_mock;
 
 	/**
 	 * @var Testee
@@ -45,15 +45,15 @@ class BlockTest extends TestCase {
 	 * @return void
 	 */
 	public function setUp(): void {
-		$this->ghClientMock = $this->createMock( GoogleClient::class );
-		$this->assetMock       = $this->createMock( Assets::class );
-		$this->testee           = new Testee( $this->assetMock, $this->ghClientMock );
+		$this->gh_client_mock = $this->createMock( GoogleClient::class );
+		$this->assert_mock    = $this->createMock( Assets::class );
+		$this->testee         = new Testee( $this->assert_mock, $this->gh_client_mock );
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
-		$this->ghClientMock = null;
-		$this->assetMock       = null;
+		$this->gh_client_mock = null;
+		$this->assert_mock    = null;
 		unset( $this->testee );
 	}
 
@@ -114,20 +114,20 @@ class BlockTest extends TestCase {
 			true
 		);
 
-		$this->assetMock->expects( $this->once() )->method( 'register_login_styles' );
-		$this->assetMock->expects( $this->once() )->method( 'register_script' )
-		                 ->with(
-			                 'google-login-block',
-			                 'build/js/block-button.js',
-			                 [
-				                 'wp-blocks',
-				                 'wp-element',
-				                 'wp-editor',
-				                 'wp-components',
-			                 ],
-			                 filemtime( $path . 'build/js/block-button.js' ),
-			                 false
-		                 );
+		$this->assert_mock->expects( $this->once() )->method( 'register_login_styles' );
+		$this->assert_mock->expects( $this->once() )->method( 'register_script' )
+						->with(
+							'google-login-block',
+							'build/js/block-button.js',
+							[
+								'wp-blocks',
+								'wp-element',
+								'wp-editor',
+								'wp-components',
+							],
+							filemtime( $path . 'build/js/block-button.js' ),
+							false
+						);
 
 		$this->testee->enqueue_block_editor_assets();
 	}
@@ -164,12 +164,12 @@ class BlockTest extends TestCase {
 		$this->assertConditionsMet();
 	}
 
-
 	/**
 	 * @covers ::render_login_button, ::markup
 	 */
 	public function testRenderLoginButton() {
-		$mockAttributes = [
+
+		$mock_attributes = [
 			'login_url'       => '#',
 			'custom_btn_text' => 'test',
 			'force_display'   => false,
@@ -186,7 +186,7 @@ class BlockTest extends TestCase {
 			'wp_parse_args',
 			[],
 			1,
-			$mockAttributes
+			$mock_attributes
 		);
 
 		$this->wpMockFunction(
@@ -219,11 +219,11 @@ class BlockTest extends TestCase {
 		);
 
 
-		$helperMock = \Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'render_template' )->once()->withArgs(
+		$helper_mock = \Mockery::mock( 'alias:' . Helper::class );
+		$helper_mock->expects( 'render_template' )->once()->withArgs(
 			[
 				$path . 'google-login-button.php',
-				$mockAttributes,
+				$mock_attributes,
 				false,
 			]
 		)->andReturn( '' );
@@ -231,7 +231,7 @@ class BlockTest extends TestCase {
 		$markup = $this->testee->render_login_button(
 			[
 				$path . '/google-login-button.php',
-				$mockAttributes,
+				$mock_attributes,
 				false,
 			]
 		);
@@ -243,7 +243,8 @@ class BlockTest extends TestCase {
 	 * @covers ::render_login_button, ::markup
 	 */
 	public function testRenderLogoutButton() {
-		$mockAttributes = [
+
+		$mock_attributes = [
 			'login_url'       => '#',
 			'custom_btn_text' => 'test',
 			'force_display'   => true,
@@ -260,7 +261,7 @@ class BlockTest extends TestCase {
 			'wp_parse_args',
 			[],
 			1,
-			$mockAttributes
+			$mock_attributes
 		);
 
 		$this->wpMockFunction(
@@ -293,11 +294,11 @@ class BlockTest extends TestCase {
 		);
 
 
-		$helperMock = \Mockery::mock( 'alias:' . Helper::class );
-		$helperMock->expects( 'render_template' )->once()->withArgs(
+		$helper_mock = \Mockery::mock( 'alias:' . Helper::class );
+		$helper_mock->expects( 'render_template' )->once()->withArgs(
 			[
 				$path . 'google-login-button.php',
-				$mockAttributes,
+				$mock_attributes,
 				false,
 			]
 		)->andReturn( '' );
@@ -305,7 +306,7 @@ class BlockTest extends TestCase {
 		$markup = $this->testee->render_login_button(
 			[
 				$path . '/google-login-button.php',
-				$mockAttributes,
+				$mock_attributes,
 				false,
 			]
 		);
