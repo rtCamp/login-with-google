@@ -1,0 +1,26 @@
+# A comment line!
+# The following should be ignored, not match '#foo.txt'
+#foo.txt
+# And here's some blank lines:
+
+
+# any file.txt, in any subdirectory:
+file.txt
+# Any file called 'bar' anywhere under any [sub]directory called 'foo'
+foo/**/bar
+# Unless it's specifically this one:
+!/foo/sux/bar
+# or one of these:
+!batch/bar
+
+## Test cases
+# should not match: #foo.txt
+# should match: file.txt
+# should match: soup/file.txt
+# should not match: bile.txt
+# should not match: file
+# should match: foo/anxiety/bar
+# should match: kangaroo/foo/stuff/bar
+# should not match: foo/sux/bar
+# should not match: batch/bar
+# should not match: foo/batch/bar
