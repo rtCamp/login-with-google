@@ -2,16 +2,23 @@
 
 > WordPress plugin to login/register with google
 
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Usage Instructions](#usage-instructions)
-
-   [Plugin Constants](#plugin-constants)
-   [Hooks](#hooks)
-
-4. [Shortcode](#shortcode)
-5. [Minimum Requirements](#minimum-requirements)
-6. [License](#license)
+- [Login with Google](#login-with-google)
+	- [Overview](#overview)
+	- [Installation](#installation)
+	- [Browser support](#browser-support)
+	- [Usage Instructions](#usage-instructions)
+		- [Plugin Constants](#plugin-constants)
+		- [Hooks](#hooks)
+			- [Filters](#filters)
+			- [Actions](#actions)
+	- [Shortcode](#shortcode)
+	- [Contribute](#contribute)
+		- [Reporting a bug 🐞](#reporting-a-bug-)
+		- [Creating a pull request](#creating-a-pull-request)
+	- [Unit testing](#unit-testing)
+	- [Minimum Requirements](#minimum-requirements)
+	- [License](#license)
+	- [BTW, We're Hiring!](#btw-were-hiring)
 
 ## Overview
 
