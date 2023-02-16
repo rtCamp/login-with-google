@@ -68,8 +68,7 @@ const wpGoogleLogin = {
 
 			/* Add remember parameter to state */
 			decodeState['remember'] = true;
-			var encodeState = JSON.stringify( decodeState );
-			var newState = btoa( encodeState );
+			var newState = btoa( JSON.stringify( decodeState ) );
 			window.orignalParams = params;
 			params = params.replace( state, newState );
 
