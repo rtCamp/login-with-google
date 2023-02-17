@@ -13,7 +13,7 @@ const wpGoogleLogin = {
 	 */
 	init() {
 		document.addEventListener( 'DOMContentLoaded', this.onContentLoaded );
-		const rememberMeCheckbox = document.getElementById('remember-google-login');
+		const rememberMeCheckbox = document.getElementById( 'remember-google-login' );
 		rememberMeCheckbox.addEventListener( 'change', this.rememberMe );
 	},
 
@@ -56,15 +56,15 @@ const wpGoogleLogin = {
 	 */
 	rememberMe() {
 
-		const loginWithGoogle = document.getElementsByClassName('wp_google_login__button')[0];
+		const loginWithGoogle = document.getElementsByClassName( 'wp_google_login__button' )[0];
 
-		if(this.checked === true) {
+		if( this.checked === true ) {
 			window.remember = true;
-			var params = loginWithGoogle.getAttribute('href');
-			var state  = params.substring( params.indexOf('&state=') + 7, params.indexOf('&scope'));
+			var params = loginWithGoogle.getAttribute( 'href' );
+			var state  = params.substring( params.indexOf( '&state=' ) + 7, params.indexOf( '&scope' ) );
 
 			/* Decodes state value */
-			var decodeState = JSON.parse( atob( state ));
+			var decodeState = JSON.parse( atob( state ) );
 
 			/* Add remember parameter to state */
 			decodeState['remember'] = true;
