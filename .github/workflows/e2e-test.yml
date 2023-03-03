@@ -1,6 +1,6 @@
 # e2e test for Login with google plugin. 
 
-name: CI for Login with google plugin test
+name: End-to-End Tests
 
 # Controls when the workflow will run
 on:
@@ -20,7 +20,7 @@ on:
 jobs:
   Run-wpe2e-TestCase:
     # The type of runner that the job will run on
-    name: Run Login with google plugin test Cases
+    name: Playwright-tests
     runs-on: ubuntu-latest
     env: 
       GMAIL_UNAME: ${{ secrets.GMAIL_UNAME }}
