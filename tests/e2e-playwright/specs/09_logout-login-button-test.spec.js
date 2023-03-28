@@ -83,6 +83,7 @@ test.describe("Should be able to logout and login from the added gutenberg block
     await page.waitForTimeout(1000);
     await page.type('input[type="email"]', process.env.GMAIL_UNAME);
     await page.click("#identifierNext");
+    await page.screenshot({ path: 'uploads/screenshot2.png', fullPage: true  });  
     await page.waitForSelector('input[type="password"]', { visible: true });
     await page.type('input[type="password"]',process.env.GMAIL_PASS);
     await page.waitForSelector("#passwordNext", { visible: true });
