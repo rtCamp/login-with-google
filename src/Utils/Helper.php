@@ -87,7 +87,7 @@ class Helper {
 			 * Use the PHP method and bail out.
 			 */
 			switch ( $filter ) {
-				case FILTER_SANITIZE_STRING:
+				case FILTER_SANITIZE_FULL_SPECIAL_CHARS:
 					$sanitized_variable = filter_input( $type, $variable_name, $filter );
 					break;
 				default:

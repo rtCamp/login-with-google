@@ -119,13 +119,13 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
-		$code = Helper::filter_input( INPUT_GET, 'code', FILTER_SANITIZE_STRING );
+		$code = Helper::filter_input( INPUT_GET, 'code', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		if ( ! $code ) {
 			return $user;
 		}
 
-		$state         = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$state         = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
 
 		if ( ! is_array( $decoded_state ) || empty( $decoded_state['provider'] ) || 'google' !== $decoded_state['provider'] ) {
@@ -198,7 +198,7 @@ class Login implements ModuleInterface {
 	 * @return array
 	 */
 	public function state_redirect( array $state ): array {
-		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_STRING );
+		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		/**
 		 * Filter the default redirect URL in case redirect_to param is not available.
 		 * Default to admin URL.
@@ -216,7 +216,7 @@ class Login implements ModuleInterface {
 	 * @return void
 	 */
 	public function login_redirect(): void {
-		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_STRING );
+		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		if ( ! $state || ! $this->authenticated ) {
 			return;

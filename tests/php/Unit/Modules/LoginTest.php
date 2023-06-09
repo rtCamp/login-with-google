@@ -146,7 +146,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( null );
 
@@ -168,7 +168,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( null );
 
@@ -194,7 +194,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'test_code' );
 
@@ -202,7 +202,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( $state );
 
@@ -224,7 +224,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'abc' );
 
@@ -232,7 +232,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6ImdpdGh1YiJ9' );
 
@@ -251,7 +251,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'abc' );
 
@@ -259,7 +259,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
@@ -310,7 +310,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'code',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'abc' );
 
@@ -318,7 +318,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
 
@@ -412,7 +412,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( 'https://example.com/state-page' );
 
@@ -431,7 +431,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( null );
 
@@ -457,7 +457,7 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'state',
-				FILTER_SANITIZE_STRING
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( [] );
 
