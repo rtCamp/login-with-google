@@ -8,39 +8,40 @@
 	<file>src</file>
 	<file>login-with-google.php</file>
 
-	<rule ref="WordPress-Core">
-		<exclude name="WordPress.PHP.DisallowShortTernary" />
-		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
-	</rule>
+    <!--Uncomment WordPress rules once WordPress Coding Standards is updated to support PHP 8.0. -->
+    <!-- <rule ref="WordPress-Core">
+        <exclude name="WordPress.PHP.DisallowShortTernary" />
+        <exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+    </rule>
 
-	<rule ref="WordPress-Docs">
-		<exclude-pattern>tests/*</exclude-pattern>
-	</rule>
+    <rule ref="WordPress-Docs">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule> -->
 
-	<!-- For PSR-4 autoloading. -->
-	<rule ref="WordPress-Extra">
+    <!-- For PSR-4 autoloading. -->
+	<!-- <rule ref="WordPress-Extra">
 		<exclude name="WordPress.Files.FileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-	</rule>
+	</rule> -->
 
-	<rule ref="WordPress-VIP-Go">
-		<exclude-pattern>tests/*</exclude-pattern>
-	</rule>
-
-	<rule ref="WordPress.WP.I18n">
-		<properties>
-			<property name="text_domain" type="array">
-				<element value="login-with-google" />
-			</property>
-		</properties>
-	</rule>
+    <!-- <rule ref="WordPress.WP.I18n">
+        <properties>
+            <property name="text_domain" type="array">
+                <element value="login-with-google" />
+            </property>
+        </properties>
+    </rule> -->
 
 	<!-- Allow namespaced hook names in dot notation. -->
-	<rule ref="WordPress.NamingConventions.ValidHookName">
+	<!-- <rule ref="WordPress.NamingConventions.ValidHookName">
 		<properties>
 			<property name="additionalWordDelimiters" value="."/>
 		</properties>
-	</rule>
+	</rule> -->
+
+    <rule ref="WordPress-VIP-Go">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
 
 	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis" />
 
