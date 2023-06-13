@@ -180,7 +180,7 @@ class OneTapLogin implements Module {
 
 			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
 			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
+			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 
 			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
 				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;

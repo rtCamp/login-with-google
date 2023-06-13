@@ -126,7 +126,7 @@ class Login implements ModuleInterface {
 		}
 
 		$state         = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
+		$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 
 		if ( ! is_array( $decoded_state ) || empty( $decoded_state['provider'] ) || 'google' !== $decoded_state['provider'] ) {
 			return $user;
