@@ -9,11 +9,27 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
+    # Setup PHP with the required version and add extensions if needed any for composer install.
+    # Ref: https://github.com/shivammathur/setup-php#heavy_plus_sign-php-extension-support
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'
+        coverage: none
+        tools: composer
+
+    # Install composer dependencies in the workflow run.
+    - name: Composer install
+      run: composer install --no-dev --no-progress --no-interaction
+
     - name: Run PHPCS inspection with PHP 8.1
       uses: rtCamp/action-phpcs-code-review@master
       env:
         SKIP_FOLDERS: "tests,.github,vendor"
         GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
+        # Add the phpcs path to pickup custom coding standard
+        # Ref: https://github.com/rtCamp/action-phpcs-code-review/#custom-coding-standards
+        PHPCS_FILE_PATH: vendor/bin/phpcs
 
     # Remove this step once WordPress Coding Standards supports PHP 8.0+.
     - name: Run PHPCS inspection with PHP 7.4
