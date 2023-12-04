@@ -9,6 +9,19 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
+    # Setup PHP with the required version and add extensions if needed any for composer install.
+    # Ref: https://github.com/shivammathur/setup-php#heavy_plus_sign-php-extension-support
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.0'
+        coverage: none
+        tools: composer
+
+    # Install composer dependencies in the workflow run.
+    - name: Composer install
+      run: composer install --no-dev --no-progress --no-interaction
+
     - name: Run PHPCS inspection with PHP 8.1
       uses: rtCamp/action-phpcs-code-review@master
       env:
