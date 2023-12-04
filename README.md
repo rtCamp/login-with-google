@@ -22,14 +22,14 @@
 
 ## Overview
 
-Login with google provides seamless experience for users to login in to WordPress 
+Login with google provides seamless experience for users to login in to WordPress
 sites using their google account. No need to manually create accounts, no need to remember quirky
 passwords. Just one click and land into the site!
 
 ## Installation
 
 1. Clone this repository.
-2. Run `composer install --no-dev` from inside the cloned directory.
+2. Run `composer update` from inside the cloned directory.
 3. Upload the directory to `wp-content/plugins` directory.
 4. Activate the plugin from WordPress dashboard.
 
@@ -46,15 +46,15 @@ passwords. Just one click and land into the site!
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
 in `Settings > Login with google` settings page in their respective fields.
 
-4. `Create new user` enables new user registration irrespective of `Membership` settings in 
+4. `Create new user` enables new user registration irrespective of `Membership` settings in
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
    Plugin will take this setting as first priority and membership setting as second priority, so if
    any one of them is enabled, new users will be registered by this plugin after successful authorization.
 
 5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered on site.
-This will prevent unwanted registration on website. 
-**For Example:** If you want users only from your organization (`myorg.com`) to get registered on the 
-website, you enter `myorg.com` in whitelisted domains. Users with google 
+This will prevent unwanted registration on website.
+**For Example:** If you want users only from your organization (`myorg.com`) to get registered on the
+website, you enter `myorg.com` in whitelisted domains. Users with google
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
 
@@ -75,7 +75,7 @@ Refer following list of constants.
 These constants can also be configured
 via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 
-**Note:** If you have defined the constant in wp-config.php file, corresponding settings field will be disable 
+**Note:** If you have defined the constant in wp-config.php file, corresponding settings field will be disable
 (locked for editing) on the settings page.
 
 ### Hooks
@@ -149,7 +149,7 @@ Once you're ready to send a pull request, please run through the following check
 
 ## Unit testing
 
-Unit tests can be run with simple command `composer tests:unit`. 
+Unit tests can be run with simple command `composer tests:unit`.
 Please note that you'll need to do `composer install` (need to install dev dependencies) for running
 unit tests.
 
