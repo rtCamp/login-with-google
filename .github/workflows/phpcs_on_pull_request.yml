@@ -1,54 +1,25 @@
+on: pull_request
 name: Inspections
-on:
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - ready_for_review
-
-# Cancel previous workflow run groups that have not completed.
-concurrency:
-  # Group workflow runs by workflow name, along with the head branch ref of the pull request
-  # or otherwise the branch or tag ref.
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   runPHPCSInspection:
     name: Run PHPCS inspection
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.0"
-          coverage: none
+    - name: Run PHPCS inspection with PHP 8.1
+      uses: rtCamp/action-phpcs-code-review@master
+      env:
+        SKIP_FOLDERS: "tests,.github,vendor"
+        GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
 
-      - name: Configure Composer cache
-        uses: actions/cache@v3.0.5
-        id: php-composer-cache
-        env:
-          SEGMENT_DOWNLOAD_TIMEOUT_MINS: '5'
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-
-      - name: Install Composer dependencies
-        if: ${{ steps.php-composer-cache.outputs.cache-hit != 'true' }}
-        run: composer install --prefer-dist --optimize-autoloader --no-progress --no-interaction
-
-      - name: Validate composer.json
-        run: composer --no-interaction validate --no-check-all
-
-      - name: Run PHPCS inspection
-        uses: rtCamp/action-phpcs-code-review@master
-        env:
-          SKIP_FOLDERS: "tests,.github"
-          GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
+    # Remove this step once WordPress Coding Standards supports PHP 8.0+.
+    - name: Run PHPCS inspection with PHP 7.4
+      uses: rtCamp/action-phpcs-code-review@master
+      env:
+        SKIP_FOLDERS: "tests,.github,vendor"
+        PHPCS_PHP_VERSION: "7.4"
+        PHPCS_STANDARD_FILE_NAME: "phpcs.wpcs.xml"
+        GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
