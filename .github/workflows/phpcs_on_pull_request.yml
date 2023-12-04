@@ -20,7 +20,7 @@ jobs:
 
     # Install composer dependencies in the workflow run.
     - name: Composer install
-      run: composer install --no-dev --no-progress --no-interaction
+      run: composer install --no-progress --no-interaction
 
     - name: Run PHPCS inspection with PHP 8.1
       uses: rtCamp/action-phpcs-code-review@master
@@ -30,12 +30,3 @@ jobs:
         # Add the phpcs path to pickup custom coding standard
         # Ref: https://github.com/rtCamp/action-phpcs-code-review/#custom-coding-standards
         PHPCS_FILE_PATH: vendor/bin/phpcs
-
-    # Remove this step once WordPress Coding Standards supports PHP 8.0+.
-    - name: Run PHPCS inspection with PHP 7.4
-      uses: rtCamp/action-phpcs-code-review@master
-      env:
-        SKIP_FOLDERS: "tests,.github,vendor"
-        PHPCS_PHP_VERSION: "7.4"
-        PHPCS_STANDARD_FILE_NAME: "phpcs.wpcs.xml"
-        GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
