@@ -243,7 +243,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'esc_html_e',
 			[
-				'Create a new user account if it does not exist already',
+				'Register a new user account through Google if it does not already exist.',
 				'login-with-google'
 			],
 			1,
@@ -260,7 +260,7 @@ class SettingsTest extends TestCase {
 			'wp_kses_post',
 			[
 				/* translators: %1s will be replaced by page link */
-				__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="network/settings.php">membership setting</a> is off.', 'login-with-google' ),
+				__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="network/settings.php">membership(Anyone cah register) setting</a> is off.', 'login-with-google' ),
 			],
 			1,
 		);
