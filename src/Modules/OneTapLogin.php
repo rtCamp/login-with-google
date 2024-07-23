@@ -86,17 +86,17 @@ class OneTapLogin implements Module {
 	 */
 	public function init(): void {
 		if ( $this->settings->one_tap_login ) {
-			add_action( 'login_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
-			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
-			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
+			add_action( 'login_enqueue_scripts', array( $this, 'one_tap_scripts' ) );
+			add_action( 'login_footer', array( $this, 'one_tap_prompt' ) );
+			add_action( 'wp_ajax_nopriv_validate_id_token', array( $this, 'validate_token' ) );
+			add_action( 'rtcamp.id_token_verified', array( $this, 'authenticate' ) );
 			add_action(
 				'init',
 				function () {
 					if ( ! is_user_logged_in() ) {
 						$hook_prefix = ( 'sitewide' === $this->settings->one_tap_login_screen ) ? 'wp' : 'login';
-						add_action( $hook_prefix . '_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-						add_action( $hook_prefix . '_footer', [ $this, 'one_tap_prompt' ], 10000 );
+						add_action( $hook_prefix . '_enqueue_scripts', array( $this, 'one_tap_scripts' ) );
+						add_action( $hook_prefix . '_footer', array( $this, 'one_tap_prompt' ), 10000 );
 					}
 				}
 			);
@@ -108,8 +108,9 @@ class OneTapLogin implements Module {
 	 *
 	 * @return void
 	 */
-	public function one_tap_prompt(): void { ?>
-		<div id="g_id_onload" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
+	public function one_tap_prompt(): void {
+		?>
+		<div id="g_id_onload" data-use_fedcm_for_prompt="true" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
 		<?php
 	}
 
@@ -124,23 +125,23 @@ class OneTapLogin implements Module {
 		wp_enqueue_script(
 			'login-with-google-one-tap',
 			'https://accounts.google.com/gsi/client',
-			[],
+			array(),
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);
 
-		$data = [
+		$data = array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'state'   => $this->google_client->state(),
 			'homeurl' => get_option( 'home', '' ),
-		];
+		);
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
 			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
-			[
+			array(
 				'wp-i18n',
-			],
+			),
 			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/onetap.js' ),
 			true
 		);
@@ -187,9 +188,9 @@ class OneTapLogin implements Module {
 			}
 
 			wp_send_json_success(
-				[
+				array(
 					'redirect' => $redirect_to,
-				]
+				)
 			);
 			die;
 
