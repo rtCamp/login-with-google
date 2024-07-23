@@ -204,14 +204,14 @@ class Settings implements ModuleInterface {
 															name='wp_google_login_settings[registration_enabled]'
 															id="user-registration" <?php echo esc_attr( checked( $this->registration_enabled ) ); ?>
 															value='1'>
-			<?php esc_html_e( 'Register a new user account through Google if it does not already exist.', 'login-with-google' ); ?>
+			<?php esc_html_e( 'Register a new user through Google.', 'login-with-google' ); ?>
 		</label>
 		<p class="description">
 			<?php
 			echo wp_kses_post(
 				sprintf(
 				/* translators: %1s will be replaced by page link */
-					__( 'If this setting is checked, a new user will be registered even if <a target="_blank" href="%1s">membership(Anyone cah register) setting</a> is off.', 'login-with-google' ),
+					__( 'If this setting is checked, a new user will be registered even if <a target="_blank" href="%1s">Membership (Anyone can register) setting</a> is off.', 'login-with-google' ),
 					is_multisite() ? 'network/settings.php' : 'options-general.php'
 				)
 			);
