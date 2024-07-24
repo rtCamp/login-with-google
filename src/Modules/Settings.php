@@ -86,7 +86,6 @@ class Settings implements ModuleInterface {
 		$this->options = get_option( 'wp_google_login_settings', [] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ]  );
 		add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ], 10, 3 );
 	}
 
@@ -111,43 +110,6 @@ class Settings implements ModuleInterface {
 		}
 
 		return $hours * HOUR_IN_SECONDS;
-	}
-
-	/**
-	 * Enqueue scripts and styles for admin.
-	 *
-	 * @param string $hook_suffix Current page hook.
-	 *
-	 * @return void
-	 */
-	public function admin_enqueue_scripts( string $hook_suffix ): void {
-
-		if ( 'settings_page_login-with-google' !== $hook_suffix ) {
-			return;
-		}
-
-		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'settings.min.js' : 'settings.js';
-
-		wp_register_script(
-			'login-with-google-settings',
-			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
-			[
-				'wp-i18n',
-			],
-			filemtime( trailingslashit( plugin()->path ) . 'assets/build/js/settings.js' ),
-			true
-		);
-
-		wp_enqueue_script( 'login-with-google-settings' );
-
-		wp_register_style(
-			'login-with-google-settings',
-			trailingslashit( plugin()->url ) . 'assets/build/css/settings.css',
-			[],
-			filemtime( trailingslashit( plugin()->path ) . 'assets/build/css/settings.css' )
-		);
-
-		wp_enqueue_style( 'login-with-google-settings' );
 	}
 
 	/**
