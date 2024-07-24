@@ -6,7 +6,6 @@
 
 let mix = require( 'laravel-mix' );
 require( '@tinypixelco/laravel-mix-wp-blocks' );
-const { sass } = require('laravel-mix')
 
 mix.options( {
 	processCssUrls: false
