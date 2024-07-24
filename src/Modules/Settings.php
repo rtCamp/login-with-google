@@ -87,9 +87,7 @@ class Settings implements ModuleInterface {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ]  );
-		if ( ! empty( $this->settings->cookie_expiry ) && is_numeric( $this->settings->cookie_expiry ) ) {
-			add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ], 10, 3 );
-		}
+		add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ], 10, 3 );
 	}
 
 	/**
@@ -106,11 +104,13 @@ class Settings implements ModuleInterface {
 			return $expiration;
 		}
 
+		$hours = intval( $this->cookie_expiry );
+
 		if ( $remember ) {
-			return $this->cookie_expiry * DAY_IN_SECONDS + $expiration;
+			return $hours * HOUR_IN_SECONDS + $expiration;
 		}
 
-		return $this->cookie_expiry * HOUR_IN_SECONDS;
+		return $hours * HOUR_IN_SECONDS;
 	}
 
 	/**
@@ -244,7 +244,7 @@ class Settings implements ModuleInterface {
 	public function cookie_expiry_field(): void {
 		$days            = 0;
 		$remaining_hours = 0;
-		$hours           = ! is_numeric( $this->cookie_expiry ) ? '' : (int) $this->cookie_expiry;
+		$hours           = ! is_numeric( $this->cookie_expiry ) ? '' : intval( $this->cookie_expiry );
 
 		if ( ! empty( $hours ) ) {
 			$days            = $hours / 24;
@@ -259,7 +259,6 @@ class Settings implements ModuleInterface {
 		}
 
 		$human_readable_cookie_expiry_classes = 'human-readable-cookie-expiry';
-
 		if ( empty( $hours ) ) {
 			$human_readable_cookie_expiry_classes .= ' hidden';
 		}
