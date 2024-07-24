@@ -47,9 +47,12 @@ const LoginCookieExpiry = {
 
 
 		this.cookieExpiryWarning = this.cookieExpiryRow.querySelector( '.warning' );
-		this.humanReadableDays = this.cookieExpiryRow.querySelector( '.human-readable-cookie-expiry .days' );
-		this.humanReadableHours = this.cookieExpiryRow.querySelector( '.human-readable-cookie-expiry .hours' );
-		console.log( wp.i18n );
+		this.humanReadableCookieExpiry = this.cookieExpiryRow.querySelector( '.human-readable-cookie-expiry' );
+
+		if ( this.humanReadableCookieExpiry ) {
+			this.humanReadableDays = this.humanReadableCookieExpiry.querySelector( '.human-readable-cookie-expiry .days' );
+			this.humanReadableHours = this.humanReadableCookieExpiry.querySelector( '.human-readable-cookie-expiry .hours' );
+		}
 
 		this.addEventListeners();
 	},
@@ -92,6 +95,12 @@ const LoginCookieExpiry = {
 		const cookieExpiry = parseInt( this.cookieExpiry.value );
 		const { days, hours } = this.getDaysAndHours( cookieExpiry );
 		const { _n, sprintf } = wp.i18n;
+
+		if ( ! days && ! hours ) {
+			this.humanReadableCookieExpiry.classList.add( 'hidden' );
+		} else {
+			this.humanReadableCookieExpiry.classList.remove( 'hidden' );
+		}
 
 		if ( this.humanReadableDays ) {
 			this.humanReadableDays.textContent = ( days ) ? sprintf( _n( '%s day', '%s days', days, 'login-with-google' ), days ) : '';

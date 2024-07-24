@@ -242,15 +242,9 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function cookie_expiry_field(): void {
-		$hours           = (int) $this->cookie_expiry;
 		$days            = 0;
 		$remaining_hours = 0;
-
-		if ( ! is_numeric( $hours ) ) {
-			$hours = '';
-		}
-
-		$warning_class = ' hidden';
+		$hours           = ! is_numeric( $this->cookie_expiry ) ? '' : (int) $this->cookie_expiry;
 
 		if ( ! empty( $hours ) ) {
 			$days            = $hours / 24;
@@ -258,35 +252,41 @@ class Settings implements ModuleInterface {
 			$remaining_hours = (int) $hours % 24;
 		}
 
-		if ( ( $days > 14 ) || ( 14 === $days && $remaining_hours > 0 ) ) {
-			$warning_class = '';
+
+		$warning_classes = 'warning';
+		if ( $days < 14 || ( 14 === $days && 0 === $remaining_hours ) ) {
+			$warning_classes .= ' hidden';
+		}
+
+		$human_readable_cookie_expiry_classes = 'human-readable-cookie-expiry';
+
+		if ( empty( $hours ) ) {
+			$human_readable_cookie_expiry_classes .= ' hidden';
 		}
 
 		?>
 		<div class='cookie_expiry_settings_wrapper'>
 			<input type='number' inputmode='numeric' name='wp_google_login_settings[cookie_expiry]' id='cookie-expiry' value='<?php echo esc_attr( $hours ); ?>' autocomplete='off' />
-			<p class='human-readable-cookie-expiry'>
-				<?php
-				if ( $this->cookie_expiry ) {
-					echo esc_html( sprintf( __( 'User will auto logout after', 'login-with-google' ), $days, $remaining_hours ) );
-					?>
-					<span class="days">
-						<?php
-						if ( ! empty( $days ) ) {
-							echo esc_html( sprintf( _n( ' %d day', ' %d days', $days, 'login-with-google' ), number_format_i18n( $days ) ) );
-						}
-						?>
-					</span>
 
-					<span class="hours">
-						<?php
-						if ( ! empty( $remaining_hours ) ) {
-							echo esc_html( sprintf( _n( ' %d hour', ' %d hours', $remaining_hours, 'login-with-google' ), number_format_i18n( $remaining_hours) ) );
-						}
-						?>
-					</span>
+			<p class='<?php echo esc_attr( $human_readable_cookie_expiry_classes ) ?>'>
+				<?php echo esc_html( sprintf( __( 'User will auto logout after', 'login-with-google' ), $days, $remaining_hours ) ); ?>
+
+				<span class="days">
 					<?php
-				}
+					if ( ! empty( $days ) ) {
+						echo esc_html( sprintf( _n( ' %d day', ' %d days', $days, 'login-with-google' ), number_format_i18n( $days ) ) );
+					}
+					?>
+				</span>
+
+				<span class="hours">
+					<?php
+					if ( ! empty( $remaining_hours ) ) {
+						echo esc_html( sprintf( _n( ' %d hour', ' %d hours', $remaining_hours, 'login-with-google' ), number_format_i18n( $remaining_hours) ) );
+					}
+					?>
+				</span>
+				<?php
 				?>
 			</p>
 		</div>
@@ -296,7 +296,7 @@ class Settings implements ModuleInterface {
 			<?php echo esc_html( __( 'If you want your user to get logged out after "2 days" just add "48"', 'login-with-google' ) ); ?>
 		</p>
 
-		<p class='warning<?php echo esc_attr( $warning_class ); ?>'>
+		<p class='<?php echo esc_attr( $warning_classes ); ?>'>
 			<?php
 			echo esc_html( __( 'Warning: Cookie expiry is set to more than 14 days. This is not recommended.', 'login-with-google' ) );
 			?>

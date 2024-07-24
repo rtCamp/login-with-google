@@ -22,6 +22,10 @@
 
 	.human-readable-cookie-expiry {
 		margin: 0;
+
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.warning {
