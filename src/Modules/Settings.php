@@ -14,6 +14,10 @@ namespace RtCamp\GoogleLogin\Modules;
 
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 
+use RtCamp\GoogleLogin\Utils\Helper;
+
+use stdClass;
+
 use function RtCamp\GoogleLogin\plugin;
 
 /**
@@ -86,30 +90,37 @@ class Settings implements ModuleInterface {
 		$this->options = get_option( 'wp_google_login_settings', [] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
-		add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ], 10, 3 );
+		add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ] );
 	}
 
 	/**
 	 * Modify cookie expiry.
 	 *
-	 * @param int  $expiration Current cookie expiry.
-	 * @param int  $user_id    User ID.
-	 * @param bool $remember   Whether to remember the user login. Default false.
+	 * @param int $expiration Current cookie expiry.
 	 *
 	 * @return int
 	 */
-	public function modify_cookie_expiry( int $expiration, int $user_id, bool $remember ): int {
+	public function modify_cookie_expiry( int $expiration ): int {
+		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( ! $state ) {
+			return $expiration;
+		}
+
+		$state = base64_decode( $state );
+		$state = $state ? json_decode( $state ) : null;
+
+		if ( ! ( $state instanceof stdClass ) || empty( $state->provider ) || 'google' !== $state->provider ) {
+			return $expiration;
+		}
+
 		if ( ! is_numeric( $this->cookie_expiry ) ) {
 			return $expiration;
 		}
 
-		$hours = intval( $this->cookie_expiry );
+		$days = intval( $this->cookie_expiry );
 
-		if ( $remember ) {
-			return $hours * HOUR_IN_SECONDS + $expiration;
-		}
-
-		return $hours * HOUR_IN_SECONDS;
+		return $days * DAY_IN_SECONDS;
 	}
 
 	/**
@@ -199,67 +210,42 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
+	 * Get Warning classes.
+	 *
+	 * @param int $days Days.
+	 *
+	 * @return string
+	 */
+	private function get_warning_classes( int $days ): string {
+		$warning_classes = 'warning';
+		if ( empty( $days ) || $days < 14 ) {
+			$warning_classes .= ' hidden';
+		}
+
+		return $warning_classes;
+	}
+
+	/**
 	 * Render cookie expiry field.
 	 *
 	 * @return void
 	 */
 	public function cookie_expiry_field(): void {
-		$days            = 0;
-		$remaining_hours = 0;
-		$hours           = ! is_numeric( $this->cookie_expiry ) ? '' : intval( $this->cookie_expiry );
 
-		if ( ! empty( $hours ) ) {
-			$days            = $hours / 24;
-			$days            = (int) floor( $days );
-			$remaining_hours = (int) $hours % 24;
-		}
-
-
-		$warning_classes = 'warning';
-		if ( $days < 14 || ( 14 === $days && 0 === $remaining_hours ) ) {
-			$warning_classes .= ' hidden';
-		}
-
-		$human_readable_cookie_expiry_classes = 'human-readable-cookie-expiry';
-		if ( empty( $hours ) ) {
-			$human_readable_cookie_expiry_classes .= ' hidden';
-		}
+		$days            = ! is_numeric( $this->cookie_expiry ) ? '' : intval( $this->cookie_expiry );
+		$warning_classes = $this->get_warning_classes( intval( $days ) );
 
 		?>
 		<div class='cookie_expiry_settings_wrapper'>
-			<input type='number' inputmode='numeric' name='wp_google_login_settings[cookie_expiry]' id='cookie-expiry' value='<?php echo esc_attr( $hours ); ?>' autocomplete='off' />
-
-			<p class='<?php echo esc_attr( $human_readable_cookie_expiry_classes ) ?>'>
-				<?php echo esc_html( sprintf( __( 'User will auto logout after', 'login-with-google' ), $days, $remaining_hours ) ); ?>
-
-				<span class="days">
-					<?php
-					if ( ! empty( $days ) ) {
-						echo esc_html( sprintf( _n( ' %d day', ' %d days', $days, 'login-with-google' ), number_format_i18n( $days ) ) );
-					}
-					?>
-				</span>
-
-				<span class="hours">
-					<?php
-					if ( ! empty( $remaining_hours ) ) {
-						echo esc_html( sprintf( _n( ' %d hour', ' %d hours', $remaining_hours, 'login-with-google' ), number_format_i18n( $remaining_hours) ) );
-					}
-					?>
-				</span>
-				<?php
-				?>
-			</p>
+			<input placeholder="<?php esc_attr_e( 'Number of days, e.g., 12', 'login-with-google' ); ?>" type='number' inputmode='numeric' name='wp_google_login_settings[cookie_expiry]' id='cookie-expiry' value='<?php echo esc_attr( $days ); ?>' autocomplete='off' />
 		</div>
 		<p class='description'>
-			<?php echo esc_html( __( 'Time in hours after which user will be logged out automatically.', 'login-with-google' ) ); ?>
-			<br>
-			<?php echo esc_html( __( 'If you want your user to get logged out after "2 days" just add "48"', 'login-with-google' ) ); ?>
+			<?php echo esc_html( __( 'The number of days after which the user will be logged out automatically.', 'login-with-google' ) ); ?>
 		</p>
 
 		<p class='<?php echo esc_attr( $warning_classes ); ?>'>
 			<?php
-			echo esc_html( __( 'Warning: Cookie expiry is set to more than 14 days. This is not recommended.', 'login-with-google' ) );
+			echo esc_html( __( 'Setting a cookie expiry for more than 14 days can have security implications. Proceed with caution!', 'login-with-google' ) );
 			?>
 		</p>
 
