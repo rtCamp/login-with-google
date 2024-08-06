@@ -226,6 +226,9 @@ class SettingsTest extends TestCase {
 
 	}
 
+	/**
+	 * @covers ::cookie_expiry_field
+	 */
 	public function testCookieExpiryField() {
 		$this->setOutputCallback(function() {});
 		$this->testee->cookie_expiry_field();
