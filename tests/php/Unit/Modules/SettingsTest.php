@@ -162,7 +162,7 @@ class SettingsTest extends TestCase {
 
 		$return = $method->invokeArgs( $object, [ 15 ] );
 
-		$this->assertEquals( false, str_contains( $return, 'hidden' ) );
+		$this->assertStringNotContainsString( 'hidden', $return );
 	}
 
 	/**
@@ -178,7 +178,7 @@ class SettingsTest extends TestCase {
 
 		$return = $method->invokeArgs( $object, [ 13 ] );
 
-		$this->assertEquals( true, str_contains( $return, 'hidden' ) );
+		$this->assertStringContainsString( 'hidden', $return );
 	}
 
 	/**
