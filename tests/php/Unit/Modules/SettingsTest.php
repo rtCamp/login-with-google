@@ -147,17 +147,38 @@ class SettingsTest extends TestCase {
 		$this->assertEquals( $default_expiration, $return );
 	}
 
-	public function testGetWarningClasses() {
+	/**
+	 * @covers ::get_warning_classes
+	 */
+	public function testGetWarningClassesForDaysMoreThen14() {
+		$expected_class = 'warning';
 
-		$this->buildTesteeMethodMock(
+		list( $object, $method ) = $this->buildTesteeMethodMock(
 			Testee::class,
 			[],
 			'get_warning_classes',
 			[]
 		);
 
-		// will invoke MyClass::myMethod()
-		$method->invoke( $this->testee );
+		$return = $method->invokeArgs( $object, [ 15 ] );
+
+		$this->assertEquals( false, str_contains( $return, 'hidden' ) );
+	}
+
+	/**
+	 * @covers ::get_warning_classes
+	 */
+	public function testGetWarningClassesForDaysLessThen14() {
+		list( $object, $method ) = $this->buildTesteeMethodMock(
+			Testee::class,
+			[],
+			'get_warning_classes',
+			[]
+		);
+
+		$return = $method->invokeArgs( $object, [ 13 ] );
+
+		$this->assertEquals( true, str_contains( $return, 'hidden' ) );
 	}
 
 	/**
@@ -203,6 +224,12 @@ class SettingsTest extends TestCase {
 		$return = $this->testee->modify_cookie_expiry( $default_expiration );
 		$this->assertEquals( $default_expiration, $return );
 
+	}
+
+	public function testCookieExpiryField() {
+		$this->setOutputCallback(function() {});
+		$this->testee->cookie_expiry_field();
+		$this->assertConditionsMet();
 	}
 
 	/**

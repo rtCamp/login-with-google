@@ -240,12 +240,12 @@ class Settings implements ModuleInterface {
 			<input placeholder="<?php esc_attr_e( 'Number of days, e.g., 12', 'login-with-google' ); ?>" type='number' inputmode='numeric' name='wp_google_login_settings[cookie_expiry]' id='cookie-expiry' value='<?php echo esc_attr( $days ); ?>' autocomplete='off' />
 		</div>
 		<p class='description'>
-			<?php echo esc_html( __( 'The number of days after which the user will be logged out automatically.', 'login-with-google' ) ); ?>
+			<?php echo esc_html__( 'The number of days after which the user will be logged out automatically.', 'login-with-google' ); ?>
 		</p>
 
 		<p class='<?php echo esc_attr( $warning_classes ); ?>'>
 			<?php
-			echo esc_html( __( 'Setting a cookie expiry for more than 14 days can have security implications. Proceed with caution!', 'login-with-google' ) );
+			echo esc_html__( 'Setting a cookie expiry for more than 14 days can have security implications. Proceed with caution!', 'login-with-google' );
 			?>
 		</p>
 
