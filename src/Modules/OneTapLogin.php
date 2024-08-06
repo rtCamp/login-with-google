@@ -212,6 +212,10 @@ class OneTapLogin implements Module {
 		}
 
 		$wp_user = $this->authenticator->authenticate( $user );
+
+		// Adding filter to modify cookie expiry for one tap login.
+		add_filter( 'auth_cookie_expiration', [ $this->settings, 'modify_cookie_expiry' ] );
 		$this->authenticator->set_auth_cookies( $wp_user );
+		remove_filter( 'auth_cookie_expiration', [ $this->settings, 'modify_cookie_expiry' ] );
 	}
 }
