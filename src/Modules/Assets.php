@@ -45,6 +45,13 @@ class Assets implements ModuleInterface {
 	const SETTINGS_PAGE_SCRIPT_HANDLE = 'login-with-google-settings-script';
 
 	/**
+	 * Settings page hook suffix.
+	 *
+	 * @var string
+	 */
+	const SETTINGS_PAGE_HOOK_SUFFIX = 'settings_page_login-with-google';
+
+	/**
 	 * Module name.
 	 *
 	 * @return string
@@ -61,6 +68,26 @@ class Assets implements ModuleInterface {
 	public function init(): void {
 		add_action( 'login_enqueue_scripts', [ $this, 'enqueue_login_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_scripts' ]  );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_styles' ]  );
+	}
+
+	/**
+	 * Enqueue styles for admin.
+	 *
+	 * @param string $hook_suffix Current page hook.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_styles( string $hook_suffix ): void {
+		if ( 'settings_page_login-with-google' !== $hook_suffix ) {
+			return;
+		}
+
+		if ( ! wp_style_is( self::SETTINGS_PAGE_STYLE_HANDLE, 'registered' ) ) {
+			$this->register_style( self::SETTINGS_PAGE_STYLE_HANDLE, 'build/css/settings.css' );
+		}
+
+		wp_enqueue_style( self::SETTINGS_PAGE_STYLE_HANDLE );
 	}
 
 	/**
@@ -71,7 +98,6 @@ class Assets implements ModuleInterface {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( string $hook_suffix ): void {
-
 		if ( 'settings_page_login-with-google' !== $hook_suffix ) {
 			return;
 		}
@@ -79,15 +105,10 @@ class Assets implements ModuleInterface {
 		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'settings.min.js' : 'settings.js';
 
 		if ( ! wp_script_is( self::SETTINGS_PAGE_SCRIPT_HANDLE, 'registered' ) ) {
-			$this->register_script( self::SETTINGS_PAGE_SCRIPT_HANDLE, 'build/js/' . $filename, [ 'wp-i18n' ] );
-		}
-
-		if ( ! wp_style_is( self::SETTINGS_PAGE_STYLE_HANDLE, 'registered' ) ) {
-			$this->register_style( self::SETTINGS_PAGE_STYLE_HANDLE, 'build/css/settings.css' );
+			$this->register_script( self::SETTINGS_PAGE_SCRIPT_HANDLE, 'build/js/' . $filename );
 		}
 
 		wp_enqueue_script( self::SETTINGS_PAGE_SCRIPT_HANDLE );
-		wp_enqueue_style( self::SETTINGS_PAGE_STYLE_HANDLE );
 	}
 
 	/**

@@ -7,6 +7,8 @@ declare( strict_types=1 );
 
 namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
+use Mockery;
+use RtCamp\GoogleLogin\Utils\Helper;
 use WP_Mock;
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 use RtCamp\GoogleLogin\Tests\TestCase;
@@ -63,11 +65,11 @@ class SettingsTest extends TestCase {
 			'get_option',
 			[
 				'wp_google_login_settings',
-				[]
+				[],
 			],
 			1,
 			[
-				'client_id' => 'cid'
+				'client_id' => 'cid',
 			]
 		);
 
@@ -84,7 +86,7 @@ class SettingsTest extends TestCase {
 			'get_option',
 			[
 				'wp_google_login_settings',
-				[]
+				[],
 			],
 			1,
 			[]
@@ -93,8 +95,114 @@ class SettingsTest extends TestCase {
 		WP_Mock::expectActionAdded( 'admin_init', [ $this->testee, 'register_settings' ] );
 		WP_Mock::expectActionAdded( 'admin_menu', [ $this->testee, 'settings_page' ] );
 
+		WP_Mock::expectFilterAdded( 'auth_cookie_expiration', [ $this->testee, 'modify_cookie_expiry' ] );
+
 		$this->testee->init();
 		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::modify_cookie_expiry
+	 */
+	public function testModifyCookieExpiry() {
+		$state = 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			]
+		)->andReturn( $state );
+
+		$default_expiration = 14;
+		$this->testee->cookie_expiry = 230;
+
+		$value_to_match = $this->testee->cookie_expiry * DAY_IN_SECONDS;
+
+		$return = $this->testee->modify_cookie_expiry( $default_expiration );
+		$this->assertEquals( $value_to_match, $return );
+	}
+
+	/**
+	 * @covers ::modify_cookie_expiry
+	 */
+	public function testModifyCookieExpiryWithOtherProvider() {
+		$state = 'eyJwcm92aWRlciI6InNvbWUtb3RoZXIiLCJub25jZSI6InRlc3Rub25jZSJ9';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			]
+		)->andReturn( $state );
+
+		$default_expiration = 14;
+		$this->testee->cookie_expiry = 230;
+
+		$return = $this->testee->modify_cookie_expiry( $default_expiration );
+		$this->assertEquals( $default_expiration, $return );
+	}
+
+	public function testGetWarningClasses() {
+
+		$this->buildTesteeMethodMock(
+			Testee::class,
+			[],
+			'get_warning_classes',
+			[]
+		);
+
+		// will invoke MyClass::myMethod()
+		$method->invoke( $this->testee );
+	}
+
+	/**
+	 * @covers ::modify_cookie_expiry
+	 */
+	public function testModifyCookieExpiryStateWithNoProvider() {
+		$state = 'eyJub25jZSI6InRlc3Rub25jZSJ9';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			]
+		)->andReturn( $state );
+
+		$default_expiration = 14;
+		$this->testee->cookie_expiry = 230;
+
+		$return = $this->testee->modify_cookie_expiry( $default_expiration );
+		$this->assertEquals( $default_expiration, $return );
+	}
+
+	/**
+	 * @covers ::modify_cookie_expiry
+	 */
+	public function testModifyCookieExpiryWithNonNumericValue() {
+		$state = 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=';
+
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+			]
+		)->andReturn( $state );
+
+		$default_expiration = 14;
+		$this->testee->cookie_expiry = 'abc';
+
+		$return = $this->testee->modify_cookie_expiry( $default_expiration );
+		$this->assertEquals( $default_expiration, $return );
+
 	}
 
 	/**
@@ -105,7 +213,7 @@ class SettingsTest extends TestCase {
 			'register_setting',
 			[
 				'wp_google_login',
-				'wp_google_login_settings'
+				'wp_google_login_settings',
 			],
 			1,
 			true
@@ -117,7 +225,7 @@ class SettingsTest extends TestCase {
 				'wp_google_login_section',
 				'Log in with Google Settings',
 				\Closure::class,
-				'login-with-google'
+				'login-with-google',
 			],
 			1
 		);
@@ -133,7 +241,7 @@ class SettingsTest extends TestCase {
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'array' ),
 				],
-				'times' => 6
+				'times' => 7,
 			]
 		);
 
@@ -154,7 +262,7 @@ class SettingsTest extends TestCase {
 				'login-with-google',
 				[
 					$this->testee,
-					'output'
+					'output',
 				],
 			]
 		);
@@ -203,7 +311,7 @@ class SettingsTest extends TestCase {
 			'esc_html__',
 			[
 				'Create oAuth Client ID and Client Secret at',
-				'login-with-google'
+				'login-with-google',
 			],
 			2,
 		);
@@ -216,7 +324,7 @@ class SettingsTest extends TestCase {
 					esc_html__( 'Create oAuth Client ID and Client Secret at', 'login-with-google' ),
 					'https://console.developers.google.com/apis/dashboard',
 					'console.developers.google.com'
-				)
+				),
 			],
 			1,
 		);
@@ -235,7 +343,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'checked',
 			[
-				'yes'
+				'yes',
 			],
 			1,
 		);
@@ -244,7 +352,7 @@ class SettingsTest extends TestCase {
 			'esc_html_e',
 			[
 				'Create a new user account if it does not exist already',
-				'login-with-google'
+				'login-with-google',
 			],
 			1,
 		);
@@ -287,7 +395,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'esc_html',
 			[
-				__( 'Add each domain comma separated', 'login-with-google' )
+				__( 'Add each domain comma separated', 'login-with-google' ),
 			],
 			1,
 		);
@@ -305,7 +413,7 @@ class SettingsTest extends TestCase {
 		$this->wpMockFunction(
 			'esc_attr',
 			[
-				'cis'
+				'cis',
 			],
 			1
 		);
