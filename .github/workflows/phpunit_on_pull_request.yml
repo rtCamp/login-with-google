@@ -1,4 +1,6 @@
-on: pull_request
+on:
+#   pull_request
+  workflow_dispatch:
 name: PHPUnit
 jobs:
   unit: #-----------------------------------------------------------------------
@@ -53,7 +55,7 @@ jobs:
         run: composer update && composer tests:unit
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: /tmp/report/html
@@ -71,7 +73,7 @@ jobs:
           token: ${{ secrets.RTBOT_TOKEN }}
 
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: code-coverage-report
           path: /tmp/report/html
