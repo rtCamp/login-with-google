@@ -137,6 +137,9 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.3.3 =
+* Fix: Redirection back to login page issue.
+
 = 1.3.2 =
 * Compatible with PHP 8.1
 * Compatible with WordPress latest version 6.3.1
