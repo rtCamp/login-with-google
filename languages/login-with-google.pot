@@ -1,38 +1,42 @@
-# Copyright (C) 2021 rtCamp
+# Copyright (C) 2025 rtCamp
 # This file is distributed under the same license as the Login with Google plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Login with Google 1.0.15\n"
+"Project-Id-Version: Login with Google 1.3.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-06-29T16:19:14+05:30\n"
+"POT-Creation-Date: 2025-01-27T10:20:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
+"X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
-#: src/Modules/Settings.php:228
+#: login-with-google.php
+#: src/Modules/Settings.php:314
 msgid "Login with Google"
 msgstr ""
 
 #. Description of the plugin
+#: login-with-google.php
 msgid "Allow users to login/register via Google."
 msgstr ""
 
 #. Author of the plugin
+#: login-with-google.php
 msgid "rtCamp"
 msgstr ""
 
 #. Author URI of the plugin
+#: login-with-google.php
 msgid "https://rtcamp.com"
 msgstr ""
 
 #: login-with-google.php:40
-msgid "Login with google Plugin requires PHP version 7.3 or higher. <br />Please ask your server administrator to update your environment to latest PHP version"
+msgid "Login with google Plugin requires PHP version 7.4 or higher. <br />Please ask your server administrator to update your environment to latest PHP version"
 msgstr ""
 
 #: login-with-google.php:47
@@ -40,57 +44,80 @@ msgid "The plugin Login with google has been deactivated"
 msgstr ""
 
 #. translators: %$s is replaced with requested service name.
-#: src/Container.php:61
+#: src/Container.php:65
 msgid "Invalid Service %s Passed to the container"
 msgstr ""
 
-#: src/Modules/Login.php:172
-msgid "Registration is not allowed."
+#: src/Modules/Login.php:159
+msgid "Could not authenticate the user, please try again."
 msgstr ""
 
-#. translators: %s is replaced with email ID of user trying to register
-#: src/Modules/Login.php:199
-msgid "Cannot register with this email: %s"
+#: src/Modules/OneTapLogin.php:169
+msgid "Cannot verify the credentials"
 msgstr ""
 
-#: src/Modules/Settings.php:93
+#: src/Modules/OneTapLogin.php:211
+msgid "User not found to authenticate"
+msgstr ""
+
+#: src/Modules/Settings.php:97
 msgid "Log in with Google Settings"
 msgstr ""
 
-#: src/Modules/Settings.php:101
+#: src/Modules/Settings.php:105
 msgid "Client ID"
 msgstr ""
 
-#: src/Modules/Settings.php:110
+#: src/Modules/Settings.php:114
 msgid "Client Secret"
 msgstr ""
 
-#: src/Modules/Settings.php:119
-msgid "Create new user"
+#: src/Modules/Settings.php:123
+msgid "Create New User"
 msgstr ""
 
-#: src/Modules/Settings.php:128
+#: src/Modules/Settings.php:132
+msgid "Enable One Tap Login"
+msgstr ""
+
+#: src/Modules/Settings.php:141
+msgid "One Tap Login Locations"
+msgstr ""
+
+#: src/Modules/Settings.php:150
 msgid "Whitelisted Domains"
 msgstr ""
 
-#: src/Modules/Settings.php:148
+#: src/Modules/Settings.php:170
 msgid "Create oAuth Client ID and Client Secret at"
 msgstr ""
 
-#: src/Modules/Settings.php:185
+#: src/Modules/Settings.php:207
 msgid "Create a new user account if it does not exist already"
 msgstr ""
 
 #. translators: %1s will be replaced by page link
-#: src/Modules/Settings.php:192
+#: src/Modules/Settings.php:214
 msgid "If this setting is checked, a new user will be created even if <a target=\"_blank\" href=\"%1s\">membership setting</a> is off."
 msgstr ""
 
-#: src/Modules/Settings.php:215
+#: src/Modules/Settings.php:235
+msgid "One Tap Login"
+msgstr ""
+
+#: src/Modules/Settings.php:255
+msgid "Enable One Tap Login Only on Login Screen"
+msgstr ""
+
+#: src/Modules/Settings.php:262
+msgid "Enable One Tap Login Site-wide"
+msgstr ""
+
+#: src/Modules/Settings.php:301
 msgid "Add each domain comma separated"
 msgstr ""
 
-#: src/Modules/Settings.php:227
+#: src/Modules/Settings.php:313
 msgid "Login with Google settings"
 msgstr ""
 
@@ -98,18 +125,80 @@ msgstr ""
 msgid "Login with google"
 msgstr ""
 
+#: src/Utils/Authenticator.php:58
+msgid "Email needs to be present for the user."
+msgstr ""
+
+#: src/Utils/Authenticator.php:99
+msgid "Registration is not allowed."
+msgstr ""
+
+#. translators: %s is replaced with email ID of user trying to register
+#: src/Utils/Authenticator.php:124
+msgid "Cannot register with this email: %s"
+msgstr ""
+
 #: src/Utils/GoogleClient.php:98
 msgid "Access token must be set to make this API call"
 msgstr ""
 
-#: src/Utils/GoogleClient.php:173
+#: src/Utils/GoogleClient.php:204
 msgid "Could not retrieve the access token, please try again."
 msgstr ""
 
-#: src/Utils/GoogleClient.php:199
+#: src/Utils/GoogleClient.php:230
 msgid "Could not retrieve the user information, please try again."
 msgstr ""
 
-#: templates/google-login-button.php:9
+#: src/Utils/TokenVerifier.php:206
+#: src/Utils/TokenVerifier.php:214
+msgid "ID token is invalid"
+msgstr ""
+
+#: src/Utils/TokenVerifier.php:243
+#: src/Utils/TokenVerifier.php:257
+msgid "Cannot verify the ID token signature. Please try again."
+msgstr ""
+
+#: src/Utils/TokenVerifier.php:267
+msgid "No user present to validate"
+msgstr ""
+
+#: src/Utils/TokenVerifier.php:271
+msgid "Invalid data found for authentication"
+msgstr ""
+
+#: src/Utils/TokenVerifier.php:275
+msgid "Invalid source found for authentication"
+msgstr ""
+
+#: src/Utils/TokenVerifier.php:279
+msgid "User data is stale! Please try again."
+msgstr ""
+
+#: templates/google-login-button.php:12
+#: assets/src/js/block-button.js:19
+#: assets/src/js/block-button.js:49
 msgid "Log in with Google"
+msgstr ""
+
+#: templates/google-login-button.php:22
+msgid "Log out"
+msgstr ""
+
+#: assets/build/js/onetap.js:1
+#: assets/src/js/onetap.js:22
+msgid "Invalid URL for Redirection"
+msgstr ""
+
+#: assets/src/js/block-button.js:53
+msgid "Display Logout"
+msgstr ""
+
+#: assets/src/js/block-button.js:54
+msgid "If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’"
+msgstr ""
+
+#: assets/src/js/block-button.js:67
+msgid "Settings"
 msgstr ""
