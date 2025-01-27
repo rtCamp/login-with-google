@@ -34,7 +34,6 @@ function create_and_configure_site () {
     ls
     wp plugin activate login-with-google --allow-root
     wp user create automation automation@example.com --role=administrator --user_pass=automation --allow-root
-    wp theme activate twentytwentyone --allow-root
 }
 
 
