@@ -464,4 +464,29 @@ class LoginTest extends TestCase {
 		$data = $this->testee->login_redirect();
 		$this->assertNull( $data );
 	}
+
+	/**
+	 * @covers ::login_redirect
+	 */
+	public function testLoginRedirect() {
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_STRING
+			]
+		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsInJlZGlyZWN0X3RvIjoiaG9tZSJ9' );
+
+		$this->setTesteeProperty( $this->testee, 'authenticated', true );
+
+		$this->wpMockFunction( 'wp_safe_redirect', [ 'home' ], 1, function () {
+			// Prevent executing 'exit'
+			throw new Exception( 'exit' );
+		} );
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'exit' );
+		$this->testee->login_redirect();
+	}
 }
