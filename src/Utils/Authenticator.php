@@ -59,7 +59,19 @@ class Authenticator {
 		}
 
 		if ( email_exists( $user->email ) ) {
-			return get_user_by( 'email', $user->email );
+			$user_wp = get_user_by( 'email', $user->email );
+
+			/**
+			 * Fires once the user has been authenticated.
+			 *
+			 * @since 1.3.0
+			 *
+			 * @param WP_User $user_wp WP User data object.
+			 * @param stdClass $user User data object returned by Google.
+			 */
+			do_action( 'rtcamp.google_user_logged_in', $user_wp, $user );
+
+			return $user_wp;
 		}
 
 		/**
@@ -95,6 +107,8 @@ class Authenticator {
 						'user_login' => Helper::unique_username( $user->login ),
 						'user_pass'  => wp_generate_password( 18 ),
 						'user_email' => $user->email,
+						'first_name' => $user->given_name ?? '',
+						'last_name'  => $user->family_name ?? '',
 					]
 				);
 

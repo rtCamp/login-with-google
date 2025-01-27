@@ -74,6 +74,7 @@ class Plugin {
 		'assets',
 		'shortcode',
 		'one_tap_login',
+		'google_login_block',
 	];
 
 	/**

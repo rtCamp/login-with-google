@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<!-- Remove this file once WordPress Coding Standards is updated to support PHP 8.0. -->
+<ruleset name="Login with github">
+	<config name="minimum_supported_wp_version" value="5.4.2" />
+
+	<file>src</file>
+	<file>login-with-google.php</file>
+
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.PHP.DisallowShortTernary" />
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax" />
+	</rule>
+
+	<rule ref="WordPress-Docs">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<!-- For PSR-4 autoloading. -->
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.Files.FileName" />
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="login-with-google" />
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Allow namespaced hook names in dot notation. -->
+	<rule ref="WordPress.NamingConventions.ValidHookName">
+		<properties>
+			<property name="additionalWordDelimiters" value="."/>
+		</properties>
+	</rule>
+
+	<arg value="s"/>
+	<arg name="extensions" value="php"/>
+	<file>.</file>
+
+	<!-- Strip the filepaths down to the relevant bit. -->
+	<arg name="basepath" value="./"/>
+
+	<!-- Check up to 20 files simultaneously. -->
+	<arg name="parallel" value="20"/>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>/lib/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/.github/*</exclude-pattern>
+	<exclude-pattern>*/.scripts/*</exclude-pattern>
+</ruleset>

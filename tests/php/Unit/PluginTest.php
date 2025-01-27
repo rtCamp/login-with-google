@@ -61,14 +61,14 @@ class PluginTest extends TestCase {
 	 * @covers ::activate_modules
 	 */
 	public function testRun() {
-		$this->moduleMock->expects( $this->exactly( 5 ) )
+		$this->moduleMock->expects( $this->exactly( 6 ) )
 		                 ->method( 'init' );
 
 		$this->containerMock->expects( $this->once() )
 		                    ->method( 'define_services' );
 
 
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );
@@ -100,13 +100,13 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testPath() {
-		$this->moduleMock->expects( $this->exactly( 5 ) )
+		$this->moduleMock->expects( $this->exactly( 6 ) )
 		                 ->method( 'init' );
 
 		$this->containerMock->expects( $this->once() )
 		                    ->method( 'define_services' );
 
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );
@@ -138,7 +138,7 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testTemplateDirPath() {
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );
@@ -170,7 +170,7 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testPluginURL() {
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );
@@ -205,7 +205,7 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testAssetsDirPath() {
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );
@@ -237,7 +237,7 @@ class PluginTest extends TestCase {
 	 * @covers ::run
 	 */
 	public function testHooksAddedOnRun() {
-		$this->containerMock->expects( $this->exactly( 5 ) )
+		$this->containerMock->expects( $this->exactly( 6 ) )
 		                    ->method( 'get' )
 		                    ->withAnyParameters()
 		                    ->willReturn( $this->moduleMock );

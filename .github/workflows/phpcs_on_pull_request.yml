@@ -5,11 +5,21 @@ jobs:
     name: Run PHPCS inspection
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-    - name: Run PHPCS inspection
+
+    - name: Run PHPCS inspection with PHP 8.1
       uses: rtCamp/action-phpcs-code-review@master
       env:
-        SKIP_FOLDERS: "tests,.github"
+        SKIP_FOLDERS: "tests,.github,vendor"
+        GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
+
+    # Remove this step once WordPress Coding Standards supports PHP 8.0+.
+    - name: Run PHPCS inspection with PHP 7.4
+      uses: rtCamp/action-phpcs-code-review@master
+      env:
+        SKIP_FOLDERS: "tests,.github,vendor"
+        PHPCS_PHP_VERSION: "7.4"
+        PHPCS_STANDARD_FILE_NAME: "phpcs.wpcs.xml"
         GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}

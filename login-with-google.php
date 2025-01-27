@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Login with Google
  * Description: Allow users to login/register via Google.
- * Version: 1.2.2
+ * Version: 1.3.3
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: login-with-google
  * Domain Path: /languages
  * License: GPLv2+
- * Requires at least: 5.4.2
- * Requires PHP: 7.3
+ * Requires at least: 5.5
+ * Requires PHP: 7.4
  *
  * @package RtCamp\GoogleLogin
  * @since 1.0.0
@@ -30,15 +30,15 @@ $hooks = [
 ];
 
 /**
- * PHP 7.3+ is required in order to use the plugin.
+ * PHP 7.4+ is required in order to use the plugin.
  */
-if ( version_compare( PHP_VERSION, '7.3', '<' ) ) {
+if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 	foreach ( $hooks as $hook ) {
 		add_action(
 			$hook,
 			function () {
 				$message = __(
-					'Login with google Plugin requires PHP version 7.3 or higher. <br />Please ask your server administrator to update your environment to latest PHP version',
+					'Login with google Plugin requires PHP version 7.4 or higher. <br />Please ask your server administrator to update your environment to latest PHP version',
 					'login-with-google'
 				);
 
@@ -107,10 +107,20 @@ function container(): Container {
 /**
  * Return the Plugin instance.
  *
+ * If reauth is set, redirect to login page.
+ *
  * @return Plugin
  */
 function plugin(): Plugin {
 	static $plugin;
+
+	$reauth = filter_input( INPUT_GET, 'reauth', FILTER_SANITIZE_STRING );
+	if ( null !== $reauth ) {
+		if ( ! empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
+			wp_safe_redirect( wp_login_url() );
+			exit;
+		}
+	}
 
 	if ( null !== $plugin ) {
 		return $plugin;

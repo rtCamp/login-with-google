@@ -32,7 +32,7 @@ const wpGoogleLogin = {
 		// Set cookie if "Login with Google" button displayed to bypass page cache
 		// Do not set on wp login or registration page.
 		if ( document.querySelector( '.wp_google_login' ) && null === this.form ) {
-			document.cookie = 'wp-login-with-google=1;path=' + window.location.pathname + ';';
+			document.cookie = 'vip-go-cb=1;wp-login-with-google=1;path=' + encodeURI(window.location.pathname) + ';';
 		}
 
 		if ( null === this.form ) {

@@ -1,11 +1,11 @@
 === Log in with Google ===
-Contributors: rtCamp
+Contributors: rtCamp, sh4lin
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
-Requires at least: 5.0
-Tested up to: 5.8.1
-Requires PHP: 7.3
-Stable tag: 1.2.2
+Requires at least: 5.5
+Tested up to: 6.3.1
+Requires PHP: 7.4
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,7 +33,7 @@ Ultra minimal plugin to let your users login to WordPress applications using the
 ```
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
-````
+```
 
 ### Browser support
 [These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
@@ -64,7 +64,6 @@ is OFF.
 By default, when you enable user registration via constant `WP_GOOGLE_LOGIN_USER_REGISTRATION` or enable *Settings > WP Google Login > Enable Google Login Registration*, it will create a user for any Google login (including gmail.com users). If you are planning to use this plugin on a private, internal site, then you may like to restrict user registration to users under a single Google Suite organization. This configuration variable does that.
 
 Add your domain name, without any schema prefix and `www,` as the value of `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` constant or in the settings `Settings > WP Google Login > Whitelisted Domains`. You can whitelist multiple domains. Please separate domains with commas. See the below example to know how to do it via constants:
-
 ```
 define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 ```
@@ -73,10 +72,7 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 
 ### Hooks
 
-Filter `wp_google_login_scopes`
-This filter can be used to filter existing scope used in Google Sign in.
-You can ask for additional permission while user logs in.
-This filter will provide 1 parameter `scopes` in callback, which contains array of scopes.
+For a list of all hooks please refer to [this documentation](https://github.com/rtCamp/login-with-google#hooks).
 
 #### wp-config.php parameters list
 
@@ -141,8 +137,28 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.3.3 =
+* Fix: Redirection back to login page issue.
+
+= 1.3.2 =
+* Compatible with PHP 8.1
+* Compatible with WordPress latest version 6.3.1
+
+= 1.3.1 =
+* Maintenance release: Updated minimum requirements.
+
+= 1.3.0 =
+* Feature: Gutenberg block for Login button.
+* Feature: Save user first name and last name on registration.
+* Add: PHP 8.0 compatibility.
+* Add: Added hook after user authentication.
+* Add: Added hook after user is logged-in.
+* Fix: set login cookie with shortcode display.
+* Fix: Redirection back to login page issue.
+* Updated npm packages and laravel-mix.
+
 = 1.2.2 =
-* Maintenance release.
+* Maintenance release. Requires PHP >= 7.4.
 
 = 1.2.1 =
 * Feature: Provide filter for client arguments: rtcamp.google_client_args
@@ -174,7 +190,13 @@ Once you're ready to send a pull request, please run through the following check
 = 1.0.9 =
 * Initial release.
 
+= 1.3.1 =
+* Maintenance release: Updated minimum requirements.
+
 == Upgrade Notice ==
 
-= 1.2.1 =
-* Feature: Provide filter for client arguments: rtcamp.google_client_args
+= 1.3.3 =
+* Fix: Redirection back to login page issue.
+
+= 1.3.2 =
+* Compatible with PHP 8.1 and WordPress 6.3.1
