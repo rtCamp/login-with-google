@@ -107,6 +107,8 @@ function container(): Container {
 /**
  * Return the Plugin instance.
  *
+ * If reauth is set, redirect to login page.
+ *
  * @return Plugin
  */
 function plugin(): Plugin {
