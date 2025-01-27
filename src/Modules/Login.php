@@ -136,6 +136,10 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
+		if ( ! empty( $decoded_state['remember'] ) && true === $decoded_state['remember'] ) {
+			add_action( 'wp_login', [ $this, 'remember_me' ], 9, 2 );
+		}
+
 		try {
 			$this->gh_client->set_access_token( $code );
 			$user = $this->gh_client->user();
@@ -229,5 +233,15 @@ class Login implements ModuleInterface {
 			wp_safe_redirect( $state->redirect_to );
 			exit;
 		}
+	}
+
+	/**
+	 * Sets cookie to remember user
+	 *
+	 * @param String  $user_login user login.
+	 * @param WP_User $user WP User Object.
+	 */
+	public function remember_me( string $user_login, WP_User $user ) {
+		$this->authenticator->set_auth_cookies( $user, true );
 	}
 }

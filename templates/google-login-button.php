@@ -34,4 +34,8 @@ if ( is_user_logged_in() ) {
 			<?php echo esc_html( $button_text ); ?>
 		</a>
 	</div>
+	<div class="wp_google_login__remember-container">
+		<input type="checkbox" id="remember-google-login"/>
+		<label for="remember-google-login"><?php esc_html_e( 'Remember Me ( Login with Google )', 'login-with-google' ); ?></label>
+	</div>
 </div>
