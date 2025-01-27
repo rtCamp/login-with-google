@@ -1,0 +1,31 @@
+const selectors = {
+    settingsHeader: "form[action='options.php'] h2",
+    settingsHeading: "Log in with Google Settings",
+    buttonSaveSetting: "role=button[name='Save Changes'i]",
+    messageSaveSetting: "#setting-error-settings_updated",
+    clientIdInput: '#client-id',
+    clientIdValue: '278082871881-qp9srgor0iqvl1aq200ctf1sdb49bli1.apps.googleusercontent.com',
+    clientSecretInput: '#client-secret',
+    clientSecretValue: 'Y3O4gbY4JnateqAj10GxL_6t',
+    titleInput: "h1[aria-label='Add title']",
+    titleValue: "Test block",
+    addBlockButton: 'role=button[name="Add block"i]',
+    searchInput: "#components-search-control-0",
+    searchInputValue: "Login with google",
+    validateOption: "role=option[name=/Log in with Google/i]",
+    loginGoogleDiv: "div[aria-label='Log in with Google']",
+    logoutCheckbox: 'role=checkbox[name="Display Logout"i]',
+    publishPanel: ".editor-post-publish-panel__toggle",
+    publishButton: ".editor-post-publish-button",
+    viewPostButton: "a[class='components-button is-primary']",
+    frontendLoginButton: ".wp_google_login__button",
+    wpAdminBar: '#wp-admin-bar-my-account',
+    wpLogout:'#wp-admin-bar-logout',
+    messageClass: '.message',
+    messageText: 'You are now logged out.',
+    wpGoogleLogin: '.wp_google_login',
+    userRegistration: "#user-registration",
+
+}
+
+module.exports = { selectors }
