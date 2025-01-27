@@ -45,7 +45,23 @@ class AssetsTest extends TestCase {
 			'login_enqueue_scripts',
 			[
 				$this->testee,
-				'enqueue_login_styles'
+				'enqueue_login_styles',
+			]
+		);
+
+		WP_Mock::expectActionAdded(
+			'admin_enqueue_scripts',
+			[
+				$this->testee,
+				'enqueue_admin_scripts',
+			]
+		);
+
+		WP_Mock::expectActionAdded(
+			'admin_enqueue_scripts',
+			[
+				$this->testee,
+				'enqueue_admin_styles',
 			]
 		);
 
@@ -90,6 +106,162 @@ class AssetsTest extends TestCase {
 	}
 
 	/**
+	 * @covers ::register_admin_styles
+	 */
+	public function testEnqueueAdminStylesWithStyleRegistered() {
+		$this->wpMockFunction(
+			'wp_style_is',
+			[
+				$this->testee::SETTINGS_PAGE_STYLE_HANDLE,
+				'registered',
+			],
+			1,
+			true,
+		);
+
+		$this->wpMockFunction(
+			'wp_enqueue_style',
+			[
+				$this->testee::SETTINGS_PAGE_STYLE_HANDLE,
+			],
+		);
+
+		$this->testee->enqueue_admin_styles( $this->testee::SETTINGS_PAGE_HOOK_SUFFIX );
+		$this->assertConditionsMet();
+
+	}
+
+	/**
+	 * @covers ::register_admin_styles
+	 */
+	public function testEnqueueAdminStylesWithStyleNotRegistered() {
+		$this->wpMockFunction(
+			'RtCamp\GoogleLogin\plugin',
+			[],
+			2,
+			function () {
+				return (object) [
+					'url'        => 'https://example.com/',
+					'assets_dir' => 'https://example.com/assets',
+				];
+			}
+		);
+
+		$this->wpMockFunction(
+			'wp_style_is',
+			[
+				$this->testee::SETTINGS_PAGE_STYLE_HANDLE,
+				'registered',
+			],
+			1,
+			false,
+		);
+
+		$this->wpMockFunction(
+			'wp_register_style',
+			[
+				$this->testee::SETTINGS_PAGE_STYLE_HANDLE,
+				'https://example.com/assets/build/css/settings.css',
+				[],
+				false,
+				true,
+			],
+			1,
+			true,
+		);
+
+		$this->wpMockFunction(
+			'wp_enqueue_style',
+			[
+				$this->testee::SETTINGS_PAGE_STYLE_HANDLE,
+			],
+			1,
+			true,
+		);
+
+		$this->testee->enqueue_admin_styles( $this->testee::SETTINGS_PAGE_HOOK_SUFFIX );
+		$this->assertConditionsMet();
+
+	}
+
+	/**
+	 * @covers ::enqueue_admin_scripts
+	 */
+	public function testEnqueueAdminScriptsWithScriptRegistered() {
+		$this->wpMockFunction(
+			'wp_script_is',
+			[
+				$this->testee::SETTINGS_PAGE_SCRIPT_HANDLE,
+				'registered',
+			],
+			1,
+			true,
+		);
+
+		$this->wpMockFunction(
+			'wp_enqueue_script',
+			[
+				$this->testee::SETTINGS_PAGE_SCRIPT_HANDLE,
+			],
+		);
+
+		$this->testee->enqueue_admin_scripts( $this->testee::SETTINGS_PAGE_HOOK_SUFFIX );
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::enqueue_admin_scripts
+	 */
+	public function testEnqueueAdminScriptsWithScriptNotRegistered() {
+		$this->wpMockFunction(
+			'RtCamp\GoogleLogin\plugin',
+			[],
+			2,
+			function () {
+				return (object) [
+					'url'        => 'https://example.com/',
+					'assets_dir' => 'https://example.com/assets',
+				];
+			}
+		);
+
+		$this->wpMockFunction(
+			'wp_script_is',
+			[
+				$this->testee::SETTINGS_PAGE_SCRIPT_HANDLE,
+				'registered',
+			],
+			1,
+			false,
+		);
+
+		$this->wpMockFunction(
+			'wp_register_script',
+			[
+				$this->testee::SETTINGS_PAGE_SCRIPT_HANDLE,
+				'https://example.com/assets/build/js/settings.js',
+				[],
+				false,
+				true,
+			],
+			1,
+			true,
+		);
+
+		$this->wpMockFunction(
+			'wp_enqueue_script',
+			[
+				$this->testee::SETTINGS_PAGE_SCRIPT_HANDLE,
+			],
+			1,
+			true,
+		);
+
+		$this->testee->enqueue_admin_scripts( $this->testee::SETTINGS_PAGE_HOOK_SUFFIX );
+		$this->assertConditionsMet();
+	}
+
+	/**
 	 * @covers ::register_script
 	 */
 	public function testRegisterLoginScript() {
@@ -111,7 +283,7 @@ class AssetsTest extends TestCase {
 				'login-with-google',
 				'https://example.com/assets/js/login.js',
 				[
-					'some-other-script'
+					'some-other-script',
 				],
 				false,
 				true,
@@ -124,7 +296,7 @@ class AssetsTest extends TestCase {
 			'login-with-google',
 			'js/login.js',
 			[
-				'some-other-script'
+				'some-other-script',
 			]
 		);
 

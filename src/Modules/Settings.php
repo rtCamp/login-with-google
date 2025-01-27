@@ -14,6 +14,12 @@ namespace RtCamp\GoogleLogin\Modules;
 
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 
+use RtCamp\GoogleLogin\Utils\Helper;
+
+use stdClass;
+
+use function RtCamp\GoogleLogin\plugin;
+
 /**
  * Class Settings.
  *
@@ -23,6 +29,7 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * @property bool|null registration_enabled
  * @property bool|null one_tap_login
  * @property string    one_tap_login_screen
+ * @property int|null  cookie_expiry
  *
  * @package RtCamp\GoogleLogin\Modules
  */
@@ -47,6 +54,7 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
 		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
 		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
+		'WP_GOOGLE_COOKIE_EXPIRY'           => 'cookie_expiry',
 	];
 
 	/**
@@ -82,6 +90,37 @@ class Settings implements ModuleInterface {
 		$this->options = get_option( 'wp_google_login_settings', [] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
+		add_filter( 'auth_cookie_expiration', [ $this, 'modify_cookie_expiry' ] );
+	}
+
+	/**
+	 * Modify cookie expiry.
+	 *
+	 * @param int $expiration Current cookie expiry.
+	 *
+	 * @return int
+	 */
+	public function modify_cookie_expiry( int $expiration ): int {
+		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( ! $state ) {
+			return $expiration;
+		}
+
+		$state = base64_decode( $state );
+		$state = $state ? json_decode( $state ) : null;
+
+		if ( ! ( $state instanceof stdClass ) || empty( $state->provider ) || 'google' !== $state->provider ) {
+			return $expiration;
+		}
+
+		if ( ! is_numeric( $this->cookie_expiry ) ) {
+			return $expiration;
+		}
+
+		$days = intval( $this->cookie_expiry );
+
+		return $days * DAY_IN_SECONDS;
 	}
 
 	/**
@@ -133,7 +172,7 @@ class Settings implements ModuleInterface {
 			[ $this, 'one_tap_login' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login' ]
+			[ 'label_for' => 'one-tap-login', ]
 		);
 
 		add_settings_field(
@@ -142,7 +181,10 @@ class Settings implements ModuleInterface {
 			[ $this, 'one_tap_login_screens' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login-screen' ]
+			[
+				'label_for' => 'one-tap-login-screen',
+				'class'     => 'one-tap-login-screen-row',
+			]
 		);
 
 		add_settings_field(
@@ -153,6 +195,60 @@ class Settings implements ModuleInterface {
 			'wp_google_login_section',
 			[ 'label_for' => 'whitelisted-domains' ]
 		);
+
+		add_settings_field(
+			'wp_google_cookie_expiry',
+			__( 'Auto logout after', 'login-with-google' ),
+			[ $this, 'cookie_expiry_field' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[
+				'label_for' => 'cookie-expiry',
+				'class'     => 'cookie-expiry-row',
+			]
+		);
+	}
+
+	/**
+	 * Get Warning classes.
+	 *
+	 * @param int $days Days.
+	 *
+	 * @return string
+	 */
+	private function get_warning_classes( int $days ): string {
+		$warning_classes = 'warning';
+		if ( empty( $days ) || $days < 14 ) {
+			$warning_classes .= ' hidden';
+		}
+
+		return $warning_classes;
+	}
+
+	/**
+	 * Render cookie expiry field.
+	 *
+	 * @return void
+	 */
+	public function cookie_expiry_field(): void {
+
+		$days            = ! is_numeric( $this->cookie_expiry ) ? '' : intval( $this->cookie_expiry );
+		$warning_classes = $this->get_warning_classes( intval( $days ) );
+
+		?>
+		<div class='cookie_expiry_settings_wrapper'>
+			<input placeholder="<?php esc_attr_e( 'Number of days, e.g., 12', 'login-with-google' ); ?>" type='number' inputmode='numeric' name='wp_google_login_settings[cookie_expiry]' id='cookie-expiry' value='<?php echo esc_attr( $days ); ?>' autocomplete='off' />
+		</div>
+		<p class='description'>
+			<?php echo esc_html__( 'The number of days after which the user will be automatically logged out (applicable only for Google login).', 'login-with-google' ); ?>
+		</p>
+
+		<p class='<?php echo esc_attr( $warning_classes ); ?>'>
+			<?php
+			echo esc_html__( 'Setting a cookie expiry for more than 14 days can have security implications. Proceed with caution!', 'login-with-google' );
+			?>
+		</p>
+		<?php
 	}
 
 	/**
@@ -262,26 +358,6 @@ class Settings implements ModuleInterface {
 			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
 		</label>
 		<?php
-		// phpcs:disable
-		?>
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                var toggle = function () {
-                    var enabled = jQuery("#one-tap-login").is(":checked");
-                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
-                    if (enabled) {
-                        tr_elem.show();
-                        return;
-                    }
-
-                    tr_elem.hide();
-                };
-                jQuery("#one-tap-login").on('change', toggle);
-                toggle();
-            });
-        </script>
-		<?php
-		// phpcs:enable
 	}
 
 	/**
