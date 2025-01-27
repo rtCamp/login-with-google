@@ -205,7 +205,7 @@ class Login implements ModuleInterface {
 		 *
 		 * @param string $admin_url Admin URL address.
 		 */
-		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+		$state['redirect_to'] = $redirect_to ?? apply_filters( 'rtcamp.google_default_redirect', home_url() );
 
 		return $state;
 	}

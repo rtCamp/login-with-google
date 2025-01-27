@@ -451,7 +451,7 @@ class LoginTest extends TestCase {
 		)->andReturn( null );
 
 		$this->wpMockFunction(
-			'admin_url',
+			'home_url',
 			[],
 			1,
 			'https://example.com/login'

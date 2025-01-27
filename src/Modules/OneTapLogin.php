@@ -178,7 +178,7 @@ class OneTapLogin implements Module {
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
-			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', home_url() );
 			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_STRING );
 			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;
 
