@@ -112,6 +112,14 @@ function container(): Container {
 function plugin(): Plugin {
 	static $plugin;
 
+	$reauth = filter_input( INPUT_GET, 'reauth', FILTER_SANITIZE_STRING );
+	if ( null !== $reauth ) {
+		if ( ! empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
+			wp_safe_redirect( wp_login_url() );
+			exit;
+		}
+	}
+
 	if ( null !== $plugin ) {
 		return $plugin;
 	}
