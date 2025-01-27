@@ -139,6 +139,23 @@ class Login implements ModuleInterface {
 		try {
 			$this->gh_client->set_access_token( $code );
 			$user = $this->gh_client->user();
+
+			if ( empty( $user ) || empty( $user->email ) ) {
+				return new WP_Error( 'google_login_failed', __( 'Failed to authenticate user.', 'login-with-google' ) );
+			}
+
+			/**
+			 * Filter the restricted emails.
+			 * Default to empty array.
+			 *
+			 * @param array $restricted_emails Array containing restricted emails.
+			 */
+			$restricted_emails = apply_filters( 'rtcamp.restrict_user', array() );
+
+			if ( in_array( $user->email, $restricted_emails, true ) ) {
+				return new WP_Error( 'google_login_restricted', __( 'User restricted.', 'login-with-google' ) );
+			}
+
 			$user = $this->authenticator->authenticate( $user );
 
 			if ( $user instanceof WP_User ) {
