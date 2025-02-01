@@ -114,8 +114,8 @@ function container(): Container {
 function plugin(): Plugin {
 	static $plugin;
 
-	$reauth = filter_input( INPUT_GET, 'reauth', FILTER_SANITIZE_STRING );
-	if ( null !== $reauth ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+	if ( isset( $_GET['reauth'] ) && null !== sanitize_text_field( wp_unslash( $_GET['reauth'] ) ) ) {
 		if ( ! empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
 			wp_safe_redirect( wp_login_url() );
 			exit;
