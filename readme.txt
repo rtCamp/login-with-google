@@ -1,11 +1,12 @@
 === Log in with Google ===
 Contributors: rtCamp, sh4lin
+Unlinked contributors: Jeppehimer
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
 Tested up to: 6.3.1
 Requires PHP: 7.4
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +138,9 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.3.5 =
+* Fix: FILTER_SANITIZE_STRING Deprecation warning
+
 = 1.3.4 =
 * Chore: Doc update
 
@@ -197,6 +201,9 @@ Once you're ready to send a pull request, please run through the following check
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.3.5 =
+* Fix: FILTER_SANITIZE_STRING Deprecation warning
 
 = 1.3.4 =
 * Fix: Redirection back to login page issue.
