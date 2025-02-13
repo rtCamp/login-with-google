@@ -2,3 +2,10 @@
 node_modules/
 .DS_Store
 .phpunit.result.cache
+
+# Ignore everything in the vendor directory, except for Composer, Pimple, and PSR and autoload.php
+/vendor
+!/vendor/composer/*
+!/vendor/pimple/*
+!/vendor/psr/*
+!/vendor/autoload.php
