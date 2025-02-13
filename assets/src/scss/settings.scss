@@ -1,0 +1,42 @@
+.one-tap-login-screen-row.hidden {
+	display: none;
+}
+
+.cookie-expiry-row {
+
+	input[type=number] {
+		-moz-appearance: textfield;
+
+		&::-webkit-inner-spin-button,
+		&::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+
+	.cookie_expiry_settings_wrapper {
+		display: flex;
+		gap: 8px;
+		align-items: center;
+
+		input {
+			flex: 0 1 200px;
+		}
+	}
+
+	.human-readable-cookie-expiry {
+		margin: 0;
+
+		&.hidden {
+			display: none;
+		}
+	}
+
+	.warning {
+		color: #f00;
+
+		&.hidden {
+			display: none;
+		}
+	}
+}
