@@ -2,16 +2,20 @@
 
 > WordPress plugin to login/register with google
 
-1. [Overview](#overview)
-2. [Installation](#installation)
-3. [Usage Instructions](#usage-instructions)
-
-   [Plugin Constants](#plugin-constants)
-   [Hooks](#hooks)
-
-4. [Shortcode](#shortcode)
-5. [Minimum Requirements](#minimum-requirements)
-6. [License](#license)
+- [Overview](#overview)
+- [Installation](#installation)
+- [Browser support](#browser-support)
+- [Usage Instructions](#usage-instructions)
+- [Plugin Constants](#plugin-constants)
+- [Hooks](#hooks)
+    - [Filters](#filters)
+    - [Actions](#actions)
+- [Shortcode](#shortcode)
+- [Contribute](#contribute)
+- [Unit testing](#unit-testing)
+- [Minimum Requirements](#minimum-requirements)
+- [License](#license)
+- [BTW, We're Hiring!](#btw-were-hiring)
 
 ## Overview
 
@@ -114,31 +118,7 @@ You can add the google login button to any page/post using shortcode: `google_lo
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
 ## Contribute
-
-### Reporting a bug 🐞
-
-Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes.
-
-If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
-
-### Creating a pull request
-
-Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/login-with-google/issues).
-
-Once you're ready to send a pull request, please run through the following checklist:
-
-1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
-
-1. Fork this repository.
-
-1. Create a branch from `develop` for each issue you'd like to address and commit your changes.
-
-1. Push the code changes from your local clone to your fork.
-
-1. Open a pull request and that's it! We'll with feedback as soon as possible (Isn't collaboration a great thing? 😌)
-
-1. Once your pull request has passed final code review and tests, it will be merged into `develop` and be in the pipeline for the next release. Props to you! 🎉
-
+- For contributing to this plugin, please refer to [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 
 ## Unit testing
 
