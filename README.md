@@ -12,8 +12,6 @@
     - [Actions](#actions)
 - [Shortcode](#shortcode)
 - [Contribute](#contribute)
-  - [Reporting a bug 🐞](#reporting-a-bug-)
-  - [Creating a pull request](#creating-a-pull-request)
 - [Unit testing](#unit-testing)
 - [Minimum Requirements](#minimum-requirements)
 - [License](#license)
@@ -120,29 +118,7 @@ You can add the google login button to any page/post using shortcode: `google_lo
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
 ## Contribute
-
-### Reporting a bug 🐞
-
-Before creating a new issue, do browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for resolution or upcoming fixes.
-
-If you still need to [log an issue](https://github.com/rtCamp/login-with-google/issues/new), making sure to include as much detail as you can, including clear steps to reproduce your issue if possible.
-
-### Creating a pull request
-
-Want to contribute a new feature? Start a conversation by logging an [issue](https://github.com/rtCamp/login-with-google/issues).
-
-1. Browse through the [existing issues](https://github.com/rtCamp/login-with-google/issues) for anything related to what you want to work on. If you don't find any related issues, open a new one.
-
-2. Fork this repository.
-
-3. Follow the [development guidelines](DEVELOPMENT.md) to start working on the issue.
-
-4. Push the code changes from your local clone to your fork.
-
-5. Open a pull request and that's it! We'll with feedback as soon as possible (Isn't collaboration a great thing? 😌)
-
-6. Once your pull request has passed final code review and tests, it will be merged into `develop` and be in the pipeline for the next release. Props to you! 🎉
-
+- For contributing to this plugin, please refer to [CONTRIBUTING.md](docs/CONTRIBUTING.md) for more details.
 
 ## Unit testing
 
