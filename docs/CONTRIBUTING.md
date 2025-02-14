@@ -28,7 +28,7 @@ Want to contribute a new feature? Start a conversation by logging an [issue](htt
 
 # Development Workflow
 
-This document outlines the Git workflow for contributing to the project. We follow a structured branching model to ensure a smooth development process.
+This section outlines the Git workflow for contributing to the project. We follow a structured branching model to ensure a smooth development process.
 
 ## Branching Strategy
 
