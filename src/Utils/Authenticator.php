@@ -134,13 +134,14 @@ class Authenticator {
 	 * Set auth cookies for WordPress login.
 	 *
 	 * @param WP_User $user WP User object.
+	 * @param bool    $remember to remember user or not.
 	 *
 	 * @return void
 	 */
-	public function set_auth_cookies( WP_User $user ) {
+	public function set_auth_cookies( WP_User $user, bool $remember = false ) {
 		wp_clear_auth_cookie();
 		wp_set_current_user( $user->ID, $user->user_login );
-		wp_set_auth_cookie( $user->ID );
+		wp_set_auth_cookie( $user->ID, $remember );
 	}
 
 	/**

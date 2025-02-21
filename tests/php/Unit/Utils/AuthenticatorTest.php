@@ -392,7 +392,8 @@ class AuthenticatorTest extends TestCase {
 		$this->wpMockFunction(
 			'wp_set_auth_cookie',
 			[
-				100
+				100,
+				false,
 			],
 			1
 		);
