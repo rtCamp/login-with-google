@@ -11,8 +11,9 @@ jobs:
     - name: WordPress Plugin Deploy
       uses: rtCamp/action-wordpress-org-plugin-deploy@master
       env:
-        EXCLUDE_LIST: .github .gitignore .eslintignore phpunit.xml phpcs.xml tests README.md 
+        EXCLUDE_LIST: .github .gitignore .eslintignore phpunit.xml phpcs.xml tests README.md
         SLUG: login-with-google
         ASSETS_DIR: wp-assets
+        CUSTOM_COMMAND: "composer install --no-dev"
         WORDPRESS_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         WORDPRESS_USERNAME: ${{ secrets.SVN_USERNAME }}
