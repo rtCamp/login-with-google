@@ -136,7 +136,7 @@ class Plugin {
 	 * @return void
 	 */
 	private function activate_modules(): void {
-		foreach ( $this->active_modules as $module ) {
+		foreach ($this->active_modules as $module ) {
 			$module_instance = $this->container()->get( $module );
 			$module_instance->init();
 		}
