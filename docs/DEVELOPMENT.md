@@ -27,17 +27,23 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    git checkout -b feature/issue-name  # For features
    git checkout -b fix/issue-name      # For bug fixes
    ```
-3. Implement your changes and commit:
+3. Installing dependencies:
+   ```sh
+   composer install
+   cd ./assets
+   npm install
+   ```
+4. Implement your changes and commit:
    ```sh
    git add .
    git commit -m "[type] Short description of change"
    ```
-4. Push your branch and create a Pull Request (PR) to `develop`:
+5. Push your branch and create a Pull Request (PR) to `develop`:
    ```sh
    git push origin feature/issue-name
    ```
-5. Always link the PR to the GitHub issue it resolves ([Learn more](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)).
-6. Once reviewed and approved, merge into `develop`.
+6. Always link the PR to the GitHub issue it resolves ([Learn more](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)).
+7. Once reviewed and approved, merge into `develop`.
 
 ---
 

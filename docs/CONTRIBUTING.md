@@ -19,10 +19,14 @@ Want to contribute a new feature? Start a conversation by logging an [issue](htt
 ### Steps to Contribute:
 1. Check the [existing issues](https://github.com/rtCamp/login-with-google/issues) to see if there's an open discussion about the feature or bug you want to work on. If not, create a new issue.
 2. Fork this repository.
-3. Follow the [development workflow](#development-workflow) to set up your local development environment.
-4. Implement your changes and commit them to your fork.
-5. Push your changes and create a pull request against the `develop` branch.
-6. Once your PR is reviewed and approved, it will be merged into `develop` and scheduled for release. 🎉
+3. `git clone` your fork to your local machine.
+4. `cd` into the cloned repository.
+5. `composer install` to install the dependencies.
+6. `cd ./assets` and run `npm install` to install the required packages.
+7. Follow the [development workflow](#development-workflow) to set up your local development environment.
+8. Implement your changes and commit them to your fork.
+9. Push your changes and create a pull request against the `develop` branch.
+10. Once your PR is reviewed and approved, it will be merged into `develop` and scheduled for release. 🎉
 
 ---
 
