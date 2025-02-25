@@ -3,8 +3,6 @@ node_modules/
 .DS_Store
 .phpunit.result.cache
 
-/vendor
-!/vendor/composer
+/vendor/*
 !/vendor/pimple
 !/vendor/psr
-!/vendor/autoload.php
