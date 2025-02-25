@@ -3,9 +3,6 @@ on:
   push:
     tags:
       - '*'
-    branches:
-      - master
-      - develop
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -26,7 +23,7 @@ jobs:
       uses: 10up/action-wordpress-plugin-deploy@2.3.0
       with:
         generate-zip: 'true'
-        dry-run: ${{ startsWith(github.ref, 'refs/tags/v') != true }}
+        dry-run: ${{ startsWith(github.ref, 'refs/tags/dry') }}
       env:
         SLUG: 'login-with-google'
         ASSETS_DIR: 'wp-assets'
@@ -34,13 +31,13 @@ jobs:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         VERSION: '${{ github.ref_name }}'
     - name: Upload Test Artifact
-      if: startsWith(github.ref, 'refs/tags/v') != true
+      if: startsWith(github.ref, 'refs/tags/dry')
       uses: actions/upload-artifact@v4.6.1
       with:
         name: plugin
         path: '${{ steps.deploy.outputs.zip-path }}'
     - name: Upload Release Artifact
-      if: startsWith(github.ref, 'refs/tags/v')
+      if: startsWith(github.ref, 'refs/tags/dry') == false
       uses: softprops/action-gh-release@v2.2.1
       with:
         files: |
