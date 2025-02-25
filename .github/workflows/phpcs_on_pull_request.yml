@@ -19,7 +19,7 @@ jobs:
     - name: Run PHPCS inspection with PHP 7.4
       uses: rtCamp/action-phpcs-code-review@master
       env:
-        SKIP_FOLDERS: "tests,.github,vendor"
+        SKIP_FOLDERS: "tests,.github,vendor,assets/build"
         PHPCS_PHP_VERSION: "7.4"
         PHPCS_STANDARD_FILE_NAME: "phpcs.wpcs.xml"
         GH_BOT_TOKEN: ${{ secrets.RTBOT_TOKEN }}
