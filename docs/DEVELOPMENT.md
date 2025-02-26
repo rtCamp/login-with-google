@@ -54,27 +54,59 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    git checkout develop
    git pull origin develop
    ```
-2. Create a release branch:
+2. Create a release branch from develop:
    ```sh
    git checkout -b release/x.y.z
    ```
-3. Perform final testing and make necessary fixes.
-4. Merge the release branch into `develop` to keep it in sync:
-   ```sh
-   git checkout develop
-   git merge release/x.y.z
-   git push origin develop
+3. Update the plugin version in the main plugin file (`plugin-name.php`):
+   ```php
+   /*
+   Plugin Name: Plugin Name
+   Version: x.y.z
+   */
    ```
-5. Create and push a GitHub tag:
+   Update the `readme.txt` file with the new version number.
+   ```md
+   == Changelog ==
+
+   = x.y.z =
+   * Feature: Description of new feature.
+   * Fix: Description of bug fix.
+   ```
+   Commit the changes:
+   ```sh
+   git add .
+   git commit -m "Release version x.y.z"
+   git push origin release/x.y.z
+   ```
+4. Perform final testing and make necessary fixes.
+5. Raise PR against `master` branch for release.
+6. Once approved, merge into `master`.
+7. Checkout to `master` and pull the changes:
+   ```sh
+   git checkout master
+   git pull origin master
+   ```
+8. Create and push a GitHub tag:
    ```sh
    git tag -a vX.Y.Z -m "Release version X.Y.Z"
    git push origin vX.Y.Z
    ```
-6. Delete the release branch:
+
+### Dry Run
+Before releasing the plugin, it's a good practice to perform a dry run to generate the release plugin zip file. This helps in identifying any issues that might occur during the actual release process.
+
+1. Checkout to the working branch:
    ```sh
-   git branch -d release/x.y.z
-   git push origin --delete release/x.y.z
+   git checkout {to working branch}
    ```
+
+2. Create a Tag with `dry` prefix
+	   ```sh
+   git tag -a dry-X.Y.Z -m "Dry run release version X.Y.Z"
+   git push origin dry-X.Y.Z
+   ```
+3. This will create a tag with `dry` prefix and you can download the zip file from the action runner. 
 
 ---
 
