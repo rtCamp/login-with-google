@@ -1,0 +1,9 @@
+.github/
+.gitignore
+.eslintignore
+
+phpunit.xml
+phpcs.xml
+tests/
+README.md
+wp-assets/
