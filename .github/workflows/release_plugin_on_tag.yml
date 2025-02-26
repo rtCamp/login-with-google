@@ -1,18 +1,47 @@
-name: Release Plugin
+name: Publish Plugin to WordPress.org
 on:
   push:
     tags:
       - '*'
 jobs:
-  tag:
+  release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v4.2.2
+    - name: Set up PHP
+      uses: shivammathur/setup-php@2.32.0
+      with:
+        php-version: '7.4'
+        coverage: xdebug
+        tools: composer,cs2pr
+    - name: Composer Install
+      shell: bash
+      run: |
+        composer install --no-dev --prefer-dist --no-progress --no-suggest
     - name: WordPress Plugin Deploy
-      uses: rtCamp/action-wordpress-org-plugin-deploy@master
+      id: deploy
+      uses: 10up/action-wordpress-plugin-deploy@2.3.0
+      with:
+        generate-zip: 'true'
+        dry-run: ${{ startsWith(github.ref, 'refs/tags/dry') }}
       env:
-        EXCLUDE_LIST: .github .gitignore .eslintignore phpunit.xml phpcs.xml tests README.md 
-        SLUG: login-with-google
-        ASSETS_DIR: wp-assets
-        WORDPRESS_PASSWORD: ${{ secrets.SVN_PASSWORD }}
-        WORDPRESS_USERNAME: ${{ secrets.SVN_USERNAME }}
+        SLUG: 'login-with-google'
+        ASSETS_DIR: 'wp-assets'
+        SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+        SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+        VERSION: '${{ github.ref_name }}'
+    - name: Upload Test Artifact
+      if: startsWith(github.ref, 'refs/tags/dry')
+      uses: actions/upload-artifact@v4.6.1
+      with:
+        name: plugin
+        path: '${{ steps.deploy.outputs.zip-path }}'
+    - name: Upload Release Artifact
+      if: startsWith(github.ref, 'refs/tags/dry') == false
+      uses: softprops/action-gh-release@v2.2.1
+      with:
+        files: |
+          ${{ steps.deploy.outputs.zip-path }}
+        token: '${{ github.token }}'
+        tag_name: ${{ github.ref_name }}
+        draft: true
