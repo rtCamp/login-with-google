@@ -11,6 +11,7 @@ This document outlines the Git workflow for contributing to this WordPress plugi
 - **Refactoring branches** → `refactor/issue-name` (e.g., `refactor/button-styles`)
 
 ### Naming Convention
+
 The `issue-name` in branch names should be replaced with a descriptive issue name related to the changes. Always check that an issue exists for the proposed change before raising a PR. If none exists, first create an issue.
 
 ---
@@ -59,26 +60,33 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    git checkout -b release/x.y.z
    ```
 3. Update the plugin version in the main plugin file (`plugin-name.php`):
+
    ```php
    /*
    Plugin Name: Plugin Name
    Version: x.y.z
    */
    ```
+
    Update the `readme.txt` file with the new version number.
+
    ```md
    == Changelog ==
 
    = x.y.z =
-   * Feature: Description of new feature.
-   * Fix: Description of bug fix.
+
+   - Feature: Description of new feature.
+   - Fix: Description of bug fix.
    ```
+
    Commit the changes:
+
    ```sh
    git add .
    git commit -m "Release version x.y.z"
    git push origin release/x.y.z
    ```
+
 4. Perform final testing and make necessary fixes.
 5. Raise PR against `master` branch for release.
 6. Once approved, merge into `master`.
@@ -87,26 +95,28 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    git checkout master
    git pull origin master
    ```
-8. Create and push a GitHub tag:
+8. Create and push a GitHub tag with a version number.
    ```sh
-   git tag -a vX.Y.Z -m "Release version X.Y.Z"
-   git push origin vX.Y.Z
+   git tag -a X.Y.Z -m "Release version X.Y.Z"
+   git push origin X.Y.Z
    ```
 
 ### Dry Run
+
 Before releasing the plugin, it's a good practice to perform a dry run to generate the release plugin zip file. This helps in identifying any issues that might occur during the actual release process.
 
 1. Checkout to the working branch:
+
    ```sh
    git checkout {to working branch}
    ```
 
 2. Create a Tag with `dry` prefix
-	   ```sh
+   ```sh
    git tag -a dry-X.Y.Z -m "Dry run release version X.Y.Z"
    git push origin dry-X.Y.Z
    ```
-3. This will create a tag with `dry` prefix and you can download the zip file from the action runner. 
+3. This will create a tag with `dry` prefix and you can download the zip file from the action runner.
 
 ---
 
@@ -117,5 +127,3 @@ Before releasing the plugin, it's a good practice to perform a dry run to genera
 - **Write meaningful commit messages** describing what changed and why.
 - **Sync `develop` regularly** to stay updated with the latest changes.
 - **Delete merged branches** to keep the repository clean.
-
-
