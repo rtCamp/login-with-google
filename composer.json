@@ -27,7 +27,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-		"php": ">=7.4,<=8.2",
+		"php": ">=7.4,<=8.2.27",
         "pimple/pimple": "3.5.*"
     },
     "require-dev": {
