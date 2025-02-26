@@ -7,3 +7,4 @@ phpcs.xml
 tests/
 README.md
 wp-assets/
+docs/
