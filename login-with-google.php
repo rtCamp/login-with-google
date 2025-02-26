@@ -136,7 +136,7 @@ function plugin(): Plugin {
  */
 add_action(
 	'plugins_loaded',
-	function() {
+	function () {
 		plugin()->run();
 	},
 	100

@@ -22,11 +22,11 @@ class Helper {
 	 *
 	 * @param string $template_path Template path.
 	 * @param array  $variables     array of variables that needed on template.
-	 * @param bool   $echo          Whether need to echo to return HTML markup.
+	 * @param bool   $should_echo   Whether you need to echo to return HTML markup.
 	 *
 	 * @return string
 	 */
-	public static function render_template( $template_path, $variables = [], $echo = true ) {
+	public static function render_template( $template_path, $variables = [], $should_echo = true ) {
 
 		$validate_file = validate_file( $template_path );
 		// Function validate_file returns 2 for Windows drive path, so we check that as well.
@@ -40,7 +40,7 @@ class Helper {
 			extract( $variables, EXTR_SKIP ); // phpcs:ignore
 		}
 
-		if ( true === $echo ) {
+		if ( true === $should_echo ) {
 
 			// Load template and output the data.
 			require $template_path; // phpcs:ignore
@@ -54,7 +54,6 @@ class Helper {
 		require $template_path; // phpcs:ignore
 
 		return ob_get_clean();
-
 	}
 
 	/**
@@ -172,7 +171,6 @@ class Helper {
 		// @codingStandardsIgnoreEnd
 
 		return filter_var( $input, $filter );
-
 	}
 
 	/**

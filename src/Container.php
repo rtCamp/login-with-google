@@ -61,8 +61,13 @@ class Container implements ContainerInterface {
 	 */
 	public function get( string $service ) {
 		if ( ! in_array( $service, $this->container->keys() ) ) {
-			/* translators: %$s is replaced with requested service name. */
-			throw new InvalidArgumentException( sprintf( __( 'Invalid Service %s Passed to the container', 'login-with-google' ), $service ) );
+			$error_message = sprintf(
+				/* translators: %$s is replaced with requested service name. */
+				__( 'Invalid Service %s Passed to the container', 'login-with-google' ),
+				$service
+			);
+
+			throw new InvalidArgumentException( esc_html( $error_message ) );
 		}
 
 		return $this->container[ $service ];
@@ -82,11 +87,9 @@ class Container implements ContainerInterface {
 		/**
 		 * Define Settings service to add settings page and retrieve setting values.
 		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
 		 * @return Settings
 		 */
-		$this->container['settings'] = function( PimpleContainer $c ) {
+		$this->container['settings'] = function () {
 			return new Settings();
 		};
 
@@ -97,7 +100,7 @@ class Container implements ContainerInterface {
 		 *
 		 * @return Login
 		 */
-		$this->container['login_flow'] = function( PimpleContainer $c ) {
+		$this->container['login_flow'] = function ( PimpleContainer $c ) {
 			return new Login( $c['gh_client'], $c['authenticator'] );
 		};
 
@@ -123,11 +126,9 @@ class Container implements ContainerInterface {
 		/**
 		 * Define Assets service to add styles or script.
 		 *
-		 * @param PimpleContainer $c Pimple container object.
-		 *
 		 * @return Assets
 		 */
-		$this->container['assets'] = function ( PimpleContainer $c ) {
+		$this->container['assets'] = function () {
 			return new Assets();
 		};
 

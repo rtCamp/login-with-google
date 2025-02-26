@@ -112,23 +112,23 @@ class TokenVerifier {
 	/**
 	 * Base64 URL Encode a string.
 	 *
-	 * @param string $string Input string to encode.
+	 * @param string $str Input string to encode.
 	 *
 	 * @return array|string|string[]
 	 */
-	public function base64_encode_url( $string ) {
-		return str_replace( [ '+', '/', '=' ], [ '-', '_', '' ], base64_encode( $string ) );
+	public function base64_encode_url( $str ) {
+		return str_replace( [ '+', '/', '=' ], [ '-', '_', '' ], base64_encode( $str ) );
 	}
 
 	/**
 	 * Base64 URL Encode a string.
 	 *
-	 * @param string $string Input string to decode.
+	 * @param string $str Input string to decode.
 	 *
 	 * @return false|string
 	 */
-	public function base64_decode_url( string $string ) {
-		return base64_decode( str_replace( [ '-', '_' ], [ '+', '/' ], $string ) );
+	public function base64_decode_url( string $str ) {
+		return base64_decode( str_replace( [ '-', '_' ], [ '+', '/' ], $str ) );
 	}
 
 	/**
@@ -203,7 +203,7 @@ class TokenVerifier {
 		$parts = explode( '.', $this->token );
 
 		if ( ! is_array( $parts ) || 3 !== count( $parts ) ) {
-			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'ID token is invalid', 'login-with-google' ) );
 		}
 
 		list( $header, $payload, $obtained_signature ) = $parts;
@@ -211,7 +211,7 @@ class TokenVerifier {
 		$payload                                       = $this->base64_decode_url( $payload );
 
 		if ( ! $header || ! $payload ) {
-			throw new Exception( __( 'ID token is invalid', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'ID token is invalid', 'login-with-google' ) );
 		}
 
 		return [
@@ -240,7 +240,7 @@ class TokenVerifier {
 		);
 
 		if ( ! $parsed_header['kid'] || ! $parsed_header['alg'] ) {
-			throw new Exception( __( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
 		}
 
 		$pubkey_pem           = $this->get_public_key( $parsed_header['kid'] );
@@ -254,7 +254,7 @@ class TokenVerifier {
 			return;
 		}
 
-		throw new Exception( __( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
+		throw new Exception( esc_html__( 'Cannot verify the ID token signature. Please try again.', 'login-with-google' ) );
 	}
 
 	/**
@@ -264,19 +264,19 @@ class TokenVerifier {
 	 */
 	private function valid_data(): void {
 		if ( is_null( $this->current_user ) ) {
-			throw new Exception( __( 'No user present to validate', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'No user present to validate', 'login-with-google' ) );
 		}
 
 		if ( $this->settings->client_id !== $this->current_user->aud ) {
-			throw new Exception( __( 'Invalid data found for authentication', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Invalid data found for authentication', 'login-with-google' ) );
 		}
 
 		if ( ! in_array( $this->current_user->iss, [ 'accounts.google.com', 'https://accounts.google.com' ], true ) ) {
-			throw new Exception( __( 'Invalid source found for authentication', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Invalid source found for authentication', 'login-with-google' ) );
 		}
 
 		if ( $this->current_user->exp < strtotime( 'now' ) ) {
-			throw new Exception( __( 'User data is stale! Please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'User data is stale! Please try again.', 'login-with-google' ) );
 		}
 	}
 
