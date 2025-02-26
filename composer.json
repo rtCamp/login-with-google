@@ -1,67 +1,67 @@
 {
-    "name": "rtcamp/login-with-google",
-    "description": "WordPress plugin to let users login with google.",
-    "license": "GPL 2.0",
-    "authors": [
-        {
-            "name": "rtCamp",
-            "email": "contact@rtcamp.com",
-            "homepage": "https://rtcamp.com/",
-            "role": "Developer"
-        },
-        {
-            "name": "Utkarsh Patel",
-            "email": "itismeutkarsh@gmail.com"
-        },
-        {
-            "name": "Paul Clark",
-            "role": "Developer"
-        },
-        {
-            "name": "Ankit Gade",
-            "email": "ankit.gade@rtcamp.com",
-            "homepage": "https://iamank.it/",
-            "role": "Developer"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-		"php": ">=7.4,<=8.2",
-        "pimple/pimple": "3.5.*"
-    },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^3.11.3",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
-        "wp-coding-standards/wpcs": "^3.1.0",
-        "sirbrillig/phpcs-variable-analysis": "^2.11.22",
-        "automattic/vipwpcs": "^3.0.1",
-        "phpcompatibility/phpcompatibility-wp": "^2.1.6",
-        "phpunit/phpunit": "9.5",
-        "10up/wp_mock": "0.4.2"
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "RtCamp\\GoogleLogin\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "RtCamp\\GoogleLogin\\Tests\\": "tests/php"
-        }
-    },
-    "scripts": {
-        "cs": "@php ./vendor/bin/phpcs .",
-        "cs:fix": "@php ./vendor/bin/phpcbf .",
-        "tests:unit": "@php ./vendor/bin/phpunit tests/php/Unit/",
-        "qa": [
-            "@cs",
-            "@tests"
-        ]
-    }
+	"name": "rtcamp/login-with-google",
+	"description": "WordPress plugin to let users login with google.",
+	"license": "GPL 2.0",
+	"authors": [
+		{
+			"name": "rtCamp",
+			"email": "contact@rtcamp.com",
+			"homepage": "https://rtcamp.com/",
+			"role": "Developer"
+		},
+		{
+			"name": "Utkarsh Patel",
+			"email": "itismeutkarsh@gmail.com"
+		},
+		{
+			"name": "Paul Clark",
+			"role": "Developer"
+		},
+		{
+			"name": "Ankit Gade",
+			"email": "ankit.gade@rtcamp.com",
+			"homepage": "https://iamank.it/",
+			"role": "Developer"
+		}
+	],
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"require": {
+		"php": ">=7.4,<=8.2.27",
+		"pimple/pimple": "3.5.*"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.11.3",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
+		"wp-coding-standards/wpcs": "^3.1.0",
+		"sirbrillig/phpcs-variable-analysis": "^2.11.22",
+		"automattic/vipwpcs": "^3.0.1",
+		"phpcompatibility/phpcompatibility-wp": "^2.1.6",
+		"phpunit/phpunit": "9.5",
+		"10up/wp_mock": "0.4.2"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"RtCamp\\GoogleLogin\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"RtCamp\\GoogleLogin\\Tests\\": "tests/php"
+		}
+	},
+	"scripts": {
+		"cs": "@php ./vendor/bin/phpcs .",
+		"cs:fix": "@php ./vendor/bin/phpcbf .",
+		"tests:unit": "@php ./vendor/bin/phpunit tests/php/Unit/",
+		"qa": [
+			"@cs",
+			"@tests"
+		]
+	}
 }
