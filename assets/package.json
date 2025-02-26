@@ -8,7 +8,7 @@
     "hot": "mix watch --hot",
     "prod": "mix --production",
     "production": "mix --production",
-    "language": "wp i18n make-pot ../ --exclude=\"assets\",\"tests\",\"vendor\" ../languages/login-with-google.pot"
+    "language": "wp i18n make-pot ../ --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ../languages/login-with-google.pot"
   },
   "devDependencies": {
     "@tinypixelco/laravel-mix-wp-blocks": "^1.1.0",
@@ -18,7 +18,6 @@
     "laravel-mix": "6.0.42",
     "lodash": "^4.17.21",
     "sass": "^1.32.13",
-    "sass-loader": "^11.1.1",
-    "vue-template-compiler": "^2.6.10"
+    "sass-loader": "^11.1.1"
   }
 }
