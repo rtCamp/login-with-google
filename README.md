@@ -1,6 +1,6 @@
 # Login with Google
 
-> WordPress plugin to login/register with google
+> WordPress plugin to login/register with Google
 
 - [Overview](#overview)
 - [Installation](#installation)
@@ -19,8 +19,8 @@
 
 ## Overview
 
-Login with google provides seamless experience for users to login in to WordPress 
-sites using their google account. No need to manually create accounts, no need to remember quirky
+Login with Google provides seamless experience for users to login in to WordPress 
+sites using their Google account. No need to manually create accounts, no need to remember quirky
 passwords. Just one click and land into the site!
 
 ## Installation
@@ -41,7 +41,7 @@ passwords. Just one click and land into the site!
 `https://yourdomain.com` will be replaced by your site URL.
 
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
-in `Settings > Login with google` settings page in their respective fields.
+in `Settings > Login with Google` settings page in their respective fields.
 
 4. `Create new user` enables new user registration irrespective of `Membership` settings in 
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
@@ -51,7 +51,7 @@ in `Settings > Login with google` settings page in their respective fields.
 5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered on site.
 This will prevent unwanted registration on website. 
 **For Example:** If you want users only from your organization (`myorg.com`) to get registered on the 
-website, you enter `myorg.com` in whitelisted domains. Users with google 
+website, you enter `myorg.com` in whitelisted domains. Users with Google 
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
 
@@ -84,7 +84,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_login_modules` | Filter out active modules before modules are initialized. | <ul><li>`active_modules` - contains array of active modules.</li></ul>
 | `rtcamp.google_login_button_display` | This filter is useful where we want to forcefully display login button, even when user is already logged-in in system. | <ul><li>`display` - contains a boolean value of whether to display the button or not.</li></ul>
 | `rtcamp.google_default_redirect` | Filter the default redirect URL in case redirect_to param is not available. <br />Default to admin URL. | <ul><li>`admin_url` - contains the admin URL address which is used as redirect URL by default.</li></ul>
-| `rtcamp.google_register_user` | Check if we need to register the user. | <ul><li>`user` - contains the user object from google.</li></ul>
+| `rtcamp.google_register_user` | Check if we need to register the user. | <ul><li>`user` - contains the user object from Google.</li></ul>
 | `rtcamp.google_client_args` | Filter the arguments for sending in query. <br />This is useful in cases for example: choosing the correct prompt. | <ul><li>`client_args` - contains the list of query arguments to send to Google OAuth.</li></ul>
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
@@ -102,7 +102,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 
 ## Shortcode
 
-You can add the google login button to any page/post using shortcode: `google_login`
+You can add the Google login button to any page/post using shortcode: `google_login`
 
 **Example:**
 ```php
@@ -113,7 +113,7 @@ You can add the google login button to any page/post using shortcode: `google_lo
 
 | Parameter      | Description                                                   | Values | Default            |
 | -------------- | --------------------------------------------------------------| -------| ------------------ |
-| button_text    | Text to show for login button                                 | string | Login with google  |
+| button_text    | Text to show for login button                                 | string | Login with Google  |
 | force_display  | Whether to display button when user is already logged in      | yes/no | no                 |
 | redirect_to    | URL where user should be redirected post login                | URL    | `wp-admin`         |
 
