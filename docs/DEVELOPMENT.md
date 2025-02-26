@@ -68,7 +68,7 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    */
    ```
 
-   Update the `readme.txt` file with the new version number.
+4. Update the `readme.txt` file with the new version number:
 
    ```md
    == Changelog ==
@@ -79,7 +79,14 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    - Fix: Description of bug fix.
    ```
 
-   Commit the changes:
+5. Generate .pot file for translations:
+
+   ```sh
+   cd ./assets
+   npm run language
+   ```
+
+6. Commit the changes:
 
    ```sh
    git add .
@@ -87,23 +94,26 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    git push origin release/x.y.z
    ```
 
-4. Perform final testing and make necessary fixes.
-5. Raise PR against `master` branch for release.
-6. Once approved, merge into `master`.
-7. Checkout to `master` and pull the changes:
-   ```sh
-   git checkout master
-   git pull origin master
-   ```
-8. Create and push a GitHub tag with a version number.
-   ```sh
-   git tag -a X.Y.Z -m "Release version X.Y.Z"
-   git push origin X.Y.Z
-   ```
+7. Perform final testing and make necessary fixes.
+8. Raise PR against `master` branch for release.
+9. Once approved, merge into `master`.
+10. Checkout to `master` and pull the changes:
+
+```sh
+git checkout master
+git pull origin master
+```
+
+11. Create and push a GitHub tag with a version number.
+
+```sh
+git tag -a X.Y.Z -m "Release version X.Y.Z"
+git push origin X.Y.Z
+```
 
 ### Dry Run
 
-Before releasing the plugin, it's a good practice to perform a dry run to generate the release plugin zip file. This helps in identifying any issues that might occur during the actual release process.
+Before releasing the plugin, it's a good practice to perform a dry run by generating a zip file for the plugin to be released.
 
 1. Checkout to the working branch:
 
