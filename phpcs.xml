@@ -60,5 +60,5 @@
     <exclude-pattern>*/tests/*</exclude-pattern>
     <exclude-pattern>*/.github/*</exclude-pattern>
     <exclude-pattern>*/.scripts/*</exclude-pattern>
-    <exclude-pattern>./assets/build</exclude-pattern>
+    <exclude-pattern>./assets/build/*</exclude-pattern>
 </ruleset>
