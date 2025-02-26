@@ -56,16 +56,13 @@ This section outlines the Git workflow for contributing to the project. We follo
    ```sh
    git checkout -b feature/new-feature
    ```
-3. Implement your changes and commit:
+3. Implement your changes commit and push:
    ```sh
    git add .
    git commit -m "Added new feature: [describe feature]"
-   ```
-4. Push your branch and create a Pull Request (PR) to `develop`:
-   ```sh
    git push origin feature/new-feature
    ```
-5. Once approved, merge into `develop`.
+4. Create a Pull Request (PR) to `login-with-google:develop` and wait for approval.
 
 ---
 
@@ -86,8 +83,7 @@ This section outlines the Git workflow for contributing to the project. We follo
    git commit -m "Fixed bug: [describe bug]"
    git push origin fix/bug-description
    ```
-4. Create a Pull Request (PR) to `develop` and wait for approval.
-5. Once reviewed and approved, merge into `develop`.
+4. Create a Pull Request (PR) to `login-with-google:develop` and wait for approval.
 
 ---
 
