@@ -60,7 +60,7 @@ class Container implements ContainerInterface {
 	 * @throws InvalidArgumentException Exception for invalid service.
 	 */
 	public function get( string $service ) {
-		if ( ! in_array( $service, $this->container->keys() ) ) {
+		if ( ! in_array( $service, $this->container->keys(), true ) ) {
 			$error_message = sprintf(
 				/* translators: %$s is replaced with requested service name. */
 				__( 'Invalid Service %s Passed to the container', 'login-with-google' ),
