@@ -92,8 +92,8 @@ class Plugin {
 	 * @return void
 	 */
 	public function run(): void {
-		$this->path         = dirname( __DIR__, 1 );
-		$this->url          = plugin_dir_url( trailingslashit( dirname( __DIR__, 1 ) ) . 'login-with-google.php' );
+		$this->path         = dirname( __DIR__ );
+		$this->url          = plugin_dir_url( trailingslashit( dirname( __DIR__ ) ) . 'login-with-google.php' );
 		$this->template_dir = trailingslashit( $this->path ) . 'templates/';
 		$this->assets_dir   = trailingslashit( $this->path ) . 'assets/';
 
