@@ -2,21 +2,21 @@
 # This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Login with Google 1.3.5\n"
+"Project-Id-Version: Login with Google 1.3.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-24T14:28:12+00:00\n"
+"POT-Creation-Date: 2025-03-04T08:23:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
 #: login-with-google.php
-#: src/Modules/Settings.php:314
+#: src/Modules/Settings.php:315
 msgid "Login with Google"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgid "The plugin Login with google has been deactivated"
 msgstr ""
 
 #. translators: %$s is replaced with requested service name.
-#: src/Container.php:65
+#: src/Container.php:66
 msgid "Invalid Service %s Passed to the container"
 msgstr ""
 
@@ -52,11 +52,11 @@ msgstr ""
 msgid "Could not authenticate the user, please try again."
 msgstr ""
 
-#: src/Modules/OneTapLogin.php:169
+#: src/Modules/OneTapLogin.php:170
 msgid "Cannot verify the credentials"
 msgstr ""
 
-#: src/Modules/OneTapLogin.php:211
+#: src/Modules/OneTapLogin.php:212
 msgid "User not found to authenticate"
 msgstr ""
 
@@ -88,36 +88,36 @@ msgstr ""
 msgid "Whitelisted Domains"
 msgstr ""
 
-#: src/Modules/Settings.php:170
+#: src/Modules/Settings.php:171
 msgid "Create oAuth Client ID and Client Secret at"
 msgstr ""
 
-#: src/Modules/Settings.php:207
+#: src/Modules/Settings.php:208
 msgid "Create a new user account if it does not exist already"
 msgstr ""
 
 #. translators: %1s will be replaced by page link
-#: src/Modules/Settings.php:214
+#: src/Modules/Settings.php:215
 msgid "If this setting is checked, a new user will be created even if <a target=\"_blank\" href=\"%1s\">membership setting</a> is off."
 msgstr ""
 
-#: src/Modules/Settings.php:235
+#: src/Modules/Settings.php:236
 msgid "One Tap Login"
 msgstr ""
 
-#: src/Modules/Settings.php:255
+#: src/Modules/Settings.php:256
 msgid "Enable One Tap Login Only on Login Screen"
 msgstr ""
 
-#: src/Modules/Settings.php:262
+#: src/Modules/Settings.php:263
 msgid "Enable One Tap Login Site-wide"
 msgstr ""
 
-#: src/Modules/Settings.php:301
+#: src/Modules/Settings.php:302
 msgid "Add each domain comma separated"
 msgstr ""
 
-#: src/Modules/Settings.php:313
+#: src/Modules/Settings.php:314
 msgid "Login with Google settings"
 msgstr ""
 
