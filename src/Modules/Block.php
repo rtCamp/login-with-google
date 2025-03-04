@@ -155,7 +155,7 @@ class Block implements Module {
 		 * @since 1.2.3
 		 */
 		$force_display = $attributes['forceDisplay'] ?? false;
-		if (  $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
+		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
 				[
 					'login_url'           => $this->client->authorization_url(),

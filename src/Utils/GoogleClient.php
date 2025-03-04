@@ -95,7 +95,7 @@ class GoogleClient {
 		];
 
 		if ( in_array( $name, $methods, true ) && empty( $this->access_token ) ) {
-			throw new Exception( __( 'Access token must be set to make this API call', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Access token must be set to make this API call', 'login-with-google' ) );
 		}
 	}
 
@@ -201,7 +201,7 @@ class GoogleClient {
 		);
 
 		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			throw new Exception( __( 'Could not retrieve the access token, please try again.', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'Could not retrieve the access token, please try again.', 'login-with-google' ) );
 		}
 
 		return json_decode( wp_remote_retrieve_body( $response ) );
@@ -227,7 +227,7 @@ class GoogleClient {
 			);
 
 			if ( 200 !== wp_remote_retrieve_response_code( $user ) ) {
-				throw new Exception( __( 'Could not retrieve the user information, please try again.', 'login-with-google' ) );
+				throw new Exception( esc_html__( 'Could not retrieve the user information, please try again.', 'login-with-google' ) );
 			}
 
 			return json_decode( wp_remote_retrieve_body( $user ) );
@@ -250,5 +250,4 @@ class GoogleClient {
 
 		return base64_encode( wp_json_encode( $state_data ) );
 	}
-
 }

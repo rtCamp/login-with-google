@@ -108,7 +108,8 @@ class OneTapLogin implements Module {
 	 *
 	 * @return void
 	 */
-	public function one_tap_prompt(): void { ?>
+	public function one_tap_prompt(): void {
+		?>
 		<div id="g_id_onload" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
 		<?php
 	}
@@ -208,7 +209,7 @@ class OneTapLogin implements Module {
 		$user = $this->token_verifier->current_user();
 
 		if ( is_null( $user ) ) {
-			throw new Exception( __( 'User not found to authenticate', 'login-with-google' ) );
+			throw new Exception( esc_html__( 'User not found to authenticate', 'login-with-google' ) );
 		}
 
 		$wp_user = $this->authenticator->authenticate( $user );
