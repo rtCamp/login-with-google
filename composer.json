@@ -61,7 +61,7 @@
 		"tests:unit": "@php ./vendor/bin/phpunit tests/php/Unit/",
 		"qa": [
 			"@cs",
-			"@tests"
+			"@tests:unit"
 		]
 	}
 }
