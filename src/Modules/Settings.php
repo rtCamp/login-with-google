@@ -160,7 +160,8 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function client_id_field(): void { ?>
+	public function client_id_field(): void {
+		?>
 		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
 		<p class="description">
 			<?php
