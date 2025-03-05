@@ -4,7 +4,7 @@ Unlinked contributors: Jeppehimer
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
-Tested up to: 6.3.1
+Tested up to: 6.7.2
 Requires PHP: 7.4
 Stable tag: 1.3.6
 License: GPLv2 or later
