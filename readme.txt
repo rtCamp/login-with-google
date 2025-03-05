@@ -6,7 +6,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.5
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.3.6
+Stable tag: 1.3.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,9 @@ Once you're ready to send a pull request, please run through the following check
 
 == Changelog ==
 
+= 1.3.7 =
+* Compatible with WordPress 6.7.2
+
 = 1.3.6 =
 * Fix: PHPCS Errors and Warnings
 
@@ -204,6 +207,9 @@ Once you're ready to send a pull request, please run through the following check
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.3.7 =
+* Compatible with WordPress 6.7.2
 
 = 1.3.6 =
 * Fix: PHPCS Errors and Warnings
