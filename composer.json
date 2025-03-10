@@ -62,6 +62,7 @@
 		"qa": [
 			"@cs",
 			"@tests:unit"
-		]
+		],
+		"pot": "wp i18n make-pot ../ --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ../languages/login-with-google.pot"
 	}
 }

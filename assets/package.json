@@ -7,8 +7,7 @@
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
     "prod": "mix --production",
-    "production": "mix --production",
-    "language": "wp i18n make-pot ../ --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ../languages/login-with-google.pot"
+    "production": "mix --production"
   },
   "devDependencies": {
     "@tinypixelco/laravel-mix-wp-blocks": "^1.1.0",
