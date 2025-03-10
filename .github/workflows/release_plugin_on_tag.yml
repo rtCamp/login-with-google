@@ -17,7 +17,7 @@ jobs:
     - name: Composer Install
       shell: bash
       run: |
-        composer install --no-dev --prefer-dist --no-progress --no-suggest
+        ./bin/build-assets.sh
     - name: WordPress Plugin Deploy
       id: deploy
       uses: 10up/action-wordpress-plugin-deploy@2.3.0
