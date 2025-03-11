@@ -14,6 +14,10 @@ jobs:
         php-version: '7.4'
         coverage: xdebug
         tools: composer,cs2pr
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: './assets/.nvmrc'
     - name: Install dependencies & build assets
       shell: bash
       run: |
