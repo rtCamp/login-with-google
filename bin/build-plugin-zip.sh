@@ -1,49 +1,69 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status
+# Exit immediately if a command fails
 set -e
 
 # Ensure the script is executed from the project root
-dirname=$(dirname "$0")
-cd "$dirname/.." || exit 1
-
-# Create a temp directory
-mkdir "temp"
-
-# Copy everything from current directory to temp directory, exclude temp and files from .distignore
-rsync -av --exclude='temp' --exclude='assets/node_modules' --exclude='vendor' --exclude='.git' --exclude='.idea' ./ temp/
-
-# store the root directory path
-ROOT_DIR=$(pwd)
-
-# Change to temp directory
-cd temp || exit 1
+SCRIPT_DIR=$(dirname "$0")
+cd "$SCRIPT_DIR/.." || exit 1
 
 # Define environment variables
 PLUGIN_SLUG="login-with-google"
 
 # Extract version from readme.txt
 VERSION=$(grep -m1 "Stable tag:" readme.txt | awk '{print $NF}')
+if [[ -z "$VERSION" ]]; then
+    echo "Error: Unable to determine the version from readme.txt"
+    exit 1
+fi
 
-# Set up PHP
-echo "Setting up PHP..."
+# Store the root directory path
+ROOT_DIR=$(pwd)
+RELEASE_DIR="${ROOT_DIR}/release"
+TEMP_DIR="${RELEASE_DIR}/${PLUGIN_SLUG}-${VERSION}-temp"
+FINAL_DIR="${RELEASE_DIR}/${PLUGIN_SLUG}-${VERSION}"
+ZIP_FILE="${RELEASE_DIR}/${PLUGIN_SLUG}-${VERSION}.zip"
+
+# Ensure the release directory exists
+mkdir -p "$RELEASE_DIR"
+
+# Copy files to the temp directory, excluding unwanted files
+echo "Copying project files to temporary release directory..."
+rsync -av --exclude='temp' --exclude='assets/node_modules' --exclude='vendor' --exclude='.git' --exclude='.idea' ./ "$TEMP_DIR/"
+
+# Change to temp directory
+cd "$TEMP_DIR" || exit 1
+
+# Ensure PHP is installed
+echo "Checking PHP installation..."
 if ! command -v php &> /dev/null; then
-    echo "PHP is not installed. Please install PHP 7.4 or higher."
+    echo "Error: PHP is not installed. Please install PHP 7.4 or higher."
     exit 1
 fi
 
 # Run build assets script
-./bin/build-assets.sh
+echo "Running build-assets script..."
+if [[ -x "./bin/build-assets.sh" ]]; then
+    ./bin/build-assets.sh
+else
+    echo "Error: build-assets.sh not found or not executable"
+    exit 1
+fi
 
-# Create release zip using .distignore for exclusions
+# Create the final release directory and copy files using .distignore
+echo "Creating final release directory..."
+cd "$RELEASE_DIR" || exit 1
+mkdir -p "$FINAL_DIR"
+
+rsync -av --exclude-from="$ROOT_DIR/.distignore" "$TEMP_DIR/" "$FINAL_DIR/"
+
+# Create release zip
 echo "Creating release zip..."
-mkdir -p ../release
-rsync -av --exclude-from=".distignore" ./ ../release/${PLUGIN_SLUG}-${VERSION}/
-cd ../release
-zip -r "${PLUGIN_SLUG}-${VERSION}.zip" "${PLUGIN_SLUG}-${VERSION}"
-rm -rf "${PLUGIN_SLUG}-${VERSION}"
+zip -r "$ZIP_FILE" "$(basename "$FINAL_DIR")"
 
-# Clean up
-rm -rf "${ROOT_DIR}/temp"
+# Clean up temporary directories
+echo "Cleaning up..."
+rm -rf "$TEMP_DIR"
+rm -rf "$FINAL_DIR"
 
-echo "Release zip created at ./release/${PLUGIN_SLUG}-${VERSION}.zip"
+echo "✅ Release zip created at: $ZIP_FILE"
