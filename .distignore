@@ -4,6 +4,7 @@
 .git
 .idea
 .distignore
+.phpunit.result.cache
 phpunit.xml.dist
 phpcs.xml
 tests/
