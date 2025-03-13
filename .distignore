@@ -1,8 +1,10 @@
 .github/
 .gitignore
 .eslintignore
-
-phpunit.xml
+.git
+.idea
+.distignore
+phpunit.xml.dist
 phpcs.xml
 tests/
 README.md
