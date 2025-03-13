@@ -38,7 +38,8 @@
 		"automattic/vipwpcs": "^3.0.1",
 		"phpcompatibility/phpcompatibility-wp": "^2.1.6",
 		"phpunit/phpunit": "9.5",
-		"10up/wp_mock": "0.4.2"
+		"10up/wp_mock": "0.4.2",
+		"wp-cli/i18n-command": "^2.6"
 	},
 	"config": {
 		"allow-plugins": {
@@ -62,6 +63,7 @@
 		"qa": [
 			"@cs",
 			"@tests:unit"
-		]
+		],
+		"pot": "wp i18n make-pot . --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ./languages/login-with-google.pot"
 	}
 }
