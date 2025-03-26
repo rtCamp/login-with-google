@@ -28,7 +28,7 @@ passwords. Just one click and land into the site!
 1. Clone this repository.
 2. Run `composer install --no-dev` inside the cloned directory.
 3. Navigate to the `assets` directory by using `cd assets`.
-4. Use `nvm` to install the supported node version.
+4. Use `nvm` to install the recommended node version.
 5. Run `npm run production` inside the `assets` directory.
 6. Upload the directory to the `wp-content/plugins` directory.
 7. Activate the plugin from the WordPress dashboard.
