@@ -128,10 +128,10 @@ class OneTapLogin implements Module {
 	 */
 	public function one_tap_scripts(): void {
 		$filename           = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
-		$redirects_to       = $this->set_redirect_url();
+		$redirects_to       = $this->get_redirect_url();
 		$this->redirect_url = $redirects_to;
 		
-		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		add_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
 
 		wp_enqueue_script(
 			'login-with-google-one-tap',
@@ -147,7 +147,7 @@ class OneTapLogin implements Module {
 			'homeurl' => get_option( 'home', '' ),
 		];
 
-		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		remove_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
@@ -230,11 +230,11 @@ class OneTapLogin implements Module {
 	}
 
 	/**
-	 * Set the redirection URL.
+	 * Get the redirection URL.
 	 *
 	 * @return string
 	 */
-	public function set_redirect_url(): string {
+	public function get_redirect_url(): string {
 		global $pagenow;
 
 		$redirect_to = '';
@@ -264,7 +264,7 @@ class OneTapLogin implements Module {
 	 * 
 	 * @return array
 	 */	
-	public function state_redirect( array $state ): array {
+	public function set_state_redirect( array $state ): array {
 		if ( is_null( $this->redirect_url ) ) {
 			return $state;
 		}
