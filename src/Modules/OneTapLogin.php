@@ -56,6 +56,13 @@ class OneTapLogin implements Module {
 	private $authenticator;
 
 	/**
+	 * URL to be redirected to post successful login.
+	 * 
+	 * @var string
+	 */
+	private $redirect_url = '';
+
+	/**
 	 * OneTapLogin constructor.
 	 *
 	 * @param Settings      $settings Settings object.
@@ -120,7 +127,11 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
-		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$filename           = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$redirects_to       = $this->set_redirect_url();
+		$this->redirect_url = $redirects_to;
+		
+		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 
 		wp_enqueue_script(
 			'login-with-google-one-tap',
@@ -135,6 +146,8 @@ class OneTapLogin implements Module {
 			'state'   => $this->google_client->state(),
 			'homeurl' => get_option( 'home', '' ),
 		];
+
+		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
@@ -214,5 +227,50 @@ class OneTapLogin implements Module {
 
 		$wp_user = $this->authenticator->authenticate( $user );
 		$this->authenticator->set_auth_cookies( $wp_user );
+	}
+
+	/**
+	 * Set the redirection URL.
+	 *
+	 * @return string
+	 */
+	public function set_redirect_url(): string {
+		global $pagenow;
+
+		$redirect_to = '';
+
+		if ( 'wp-login.php' === $pagenow ) {
+			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_DEFAULT );
+			
+			// In case no query parameter is available.
+			if ( is_null( $redirect_to ) ) {
+				$redirect_to = '';
+			}
+		} else {
+			$redirect_to = get_permalink();
+		}
+
+		if ( '' === $redirect_to ) {
+			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+		}
+
+		return $redirect_to;
+	}
+
+	/**
+	 * Updating the state variable to set the dynamic url.
+	 * 
+	 * @param array $state Contains the state array.
+	 * 
+	 * @return array
+	 */	
+	public function state_redirect( array $state ): array {
+		if ( is_null( $this->redirect_url ) ) {
+			return $state;
+		}
+
+		$state['redirect_to'] = $this->redirect_url;
+
+		return $state;
 	}
 }
