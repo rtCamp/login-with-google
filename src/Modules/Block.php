@@ -164,9 +164,9 @@ class Block implements Module {
 		$force_display = $attributes['forceDisplay'] ?? false;
 
 		// Setting up dynamic redirect URL based on the current page.
-		$redirects_to       = $this->set_redirect_url();
+		$redirects_to       = $this->get_redirect_url();
 		$this->redirect_url = $redirects_to;
-		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		add_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
 
 		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
@@ -187,7 +187,7 @@ class Block implements Module {
 			return ob_get_clean();
 		}
 
-		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		remove_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
 
 		return '';
 	}
@@ -214,11 +214,11 @@ class Block implements Module {
 	}
 
 	/**
-	 * Set the redirection URL.
+	 * Get the redirection URL.
 	 *
 	 * @return string
 	 */
-	public function set_redirect_url(): string {
+	public function get_redirect_url(): string {
 		global $pagenow;
 
 		$redirect_to = '';
@@ -248,7 +248,7 @@ class Block implements Module {
 	 * 
 	 * @return array
 	 */	
-	public function state_redirect( array $state ): array {
+	public function set_state_redirect( array $state ): array {
 		if ( is_null( $this->redirect_url ) ) {
 			return $state;
 		}
