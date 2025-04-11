@@ -240,7 +240,7 @@ class OneTapLogin implements Module {
 		$redirect_to = '';
 
 		if ( 'wp-login.php' === $pagenow ) {
-			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_DEFAULT );
+			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
 			
 			// In case no query parameter is available.
 			if ( is_null( $redirect_to ) ) {
@@ -263,7 +263,7 @@ class OneTapLogin implements Module {
 	 * @param array $state Contains the state array.
 	 * 
 	 * @return array
-	 */	
+	 */
 	public function set_state_redirect( array $state ): array {
 		if ( is_null( $this->redirect_url ) ) {
 			return $state;
