@@ -17,6 +17,8 @@ namespace RtCamp\GoogleLogin\Utils;
  */
 class Helper {
 
+	public static $redirection_url = '';
+
 	/**
 	 * To render or return output of template.
 	 *
@@ -190,5 +192,76 @@ class Helper {
 		}
 
 		return $uname;
+	}
+
+	/**
+	 * Get the redirection URL.
+	 *
+	 * @return string
+	 */
+	public static function get_redirect_url(): string {
+		global $pagenow;
+
+		$redirect_to = '';
+
+		if ( 'wp-login.php' === $pagenow ) {
+			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
+			
+			// In case no query parameter is available.
+			if ( is_null( $redirect_to ) ) {
+				$redirect_to = '';
+			}
+		} else {
+			$redirect_to = get_permalink();
+		}
+
+		if ( '' === $redirect_to ) {
+			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+		}
+
+		return $redirect_to;
+	}
+
+	/**
+	 * Wrapper function to update the state variable with the redirection url.
+	 * 
+	 * @param string $redirect_to Contains the redirection url.
+	 * 
+	 * @return void
+	 */
+	public static function set_state_redirect( $redirect_to ) {
+		if ( empty( $redirect_to ) ) {
+			return;
+		}
+
+		self::$redirection_url = $redirect_to;
+
+		add_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_state_redirect' ] );
+	}
+
+	/**
+	 * Updating the state variable to set the dynamic url.
+	 * 
+	 * @param array $state Contains the state array.
+	 * 
+	 * @return array
+	 */
+	public static function update_state_redirect( array $state ): array {
+		if ( is_null( self::$redirection_url ) ) {
+			return $state;
+		}
+
+		$state['redirect_to'] = self::$redirection_url;
+
+		return $state;
+	}
+
+	/**
+	 * Removes the filter for state redirection URL updation.
+	 * 
+	 * @return void
+	 */
+	public static function remove_state_redirect() {
+		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_state_redirect' ] );
 	}
 }

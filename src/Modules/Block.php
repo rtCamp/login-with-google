@@ -164,9 +164,9 @@ class Block implements Module {
 		$force_display = $attributes['forceDisplay'] ?? false;
 
 		// Setting up dynamic redirect URL based on the current page.
-		$redirects_to       = $this->get_redirect_url();
-		$this->redirect_url = $redirects_to;
-		add_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
+		$redirects_to = Helper::get_redirect_url();
+
+		Helper::set_state_redirect( $redirects_to );
 
 		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
@@ -187,7 +187,7 @@ class Block implements Module {
 			return ob_get_clean();
 		}
 
-		remove_filter( 'rtcamp.google_login_state', [ $this, 'set_state_redirect' ] );
+		Helper::remove_state_redirect();
 
 		return '';
 	}
@@ -211,50 +211,5 @@ class Block implements Module {
 
 		$template = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 		return Helper::render_template( $template, $args, false );
-	}
-
-	/**
-	 * Get the redirection URL.
-	 *
-	 * @return string
-	 */
-	public function get_redirect_url(): string {
-		global $pagenow;
-
-		$redirect_to = '';
-
-		if ( 'wp-login.php' === $pagenow ) {
-			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
-			
-			// In case no query parameter is available.
-			if ( is_null( $redirect_to ) ) {
-				$redirect_to = '';
-			}
-		} else {
-			$redirect_to = get_permalink();
-		}
-
-		if ( '' === $redirect_to ) {
-			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
-		}
-
-		return $redirect_to;
-	}
-
-	/**
-	 * Updating the state variable to set the dynamic url.
-	 * 
-	 * @param array $state Contains the state array.
-	 * 
-	 * @return array
-	 */
-	public function set_state_redirect( array $state ): array {
-		if ( is_null( $this->redirect_url ) ) {
-			return $state;
-		}
-
-		$state['redirect_to'] = $this->redirect_url;
-
-		return $state;
 	}
 }
