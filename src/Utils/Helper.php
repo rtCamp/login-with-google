@@ -17,6 +17,11 @@ namespace RtCamp\GoogleLogin\Utils;
  */
 class Helper {
 
+	/**
+	 * URL to be redirected to post successful login.
+	 * 
+	 * @var string
+	 */
 	public static $redirection_url = '';
 
 	/**
@@ -229,14 +234,14 @@ class Helper {
 	 * 
 	 * @return void
 	 */
-	public static function set_state_redirect( $redirect_to ) {
+	public static function set_redirect_state_filter( $redirect_to ) {
 		if ( empty( $redirect_to ) ) {
 			return;
 		}
 
 		self::$redirection_url = $redirect_to;
 
-		add_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_state_redirect' ] );
+		add_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
 	}
 
 	/**
@@ -246,7 +251,7 @@ class Helper {
 	 * 
 	 * @return array
 	 */
-	public static function update_state_redirect( array $state ): array {
+	public static function update_redirect_state( array $state ): array {
 		if ( is_null( self::$redirection_url ) ) {
 			return $state;
 		}
@@ -261,7 +266,7 @@ class Helper {
 	 * 
 	 * @return void
 	 */
-	public static function remove_state_redirect() {
-		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_state_redirect' ] );
+	public static function remove_redirect_state_filter() {
+		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
 	}
 }

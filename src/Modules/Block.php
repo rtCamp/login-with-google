@@ -49,13 +49,6 @@ class Block implements Module {
 	public $client;
 
 	/**
-	 * URL to be redirected to post successful login.
-	 * 
-	 * @var string
-	 */
-	private $redirect_url = '';
-
-	/**
 	 * Module name.
 	 *
 	 * @return string
@@ -166,7 +159,7 @@ class Block implements Module {
 		// Setting up dynamic redirect URL based on the current page.
 		$redirects_to = Helper::get_redirect_url();
 
-		Helper::set_state_redirect( $redirects_to );
+		Helper::set_redirect_state_filter( $redirects_to );
 
 		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
@@ -187,7 +180,7 @@ class Block implements Module {
 			return ob_get_clean();
 		}
 
-		Helper::remove_state_redirect();
+		Helper::remove_redirect_state_filter();
 
 		return '';
 	}
