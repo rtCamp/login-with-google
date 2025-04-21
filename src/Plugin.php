@@ -151,6 +151,8 @@ class Plugin {
 	 * @return array
 	 */
 	public function add_plugin_action_links( $actions ) {
+		$new_actions = [];
+
 		$new_actions['settings'] = sprintf(
 			/* translators: %s: URL for settings page link */
 			__( '<a href="%s">Settings</a>', 'login-with-google' ),
