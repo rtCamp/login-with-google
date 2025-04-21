@@ -222,7 +222,6 @@ class Helper {
 			if ( ! is_null( $redirect_to ) ) {
 				$default_redirect_url = $redirect_to;
 			}
-
 		} else {
 			$default_redirect_url = get_permalink();
 		}
