@@ -110,6 +110,8 @@ class Plugin {
 		$this->activate_modules();
 
 		add_action( 'init', [ $this, 'load_translations' ] );
+
+		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
 	}
 
 	/**
@@ -140,5 +142,21 @@ class Plugin {
 			$module_instance = $this->container()->get( $module );
 			$module_instance->init();
 		}
+	}
+
+	/**
+	 * Add settings link to plugin actions
+	 *
+	 * @param  array $actions Plugin actions.
+	 * @return array
+	 */
+	public function add_plugin_action_links( $actions ) {
+		$new_actions['settings'] = sprintf(
+			/* translators: %s: URL for settings page link */
+			__( '<a href="%s">Settings</a>', 'login-with-google' ),
+			esc_url( admin_url( 'options-general.php?page=login-with-google' ) )
+		);
+
+		return array_merge( $new_actions, $actions );
 	}
 }
