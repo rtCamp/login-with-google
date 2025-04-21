@@ -200,31 +200,37 @@ class Helper {
 	}
 
 	/**
-	 * Get the redirection URL.
+	 * Get the redirection URL and set the redirection URL to the default URL.
+	 * 
+	 * This function offers customization to the users for the URL that they want to be redirected to.
+	 * The filter `rtcamp.google_default_redirect` can be used to manipulate the value of $default_redirect_url.
+	 * This way the updated redirection URL customized by the user can be integrated into current system.
 	 *
 	 * @return string
 	 */
 	public static function get_redirect_url(): string {
 		global $pagenow;
 
-		$redirect_to = '';
+		// Initializing the deafult with admin URL.
+		$default_redirect_url = admin_url();
 
 		if ( 'wp-login.php' === $pagenow ) {
+			// If any redirect_to query parameter is available.
 			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
 			
-			// In case no query parameter is available.
-			if ( is_null( $redirect_to ) ) {
-				$redirect_to = '';
+			// In case query parameter is available.
+			if ( ! is_null( $redirect_to ) ) {
+				$default_redirect_url = $redirect_to;
 			}
+
 		} else {
-			$redirect_to = get_permalink();
+			$default_redirect_url = get_permalink();
 		}
 
-		if ( '' === $redirect_to ) {
-			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
-		}
+		// If any manipulation needs to be done.
+		$default_redirect_url = apply_filters( 'rtcamp.google_default_redirect', $default_redirect_url );
 
-		return $redirect_to;
+		return $default_redirect_url;
 	}
 
 	/**
