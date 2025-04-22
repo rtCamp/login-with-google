@@ -154,9 +154,9 @@ class Plugin {
 		$new_actions = [];
 
 		$new_actions['settings'] = sprintf(
-			/* translators: %s: URL for settings page link */
-			__( '<a href="%s">Settings</a>', 'login-with-google' ),
-			esc_url( admin_url( 'options-general.php?page=login-with-google' ) )
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'options-general.php?page=login-with-google' ) ),
+			esc_html__( 'Settings', 'login-with-google' ),
 		);
 
 		return array_merge( $new_actions, $actions );
