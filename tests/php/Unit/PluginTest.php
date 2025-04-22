@@ -89,6 +89,13 @@ class PluginTest extends TestCase {
 			]
 		);
 
+		$this->wpMockFunction(
+			'plugin_basename',
+			[],
+			1,
+			'login-with-google'
+		);
+
 		$this->testee->run();
 
 		$this->assertConditionsMet();
@@ -159,6 +166,13 @@ class PluginTest extends TestCase {
 			]
 		);
 
+		$this->wpMockFunction(
+			'plugin_basename',
+			[],
+			1,
+			'login-with-google'
+		);
+
 		$this->testee->run();
 
 		$this->assertSame( 'slashedstring/templates/', $this->testee->template_dir );
@@ -192,6 +206,13 @@ class PluginTest extends TestCase {
 				],
 				'return_arg' => 0
 			]
+		);
+
+		$this->wpMockFunction(
+			'plugin_basename',
+			[],
+			1,
+			'login-with-google'
 		);
 
 		$this->testee->run();
@@ -258,7 +279,15 @@ class PluginTest extends TestCase {
 			]
 		);
 
+		$this->wpMockFunction(
+			'plugin_basename',
+			[],
+			2,
+			'login-with-google'
+		);
+
 		WP_Mock::expectActionAdded( 'init', [ $this->testee, 'load_translations' ] );
+		WP_Mock::expectActionAdded( 'plugin_action_links_' . plugin_basename( $this->testee->path ) . '/login-with-google.php', [ $this->testee, 'add_plugin_action_links' ] );
 		WP_Mock::expectFilter( 'rtcamp.google_login_modules', $this->testee->active_modules );
 
 		$this->testee->run();
@@ -308,6 +337,34 @@ class PluginTest extends TestCase {
 		$this->testee->load_translations();
 
 		$this->assertConditionsMet();
+	}
+
+	/**
+	 * Test plugin action callback.
+	 *
+	 * @covers ::add_plugin_action_links
+	 */
+	public function testSettingPluginActionIsAdded() {
+		$this->wpMockFunction(
+			'admin_url',
+			[
+				'options-general.php?page=login-with-google',
+			],
+			1,
+			'http://example.test/wp-admin/options-general.php?page=login-with-google'
+		);
+
+		$actions = $this->testee->add_plugin_action_links( [] );
+
+		print_r($actions);
+
+		$this->assertIsArray( $actions, 'Plugin actions should be an array.');
+		$this->assertArrayHasKey( 'settings', $actions, 'Setting plugin action should exists.' );
+		$this->assertEquals(
+			'<a href="http://example.test/wp-admin/options-general.php?page=login-with-google">Settings</a>',
+			$actions['settings'],
+			'Setting plugin action link is created.'
+		);
 	}
 
 	/**
