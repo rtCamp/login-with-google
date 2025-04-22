@@ -117,7 +117,7 @@ function plugin(): Plugin {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 	if ( isset( $_GET['reauth'] ) && null !== sanitize_text_field( wp_unslash( $_GET['reauth'] ) ) ) {
 		if ( ! empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
-			wp_safe_redirect( wp_login_url() );
+			wp_safe_redirect( wp_login_url(), 302, 'Login with Google' );
 			exit;
 		}
 	}

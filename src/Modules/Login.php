@@ -226,7 +226,7 @@ class Login implements ModuleInterface {
 		$state = $state ? json_decode( $state ) : null;
 
 		if ( ( $state instanceof stdClass ) && ! empty( $state->provider ) && 'google' === $state->provider && ! empty( $state->redirect_to ) ) {
-			wp_safe_redirect( $state->redirect_to );
+			wp_safe_redirect( $state->redirect_to, 302, 'Login with Google' );
 			exit;
 		}
 	}
