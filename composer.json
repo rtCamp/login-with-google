@@ -64,7 +64,7 @@
 			"@cs",
 			"@tests:unit"
 		],
-		"pot": "wp i18n make-pot . --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ./languages/login-with-google.pot",
+		"pot": "wp i18n make-pot . --exclude=\"assets/node_modules\",\"tests\",\"vendor\" ./languages/login-with-google.pot",
 		"build-plugin-zip": "./bin/build-plugin-zip.sh"
 	}
 }
