@@ -153,6 +153,12 @@ class OneTapLogin implements Module {
 		);
 
 		wp_enqueue_script( 'login-with-google-one-tap-js' );
+
+		// @see https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
+		// @see https://developer.wordpress.org/reference/functions/wp_set_script_translations/
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'login-with-google-one-tap-js', 'login-with-google' );
+		}
 	}
 
 	/**
