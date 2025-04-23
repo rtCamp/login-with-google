@@ -223,7 +223,10 @@ class Helper {
 				$default_redirect_url = $redirect_to;
 			}
 		} else {
-			$default_redirect_url = get_permalink();
+			$home_url             = home_url();
+			$uri_from_server      = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_DEFAULT );
+			$final_request_uri    = ( is_string( $uri_from_server ) && '' !== $uri_from_server ) ? trim( $uri_from_server ) : '/';
+			$default_redirect_url = $home_url . $final_request_uri;
 		}
 
 		// If any manipulation needs to be done.

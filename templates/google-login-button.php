@@ -19,8 +19,12 @@ if ( empty( $login_url ) ) {
 $button_url = $login_url;
 
 if ( is_user_logged_in() ) {
-	$button_text = __( 'Log out', 'login-with-google' );
-	$button_url  = wp_logout_url( get_permalink() );
+	$button_text       = __( 'Log out', 'login-with-google' );
+	$home_url          = home_url();
+	$uri_from_server   = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_DEFAULT );
+	$final_request_uri = ( is_string( $uri_from_server ) && '' !== $uri_from_server ) ? trim( $uri_from_server ) : '/';
+	$redirect_url      = $home_url . $final_request_uri;
+	$button_url        = wp_logout_url( $redirect_url );
 }
 ?>
 <div class="wp_google_login">
