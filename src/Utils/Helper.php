@@ -181,15 +181,15 @@ class Helper {
 	 *
 	 * @return string
 	 */
-    public static function unique_username( string $username ): string {
-        $uname = $username;
-        $count = 1;
-    
-        while ( username_exists( $uname ) ) {
-            $uname = $username . $count;
-            ++$count;
-        }
-    
-        return $uname;
-    }
+	public static function unique_username(string $username): string {
+		$uname = $username;
+		$count = 1;
+
+		while (username_exists($uname)) {
+			$uname = $username . $count;
+			++$count;
+		}
+
+		return $uname;
+	}
 }
