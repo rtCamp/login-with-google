@@ -186,7 +186,8 @@ class Helper {
 		$count = 1;
 
 		while ( username_exists( $uname ) ) {
-			$uname = $uname . '' . $count;
+			$uname = $username . $count;
+			++$count;
 		}
 
 		return $uname;
