@@ -216,14 +216,14 @@ class Helper {
 
 		if ( 'wp-login.php' === $pagenow ) {
 			// If any redirect_to query parameter is available.
-			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
+			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 
 			// In case the query parameter is available.
 			if ( ! empty( $redirect_to ) ) {
 				$default_redirect_url = $redirect_to;
 			}
 		} else {
-			$request_uri = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_VALIDATE_URL );
+			$request_uri = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL );
 			if ( empty( $request_uri ) ) {
 				$default_redirect_url = home_url();
 			} else {
