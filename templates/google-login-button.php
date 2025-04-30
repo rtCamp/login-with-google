@@ -6,6 +6,8 @@
  * @since 1.0.0
  */
 
+ use RtCamp\GoogleLogin\Utils\Helper;
+
 if ( isset( $custom_btn_text ) && $custom_btn_text ) {
 	$button_text = esc_html( $custom_btn_text );
 } else {
@@ -20,10 +22,11 @@ $button_url = $login_url;
 
 if ( is_user_logged_in() ) {
 	$button_text       = __( 'Log out', 'login-with-google' );
-	$home_url          = home_url();
-	$uri_from_server   = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_VALIDATE_URL );
-	$final_request_uri = ( is_string( $uri_from_server ) && '' !== $uri_from_server ) ? trim( $uri_from_server ) : '/';
-	$redirect_url      = $home_url . $final_request_uri;
+	// $home_url          = home_url();
+	// $uri_from_server   = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_VALIDATE_URL );
+	// $final_request_uri = ( is_string( $uri_from_server ) && '' !== $uri_from_server ) ? trim( $uri_from_server ) : '/';
+	// $redirect_url      = $home_url . $final_request_uri;
+	$redirect_url = Helper::get_redirect_url();
 	$button_url        = wp_logout_url( $redirect_url );
 }
 ?>
