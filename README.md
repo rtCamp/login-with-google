@@ -2,20 +2,22 @@
 
 > WordPress plugin to login/register with Google
 
-- [Overview](#overview)
-- [Installation](#installation)
-- [Browser support](#browser-support)
-- [Usage Instructions](#usage-instructions)
-- [Plugin Constants](#plugin-constants)
-- [Hooks](#hooks)
-    - [Filters](#filters)
-    - [Actions](#actions)
-- [Shortcode](#shortcode)
-- [Contribute](#contribute)
-- [Unit testing](#unit-testing)
-- [Minimum Requirements](#minimum-requirements)
-- [License](#license)
-- [BTW, We're Hiring!](#btw-were-hiring)
+- [Login with Google](#login-with-google)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Browser support](#browser-support)
+  - [Usage Instructions](#usage-instructions)
+    - [Plugin Constants](#plugin-constants)
+    - [Hooks](#hooks)
+      - [Filters](#filters)
+      - [Actions](#actions)
+  - [Shortcode](#shortcode)
+  - [Contribute](#contribute)
+  - [Unit testing](#unit-testing)
+  - [Code Snippets](#code-snippets)
+  - [Minimum Requirements](#minimum-requirements)
+  - [License](#license)
+  - [BTW, We're Hiring!](#btw-were-hiring)
 
 ## Overview
 
@@ -131,6 +133,9 @@ unit tests.
 
 You should have PHP CLI > 7.1 installed. If you have Xdebug enabled with php, code coverage report will be
 generated at `/tmp/report/html`
+
+## Code Snippets
+Code snippets to extend and customize the plugin can be found [here](docs/CODE_SNIPPETS.md).
 
 ## Minimum Requirements
 
