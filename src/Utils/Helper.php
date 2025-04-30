@@ -19,7 +19,7 @@ class Helper {
 
 	/**
 	 * URL to be redirected to post successful login.
-	 * 
+	 *
 	 * @var string
 	 */
 	public static $redirection_url = '';
@@ -201,7 +201,7 @@ class Helper {
 
 	/**
 	 * Get the redirection URL and set the redirection URL to the default URL.
-	 * 
+	 *
 	 * This function offers customization to the users for the URL that they want to be redirected to.
 	 * The filter `rtcamp.google_default_redirect` can be used to manipulate the value of $default_redirect_url.
 	 * This way the updated redirection URL customized by the user can be integrated into current system.
@@ -211,35 +211,34 @@ class Helper {
 	public static function get_redirect_url(): string {
 		global $pagenow;
 
-		// Initializing the deafult with admin URL.
+		// Initializing the default with admin URL.
 		$default_redirect_url = admin_url();
 
 		if ( 'wp-login.php' === $pagenow ) {
 			// If any redirect_to query parameter is available.
-			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_VALIDATE_URL );
-			
-			// In case query parameter is available.
-			if ( ! is_null( $redirect_to ) ) {
+			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
+
+			// In case the query parameter is available.
+			if ( ! empty( $redirect_to ) ) {
 				$default_redirect_url = $redirect_to;
 			}
 		} else {
-			$home_url             = home_url();
-			$uri_from_server      = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_VALIDATE_URL );
-			$final_request_uri    = ( is_string( $uri_from_server ) && '' !== $uri_from_server ) ? trim( $uri_from_server ) : '/';
-			$default_redirect_url = $home_url . $final_request_uri;
+			$request_uri = filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL );
+			if ( empty( $request_uri ) ) {
+				$default_redirect_url = home_url();
+			} else {
+				$default_redirect_url = home_url( trim( $request_uri ) );
+			}
 		}
 
-		// If any manipulation needs to be done.
-		$default_redirect_url = apply_filters( 'rtcamp.google_default_redirect', $default_redirect_url );
-
-		return $default_redirect_url;
+		return apply_filters( 'rtcamp.google_default_redirect', $default_redirect_url );
 	}
 
 	/**
 	 * Wrapper function to update the state variable with the redirection url.
-	 * 
+	 *
 	 * @param string $redirect_to Contains the redirection url.
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function set_redirect_state_filter( $redirect_to ) {
@@ -254,9 +253,9 @@ class Helper {
 
 	/**
 	 * Updating the state variable to set the dynamic url.
-	 * 
+	 *
 	 * @param array $state Contains the state array.
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function update_redirect_state( array $state ): array {
@@ -271,7 +270,7 @@ class Helper {
 
 	/**
 	 * Removes the filter for state redirection URL updation.
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function remove_redirect_state_filter() {
