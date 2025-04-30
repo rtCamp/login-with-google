@@ -21,9 +21,9 @@ if ( empty( $login_url ) ) {
 $button_url = $login_url;
 
 if ( is_user_logged_in() ) {
-	$button_text       = __( 'Log out', 'login-with-google' );
+	$button_text  = __( 'Log out', 'login-with-google' );
 	$redirect_url = Helper::get_redirect_url();
-	$button_url        = wp_logout_url( $redirect_url );
+	$button_url   = wp_logout_url( $redirect_url );
 }
 ?>
 <div class="wp_google_login">
