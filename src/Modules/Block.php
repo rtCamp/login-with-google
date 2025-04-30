@@ -161,6 +161,12 @@ class Block implements Module {
 		 * @since 1.2.3
 		 */
 		$force_display = $attributes['forceDisplay'] ?? false;
+
+		// Setting up dynamic redirect URL based on the current page.
+		$redirects_to = Helper::get_redirect_url();
+
+		Helper::set_redirect_state_filter( $redirects_to );
+
 		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
 				[
@@ -179,6 +185,8 @@ class Block implements Module {
 
 			return ob_get_clean();
 		}
+
+		Helper::remove_redirect_state_filter();
 
 		return '';
 	}

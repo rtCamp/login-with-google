@@ -120,7 +120,10 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
-		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$filename     = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$redirects_to = Helper::get_redirect_url();
+
+		Helper::set_redirect_state_filter( $redirects_to );
 
 		wp_enqueue_script(
 			'login-with-google-one-tap',
@@ -135,6 +138,8 @@ class OneTapLogin implements Module {
 			'state'   => $this->google_client->state(),
 			'homeurl' => get_option( 'home', '' ),
 		];
+
+		Helper::remove_redirect_state_filter();
 
 		wp_register_script(
 			'login-with-google-one-tap-js',

@@ -86,11 +86,12 @@ class Shortcode implements ModuleInterface {
 	 * @return string
 	 */
 	public function callback( $attrs = [] ): string {
-		$attrs = shortcode_atts(
+		$redirect_to = Helper::get_redirect_url();
+		$attrs       = shortcode_atts(
 			[
 				'button_text'   => __( 'Login with google', 'login-with-google' ),
 				'force_display' => 'no',
-				'redirect_to'   => get_permalink(),
+				'redirect_to'   => $redirect_to,
 			],
 			$attrs,
 			self::TAG
@@ -103,11 +104,13 @@ class Shortcode implements ModuleInterface {
 		$this->redirect_uri = $attrs['redirect_to'];
 
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
-		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		
+		Helper::set_redirect_state_filter( $redirect_to );
 
 		$attrs['login_url'] = $this->gh_client->authorization_url();
 
-		remove_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		Helper::remove_redirect_state_filter();
+		
 		remove_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		$template = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 
@@ -145,23 +148,6 @@ class Shortcode implements ModuleInterface {
 	public function redirect_url( string $url ): string {
 
 		return remove_query_arg( 'redirect_to', $url );
-	}
-
-	/**
-	 * Add redirect_to location in state.
-	 *
-	 * @param array $state State data.
-	 *
-	 * @return array
-	 */
-	public function state_redirect( array $state ): array {
-		if ( is_null( $this->redirect_uri ) ) {
-			return $state;
-		}
-
-		$state['redirect_to'] = $this->redirect_uri;
-
-		return $state;
 	}
 
 	/**
