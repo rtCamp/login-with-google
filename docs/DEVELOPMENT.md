@@ -20,28 +20,28 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
 
 1. Checkout `develop` and update it:
    ```sh
-   git checkout develop
-   git pull origin develop
+   > git checkout develop
+   > git pull origin develop
    ```
 2. Create a new feature or bug fix branch:
    ```sh
-   git checkout -b feature/issue-name  # For features
-   git checkout -b fix/issue-name      # For bug fixes
+   > git checkout -b feature/issue-name  # For features
+   > git checkout -b fix/issue-name      # For bug fixes
    ```
 3. Installing dependencies:
    ```sh
-   composer install
-   cd ./assets
-   npm install
+   > composer install
+   > cd ./assets
+   > npm install
    ```
 4. Implement your changes and commit:
    ```sh
-   git add .
-   git commit -m "[type] Short description of change"
+   > git add .
+   > git commit -m "[type] Short description of change"
    ```
 5. Push your branch and create a Pull Request (PR) to `develop`:
    ```sh
-   git push origin feature/issue-name
+   > git push origin feature/issue-name
    ```
 6. Always link the PR to the GitHub issue it resolves ([Learn more](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue)).
 7. Once reviewed and approved, merge into `develop`.
@@ -52,12 +52,12 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
 
 1. Ensure `develop` is stable and up to date:
    ```sh
-   git checkout develop
-   git pull origin develop
+   > git checkout develop
+   > git pull origin develop
    ```
 2. Create a release branch from develop:
    ```sh
-   git checkout -b release/x.y.z
+   > git checkout -b release/x.y.z
    ```
 3. Update the plugin version in the main plugin file (`plugin-name.php`):
 
@@ -78,37 +78,41 @@ The `issue-name` in branch names should be replaced with a descriptive issue nam
    - Feature: Description of new feature.
    - Fix: Description of bug fix.
    ```
-
-5. Generate .pot file for translations:
-
+5. Build assets for production
    ```sh
-   cd ./assets
-   npm run language
+   > cd ./assets
+   > npm run production
    ```
 
-6. Commit the changes:
+6. Generate .pot file for translations:
 
    ```sh
-   git add .
-   git commit -m "Release version x.y.z"
-   git push origin release/x.y.z
+   > composer run pot # Run from the root directory of the plugin. New pot file will be generated under ./languages directory
    ```
 
-7. Perform final testing and make necessary fixes.
-8. Raise PR against `master` branch for release.
-9. Once approved, merge into `master`.
-10. Checkout to `master` and pull the changes:
+7. Commit the changes:
+
+   ```sh
+   > git add .
+   > git commit -m "Release version x.y.z"
+   > git push origin release/x.y.z
+   ```
+
+8. Perform final testing and make necessary fixes.
+9.  Raise PR against `master` branch for release.
+10. Once approved, merge into `master`.
+11. Checkout to `master` and pull the changes:
 
 ```sh
-git checkout master
-git pull origin master
+> git checkout master
+> git pull origin master
 ```
 
 11. Create and push a GitHub tag with a version number.
 
 ```sh
-git tag -a X.Y.Z -m "Release version X.Y.Z"
-git push origin X.Y.Z
+> git tag -a X.Y.Z -m "Release version X.Y.Z"
+> git push origin X.Y.Z
 ```
 
 ### Dry Run
@@ -118,13 +122,13 @@ Before releasing the plugin, it's a good practice to perform a dry run by genera
 1. Checkout to the working branch:
 
    ```sh
-   git checkout {to working branch}
+   > git checkout {to working branch}
    ```
 
 2. Create a Tag with `dry` prefix
    ```sh
-   git tag -a dry-X.Y.Z -m "Dry run release version X.Y.Z"
-   git push origin dry-X.Y.Z
+   > git tag -a dry-X.Y.Z -m "Dry run release version X.Y.Z"
+   > git push origin dry-X.Y.Z
    ```
 3. This will create a tag with `dry` prefix and you can download the zip file from the action runner.
 
