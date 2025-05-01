@@ -130,6 +130,9 @@ Once you're ready to send a pull request, please run through the following check
 
 - Run `composer install && composer tests:unit` to run unit tests.
 
+= Code Snippets =
+Code snippets to extend and customize the plugin can be found [here](https://github.com/rtCamp/login-with-google/blob/develop/docs/CODE_SNIPPETS.md).
+
 == Screenshots ==
 
 1. Login screen with Google option added.
