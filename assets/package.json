@@ -1,23 +1,20 @@
 {
   "private": true,
   "scripts": {
-    "dev": "mix",
     "development": "mix",
     "watch": "mix watch",
     "watch-poll": "mix watch -- --watch-options-poll=1000",
     "hot": "mix watch --hot",
-    "prod": "mix --production",
-    "production": "mix --production",
-    "language": "wp i18n make-pot ../ --exclude=\"assets/build\",\"assets/node_modules\",\"tests\",\"vendor\" ../languages/login-with-google.pot"
+    "production": "mix --production"
   },
   "devDependencies": {
-    "@tinypixelco/laravel-mix-wp-blocks": "^1.1.0",
-    "@wordpress/babel-preset-default": "^6.16.0",
-    "@wordpress/dependency-extraction-webpack-plugin": "^3.1.3",
-    "cross-env": "^5.1",
-    "laravel-mix": "6.0.42",
+    "@tinypixelco/laravel-mix-wp-blocks": "^1.2.0",
+    "@wordpress/babel-preset-default": "^8.9.0",
+    "@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
+    "cross-env": "^7.0.3",
+    "laravel-mix": "^6.0.49",
     "lodash": "^4.17.21",
-    "sass": "^1.32.13",
-    "sass-loader": "^11.1.1"
+    "sass": "^1.85.1",
+    "sass-loader": "^16.0.5"
   }
 }

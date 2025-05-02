@@ -108,6 +108,12 @@ class Block implements Module {
 		);
 
 		wp_enqueue_script( self::SCRIPT_HANDLE );
+
+		// @see https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
+		// @see https://developer.wordpress.org/reference/functions/wp_set_script_translations/
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( self::SCRIPT_HANDLE, 'login-with-google' );
+		}
 	}
 
 	/**
@@ -155,6 +161,12 @@ class Block implements Module {
 		 * @since 1.2.3
 		 */
 		$force_display = $attributes['forceDisplay'] ?? false;
+
+		// Setting up dynamic redirect URL based on the current page.
+		$redirects_to = Helper::get_redirect_url();
+
+		Helper::set_redirect_state_filter( $redirects_to );
+
 		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
 			$markup = $this->markup(
 				[
@@ -173,6 +185,8 @@ class Block implements Module {
 
 			return ob_get_clean();
 		}
+
+		Helper::remove_redirect_state_filter();
 
 		return '';
 	}

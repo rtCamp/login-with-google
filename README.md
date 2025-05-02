@@ -2,33 +2,38 @@
 
 > WordPress plugin to login/register with Google
 
-- [Overview](#overview)
-- [Installation](#installation)
-- [Browser support](#browser-support)
-- [Usage Instructions](#usage-instructions)
-- [Plugin Constants](#plugin-constants)
-- [Hooks](#hooks)
-    - [Filters](#filters)
-    - [Actions](#actions)
-- [Shortcode](#shortcode)
-- [Contribute](#contribute)
-- [Unit testing](#unit-testing)
-- [Minimum Requirements](#minimum-requirements)
-- [License](#license)
-- [BTW, We're Hiring!](#btw-were-hiring)
+- [Login with Google](#login-with-google)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Browser support](#browser-support)
+  - [Usage Instructions](#usage-instructions)
+    - [Plugin Constants](#plugin-constants)
+    - [Hooks](#hooks)
+      - [Filters](#filters)
+      - [Actions](#actions)
+  - [Shortcode](#shortcode)
+  - [Contribute](#contribute)
+  - [Unit testing](#unit-testing)
+  - [Code Snippets](#code-snippets)
+  - [Minimum Requirements](#minimum-requirements)
+  - [License](#license)
+  - [BTW, We're Hiring!](#btw-were-hiring)
 
 ## Overview
 
-Login with Google provides seamless experience for users to login in to WordPress 
+Login with Google provides seamless experience for users to login in to WordPress
 sites using their Google account. No need to manually create accounts, no need to remember quirky
 passwords. Just one click and land into the site!
 
 ## Installation
 
 1. Clone this repository.
-2. Run `composer install --no-dev` from inside the cloned directory.
-3. Upload the directory to `wp-content/plugins` directory.
-4. Activate the plugin from WordPress dashboard.
+2. Run `composer install --no-dev` inside the cloned directory.
+3. Navigate to the `assets` directory by using `cd assets`.
+4. Use `nvm` to install the recommended node version.
+5. Run `npm run production` inside the `assets` directory.
+6. Upload the directory to the `wp-content/plugins` directory.
+7. Activate the plugin from the WordPress dashboard.
 
 ## Browser support
 [These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
@@ -43,15 +48,15 @@ passwords. Just one click and land into the site!
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
 in `Settings > Login with Google` settings page in their respective fields.
 
-4. `Create new user` enables new user registration irrespective of `Membership` settings in 
+4. `Create new user` enables new user registration irrespective of `Membership` settings in
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.
    Plugin will take this setting as first priority and membership setting as second priority, so if
    any one of them is enabled, new users will be registered by this plugin after successful authorization.
 
 5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered on site.
-This will prevent unwanted registration on website. 
-**For Example:** If you want users only from your organization (`myorg.com`) to get registered on the 
-website, you enter `myorg.com` in whitelisted domains. Users with Google 
+This will prevent unwanted registration on website.
+**For Example:** If you want users only from your organization (`myorg.com`) to get registered on the
+website, you enter `myorg.com` in whitelisted domains. Users with Google
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
 
@@ -72,7 +77,7 @@ Refer following list of constants.
 These constants can also be configured
 via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 
-**Note:** If you have defined the constant in wp-config.php file, corresponding settings field will be disable 
+**Note:** If you have defined the constant in wp-config.php file, corresponding settings field will be disable
 (locked for editing) on the settings page.
 
 ### Hooks
@@ -122,12 +127,15 @@ You can add the Google login button to any page/post using shortcode: `google_lo
 
 ## Unit testing
 
-Unit tests can be run with simple command `composer tests:unit`. 
+Unit tests can be run with simple command `composer tests:unit`.
 Please note that you'll need to do `composer install` (need to install dev dependencies) for running
 unit tests.
 
 You should have PHP CLI > 7.1 installed. If you have Xdebug enabled with php, code coverage report will be
 generated at `/tmp/report/html`
+
+## Code Snippets
+Code snippets to extend and customize the plugin can be found [here](docs/CODE_SNIPPETS.md).
 
 ## Minimum Requirements
 

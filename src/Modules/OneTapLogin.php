@@ -110,7 +110,7 @@ class OneTapLogin implements Module {
 	 */
 	public function one_tap_prompt(): void {
 		?>
-		<div id="g_id_onload" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
+		<div id="g_id_onload" data-use_fedcm_for_prompt="true" data-client_id="<?php echo esc_attr( $this->settings->client_id ); ?>" data-login_uri="<?php echo esc_attr( wp_login_url() ); ?>" data-callback="LoginWithGoogleDataCallBack"></div>
 		<?php
 	}
 
@@ -120,7 +120,10 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
-		$filename = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$filename     = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
+		$redirects_to = Helper::get_redirect_url();
+
+		Helper::set_redirect_state_filter( $redirects_to );
 
 		wp_enqueue_script(
 			'login-with-google-one-tap',
@@ -135,6 +138,8 @@ class OneTapLogin implements Module {
 			'state'   => $this->google_client->state(),
 			'homeurl' => get_option( 'home', '' ),
 		];
+
+		Helper::remove_redirect_state_filter();
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
@@ -153,6 +158,12 @@ class OneTapLogin implements Module {
 		);
 
 		wp_enqueue_script( 'login-with-google-one-tap-js' );
+
+		// @see https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
+		// @see https://developer.wordpress.org/reference/functions/wp_set_script_translations/
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'login-with-google-one-tap-js', 'login-with-google' );
+		}
 	}
 
 	/**

@@ -5,7 +5,7 @@
  */
 
 const {registerBlockType} = wp.blocks;
-const {__} = wp.i18n;
+import { __ } from '@wordpress/i18n'; // Need to use import here, otherwise the __() will be mangled by the minifier.
 const {InspectorControls, RichText, useBlockProps} = wp.blockEditor;
 const {Panel, PanelBody, CheckboxControl} = wp.components;
 

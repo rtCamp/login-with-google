@@ -1,12 +1,12 @@
 === Log in with Google ===
-Contributors: rtCamp, sh4lin, nikhiljoshua
-Unlinked contributors: Jeppehimer
+Contributors: rtCamp, sh4lin, nikhiljoshua, mchirag2002, mi5t4n
+Unlinked contributors: Jeppehimer, dev-alamin
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.3.7
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,6 +130,9 @@ Once you're ready to send a pull request, please run through the following check
 
 - Run `composer install && composer tests:unit` to run unit tests.
 
+= Code Snippets =
+Code snippets to extend and customize the plugin can be found [here](https://github.com/rtCamp/login-with-google/blob/develop/docs/CODE_SNIPPETS.md).
+
 == Screenshots ==
 
 1. Login screen with Google option added.
@@ -137,6 +140,15 @@ Once you're ready to send a pull request, please run through the following check
 3. Settings within Google Developer Console.
 
 == Changelog ==
+
+= 1.4.0 =
+Update: Migrated One Tap Login to use FedCM.
+Update: After a successful login or logout, users are now redirected to the page they originally intended to access.
+Update: When the plugin performs a redirect, it now includes an x-redirect-by header.
+Update: A settings page link has been added directly under the plugin name on the Plugins screen.
+Fix: Resolved an issue with generating unique usernames.
+Fix: Fixed a bug where JavaScript string translations were not being applied correctly.
+Chore: Documentation update.
 
 = 1.3.7 =
 * Compatible with WordPress 6.7.2
@@ -207,6 +219,15 @@ Once you're ready to send a pull request, please run through the following check
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Update: Migrated One Tap Login to use FedCM.
+Update: After a successful login or logout, users are now redirected to the page they originally intended to access.
+Update: When the plugin performs a redirect, it now includes an x-redirect-by header.
+Update: A settings page link has been added directly under the plugin name on the Plugins screen.
+Fix: Resolved an issue with generating unique usernames.
+Fix: Fixed a bug where JavaScript string translations were not being applied correctly.
+Chore: Documentation update.
 
 = 1.3.7 =
 * Compatible with WordPress 6.7.2

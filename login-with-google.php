@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Login with Google
  * Description: Allow users to login/register via Google.
- * Version: 1.3.7
+ * Version: 1.4.0
  * Author: rtCamp
  * Author URI: https://rtcamp.com
  * Text Domain: login-with-google
@@ -117,7 +117,7 @@ function plugin(): Plugin {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 	if ( isset( $_GET['reauth'] ) && null !== sanitize_text_field( wp_unslash( $_GET['reauth'] ) ) ) {
 		if ( ! empty( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
-			wp_safe_redirect( wp_login_url() );
+			wp_safe_redirect( wp_login_url(), 302, 'Login with Google' );
 			exit;
 		}
 	}

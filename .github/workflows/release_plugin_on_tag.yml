@@ -14,10 +14,14 @@ jobs:
         php-version: '7.4'
         coverage: xdebug
         tools: composer,cs2pr
-    - name: Composer Install
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: './assets/.nvmrc'
+    - name: Install dependencies & build assets
       shell: bash
       run: |
-        composer install --no-dev --prefer-dist --no-progress --no-suggest
+        ./bin/build-assets.sh
     - name: WordPress Plugin Deploy
       id: deploy
       uses: 10up/action-wordpress-plugin-deploy@2.3.0
