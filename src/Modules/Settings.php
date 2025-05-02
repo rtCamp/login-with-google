@@ -23,6 +23,9 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * @property bool|null registration_enabled
  * @property bool|null one_tap_login
  * @property string    one_tap_login_screen
+ * @property string|null redirect_url
+ * @property string|null allowed_domains
+ * @property bool|null dev_mode
  *
  * @package RtCamp\GoogleLogin\Modules
  */
@@ -47,6 +50,9 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
 		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
 		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
+		'WP_GOOGLE_LOGIN_REDIRECT_URL'      => 'redirect_url',
+		'WP_GOOGLE_LOGIN_ALLOWED_DOMAINS'   => 'allowed_domains',
+		'WP_GOOGLE_LOGIN_DEV_MODE'          => 'dev_mode',
 	];
 
 	/**
@@ -152,6 +158,33 @@ class Settings implements ModuleInterface {
 			'login-with-google',
 			'wp_google_login_section',
 			[ 'label_for' => 'whitelisted-domains' ]
+		);
+
+		add_settings_field(
+			'wp_google_login_redirect_url',
+			__( 'Default Redirect URL', 'login-with-google' ),
+			[ $this, 'redirect_url_field' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'redirect-url' ]
+		);
+
+		add_settings_field(
+			'wp_google_login_allowed_domains',
+			__( 'Allowed Email Domains', 'login-with-google' ),
+			[ $this, 'allowed_domains_field' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'allowed-domains' ]
+		);
+
+		add_settings_field(
+			'wp_google_login_dev_mode',
+			__( 'Developer Mode', 'login-with-google' ),
+			[ $this, 'dev_mode_field' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'dev-mode' ]
 		);
 	}
 
@@ -305,6 +338,51 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
+	 * Render redirect URL field.
+	 *
+	 * @return void
+	 */
+	public function redirect_url_field(): void {
+		?>
+		<input type='text' name='wp_google_login_settings[redirect_url]' id="redirect-url" value='<?php echo esc_attr( $this->redirect_url ); ?>' class="regular-text" />
+		<p class="description">
+			<?php esc_html_e( 'Enter the default URL where users should be redirected after login. Leave empty to use the default WordPress redirect.', 'login-with-google' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render allowed domains field.
+	 *
+	 * @return void
+	 */
+	public function allowed_domains_field(): void {
+		?>
+		<input type='text' name='wp_google_login_settings[allowed_domains]' id="allowed-domains" value='<?php echo esc_attr( $this->allowed_domains ); ?>' class="regular-text" />
+		<p class="description">
+			<?php esc_html_e( 'Enter comma-separated email domains that are allowed to login. Leave empty to allow all domains.', 'login-with-google' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Render developer mode field.
+	 *
+	 * @return void
+	 */
+	public function dev_mode_field(): void {
+		?>
+		<label style='display:block;margin-top:6px;'>
+			<input type='checkbox' name='wp_google_login_settings[dev_mode]' id="dev-mode" <?php echo esc_attr( checked( $this->dev_mode ) ); ?> value='1'>
+			<?php esc_html_e( 'Enable developer mode', 'login-with-google' ); ?>
+		</label>
+		<p class="description">
+			<?php esc_html_e( 'When enabled, raw Google user data will be logged and displayed on the login page. Use this for debugging purposes only.', 'login-with-google' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
 	 * Add settings sub-menu page in admin menu.
 	 *
 	 * @return void
@@ -334,7 +412,41 @@ class Settings implements ModuleInterface {
 			submit_button();
 			?>
 		</form>
+
+		<h2><?php esc_html_e( 'Recent Login Attempts', 'login-with-google' ); ?></h2>
+		<?php $this->display_login_logs(); ?>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Display login logs in a table format
+	 *
+	 * @return void
+	 */
+	private function display_login_logs(): void {
+		$logs = get_option( 'google_login_logs', [] );
+		if ( empty( $logs ) ) {
+			echo '<p>' . esc_html__( 'No login attempts logged yet.', 'login-with-google' ) . '</p>';
+			return;
+		}
+		?>
+		<table class="widefat fixed" cellspacing="0">
+			<thead>
+				<tr>
+					<th scope="col" class="manage-column column-columnname"><?php esc_html_e( 'Timestamp', 'login-with-google' ); ?></th>
+					<th scope="col" class="manage-column column-columnname"><?php esc_html_e( 'Reason', 'login-with-google' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $logs as $log ) : ?>
+					<tr>
+						<td><?php echo esc_html( $log['timestamp'] ); ?></td>
+						<td><?php echo esc_html( $log['reason'] ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 
