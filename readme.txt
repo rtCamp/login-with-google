@@ -6,7 +6,7 @@ Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on
 Requires at least: 5.5
 Tested up to: 6.7.2
 Requires PHP: 7.4
-Stable tag: 1.3.7
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,15 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 
 == Changelog ==
 
+= 1.4.0 =
+Update: Migrated One Tap Login to use FedCM.
+Update: After a successful login or logout, users are now redirected to the page they originally intended to access.
+Update: When the plugin performs a redirect, it now includes an x-redirect-by header.
+Update: A settings page link has been added directly under the plugin name on the Plugins screen.
+Fix: Resolved an issue with generating unique usernames.
+Fix: Fixed a bug where JavaScript string translations were not being applied correctly.
+Chore: Documentation update.
+
 = 1.3.7 =
 * Compatible with WordPress 6.7.2
 
@@ -210,6 +219,15 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.4.0 =
+Update: Migrated One Tap Login to use FedCM.
+Update: After a successful login or logout, users are now redirected to the page they originally intended to access.
+Update: When the plugin performs a redirect, it now includes an x-redirect-by header.
+Update: A settings page link has been added directly under the plugin name on the Plugins screen.
+Fix: Resolved an issue with generating unique usernames.
+Fix: Fixed a bug where JavaScript string translations were not being applied correctly.
+Chore: Documentation update.
 
 = 1.3.7 =
 * Compatible with WordPress 6.7.2
