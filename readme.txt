@@ -1,6 +1,6 @@
 === Log in with Google ===
-Contributors: rtCamp, sh4lin, nikhiljoshua
-Unlinked contributors: Jeppehimer
+Contributors: rtCamp, sh4lin, nikhiljoshua, mchirag2002, mi5t4n
+Unlinked contributors: Jeppehimer, dev-alamin
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
