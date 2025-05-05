@@ -198,7 +198,7 @@ class Authenticator {
 	/**
 	 * Save user profile picture.
 	 *
-	 * @param int $user_id WP User ID.
+	 * @param int       $user_id WP User ID.
 	 * @param \stdClass $user User object returned by google.
 	 * @return void
 	 */
