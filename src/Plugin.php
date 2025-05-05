@@ -112,6 +112,8 @@ class Plugin {
 		add_action( 'init', [ $this, 'load_translations' ] );
 
 		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
+
+		add_action( 'get_avatar_url', [ $this, 'return_avatar_url' ], 10, 3 );
 	}
 
 	/**
@@ -161,5 +163,49 @@ class Plugin {
 		);
 
 		return array_merge( $new_actions, $actions );
+	}
+
+	/**
+	 * Return the stored profile picture during the account creation.
+	 *
+	 * @param string $url The URL of the avatar.
+	 * @param mixed  $id_or_email The avatar to retrieve. Accepts a user ID, Gravatar SHA-256 or MD5 hash, user email, WP_User object, WP_Post object, or WP_Comment object.
+	 * @param array  $args Arguments passed to get_avatar_data() , after processing.
+	 *
+	 * @return string The URL of the avatar.
+	 */
+	public function return_avatar_url( $url, $id_or_email, $args ): string {
+		/**
+		 * Filter to bypass the use of saved profile picture for avatar.
+		 *
+		 * @since n.e.x.t
+		 *
+		 * @param boolean $use_saved_profile_picture_for_avatar Whether to bypass the use the saved profile picture for avatar or not.
+		 */
+		$use_avatar_url = apply_filters( 'rtcamp.google_use_saved_profile_picture_for_avatar', true );
+
+		if ( ! $use_avatar_url ) {
+			return $url;
+		}
+
+		$wp_user = null;
+		if ( is_int( $id_or_email ) ) {
+			$wp_user = get_user_by( 'id', $id_or_email );
+		} elseif ( is_string( $id_or_email ) && is_email( $id_or_email ) ) {
+			$wp_user = get_user_by( 'email', $id_or_email );
+		}
+
+		if ( $wp_user ) {
+			$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 64;
+			$height = isset( $args['height'] ) ? absint( $args['height'] ) : 64;
+
+			$profile_picture_id = get_user_meta( $wp_user->ID, 'rtlwg_profile_picture_id', true );
+
+			if ( ! empty( $profile_picture_id ) ) {
+				$url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
+			}
+		}
+
+		return $url;
 	}
 }
