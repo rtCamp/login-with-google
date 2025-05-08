@@ -86,6 +86,7 @@ class OneTapLogin implements Module {
 	 */
 	public function init(): void {
 		if ( $this->settings->one_tap_login ) {
+			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
 			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
 				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
