@@ -74,47 +74,9 @@ class Block implements Module {
 	 * @return void
 	 */
 	public function init(): void {
-		add_action(
-			'wp_enqueue_scripts',
-			[ $this->assets, 'register_login_styles' ]
-		);
-
-		add_action(
-			'enqueue_block_editor_assets',
-			[ $this, 'enqueue_block_editor_assets' ]
-		);
-
 		add_action( 'init', [ $this, 'register' ] );
 	}
 
-	/**
-	 * Enqueue block editor assets.
-	 *
-	 * @return void
-	 */
-	public function enqueue_block_editor_assets() {
-		$this->assets->register_login_styles();
-		$this->assets->register_script(
-			self::SCRIPT_HANDLE,
-			'build/js/block-button.js',
-			[
-				'wp-blocks',
-				'wp-element',
-				'wp-editor',
-				'wp-components',
-			],
-			filemtime( trailingslashit( plugin()->assets_dir ) . 'build/js/block-button.js' ),
-			false
-		);
-
-		wp_enqueue_script( self::SCRIPT_HANDLE );
-
-		// @see https://make.wordpress.org/core/2018/11/09/new-javascript-i18n-support-in-wordpress/
-		// @see https://developer.wordpress.org/reference/functions/wp_set_script_translations/
-		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( self::SCRIPT_HANDLE, 'login-with-google' );
-		}
-	}
 
 	/**
 	 * Register the block.
@@ -122,21 +84,15 @@ class Block implements Module {
 	 * @return void
 	 */
 	public function register(): void {
+		wp_register_block_metadata_collection(
+			trailingslashit( plugin()->assets_dir ) . 'build/blocks',
+			trailingslashit( plugin()->assets_dir ) . 'build/blocks/blocks-manifest.php',
+		);
+
 		register_block_type(
-			'google-login/login-button',
+			trailingslashit( plugin()->assets_dir ) . 'build/blocks/login-button',
 			[
-				'editor_style'    => $this->assets::LOGIN_BUTTON_STYLE_HANDLE,
-				'style'           => $this->assets::LOGIN_BUTTON_STYLE_HANDLE,
 				'render_callback' => [ $this, 'render_login_button' ],
-				'attributes'      => [
-					'buttonText'   => [
-						'type' => 'string',
-					],
-					'forceDisplay' => [
-						'type'    => 'boolean',
-						'default' => false,
-					],
-				],
 			]
 		);
 	}
@@ -147,11 +103,11 @@ class Block implements Module {
 	 * This will output the Login with Google
 	 * button if user is not logged in currently.
 	 *
-	 * @param string $attributes Block attributes.
+	 * @param array $attributes Block attributes.
 	 *
 	 * @return string
 	 */
-	public function render_login_button( $attributes ): string {
+	public function render_login_button( array $attributes ): string {
 		/**
 		 * This filter is useful where we want to forcefully display login button,
 		 * even when user is already logged-in in system.
@@ -167,7 +123,11 @@ class Block implements Module {
 
 		Helper::set_redirect_state_filter( $redirects_to );
 
-		if ( $force_display || ! is_user_logged_in() || apply_filters( 'rtcamp.google_login_button_display', false ) ) {
+		if (
+			$force_display ||
+			! is_user_logged_in() ||
+			apply_filters( 'rtcamp.google_login_button_display', false )
+		) {
 			$markup = $this->markup(
 				[
 					'login_url'           => $this->client->authorization_url(),
