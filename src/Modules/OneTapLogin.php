@@ -86,20 +86,15 @@ class OneTapLogin implements Module {
 	 */
 	public function init(): void {
 		if ( $this->settings->one_tap_login ) {
+			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
+			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
+				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
+				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
+			}
 			add_action( 'login_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
 			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
 			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
-			add_action(
-				'init',
-				function () {
-					if ( ! is_user_logged_in() ) {
-						$hook_prefix = ( 'sitewide' === $this->settings->one_tap_login_screen ) ? 'wp' : 'login';
-						add_action( $hook_prefix . '_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
-						add_action( $hook_prefix . '_footer', [ $this, 'one_tap_prompt' ], 10000 );
-					}
-				}
-			);
 		}
 	}
 
@@ -120,6 +115,10 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function one_tap_scripts(): void {
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
 		$filename     = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
 		$redirects_to = Helper::get_redirect_url();
 
