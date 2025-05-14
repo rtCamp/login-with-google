@@ -126,8 +126,7 @@ msgid "Login with google"
 msgstr ""
 
 #: src/Plugin.php:160
-#: assets/build/blocks/login-button/index.js:103
-#: assets/build/blocks/login-button/index.js:67
+#: assets/build/blocks/login-button/index.js:1
 msgid "Settings"
 msgstr ""
 
@@ -183,8 +182,7 @@ msgid "User data is stale! Please try again."
 msgstr ""
 
 #: templates/google-login-button.php:14
-#: assets/build/blocks/login-button/index.js:86
-#: assets/build/blocks/login-button/index.js:48
+#: assets/build/blocks/login-button/index.js:1
 msgid "Log in with Google"
 msgstr ""
 
@@ -192,13 +190,11 @@ msgstr ""
 msgid "Log out"
 msgstr ""
 
-#: assets/build/blocks/login-button/index.js:89
-#: assets/build/blocks/login-button/index.js:52
+#: assets/build/blocks/login-button/index.js:1
 msgid "Display Logout"
 msgstr ""
 
-#: assets/build/blocks/login-button/index.js:90
-#: assets/build/blocks/login-button/index.js:53
+#: assets/build/blocks/login-button/index.js:1
 msgid "If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’"
 msgstr ""
 
