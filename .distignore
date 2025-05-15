@@ -12,6 +12,6 @@ README.md
 wp-assets/
 docs/
 assets/src
-assets/node_modules
+node_modules
 release
 bin
