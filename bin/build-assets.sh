@@ -15,15 +15,6 @@ fi
 echo "📦 Installing PHP dependencies (without dev)..."
 composer install --no-dev --prefer-dist --optimize-autoloader
 
-# Navigate to the assets directory
-ASSETS_DIR="./assets"
-if [[ ! -d "$ASSETS_DIR" ]]; then
-    echo "❌ Error: $ASSETS_DIR directory not found."
-    exit 1
-fi
-
-cd "$ASSETS_DIR"
-
 # Ensure npm is installed
 if ! command -v npm &>/dev/null; then
     echo "❌ Error: npm is not installed. Please install Node.js and npm before proceeding."

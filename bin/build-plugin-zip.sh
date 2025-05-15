@@ -29,7 +29,7 @@ mkdir -p "$RELEASE_DIR"
 
 # Copy files to the temp directory, excluding unwanted files
 echo "Copying project files to temporary release directory..."
-rsync -av --exclude='temp' --exclude='assets/node_modules' --exclude='vendor' --exclude='.git' --exclude='.idea' ./ "$TEMP_DIR/"
+rsync -av --exclude='temp' --exclude='node_modules' --exclude='vendor' --exclude='.git' --exclude='.idea' ./ "$TEMP_DIR/"
 
 # Change to temp directory
 cd "$TEMP_DIR" || exit 1
