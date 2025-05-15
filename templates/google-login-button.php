@@ -11,7 +11,7 @@ use RtCamp\GoogleLogin\Utils\Helper;
 if ( isset( $custom_btn_text ) && $custom_btn_text ) {
 	$button_text = esc_html( $custom_btn_text );
 } else {
-	$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Log in with Google', 'login-with-google' );
+	$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Login with Google', 'login-with-google' );
 }
 
 if ( empty( $login_url ) ) {

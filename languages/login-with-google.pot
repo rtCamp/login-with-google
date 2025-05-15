@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-13T21:13:48+00:00\n"
+"POT-Creation-Date: 2025-05-15T07:44:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0-alpha\n"
 "X-Domain: login-with-google\n"
@@ -17,6 +17,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #: login-with-google.php
 #: src/Modules/Settings.php:315
+#: templates/google-login-button.php:14
+#: assets/build/blocks/login-button/index.js:1
 msgid "Login with Google"
 msgstr ""
 
@@ -179,11 +181,6 @@ msgstr ""
 
 #: src/Utils/TokenVerifier.php:279
 msgid "User data is stale! Please try again."
-msgstr ""
-
-#: templates/google-login-button.php:14
-#: assets/build/blocks/login-button/index.js:1
-msgid "Log in with Google"
 msgstr ""
 
 #: templates/google-login-button.php:24

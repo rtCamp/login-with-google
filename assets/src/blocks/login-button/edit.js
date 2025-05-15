@@ -45,7 +45,7 @@ export default function Edit( { attributes, setAttributes, className } ) {
 			setAttributes( { buttonText: value } );
 		},
 		value: buttonText,
-		placeholder: __( 'Log in with Google', 'login-with-google' ),
+		placeholder: __( 'Login with Google', 'login-with-google' ),
 	};
 
 	const forceDisplayAttributes = {

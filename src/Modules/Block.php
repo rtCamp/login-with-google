@@ -84,10 +84,12 @@ class Block implements Module {
 	 * @return void
 	 */
 	public function register(): void {
-		wp_register_block_metadata_collection(
-			trailingslashit( plugin()->assets_dir ) . 'build/blocks',
-			trailingslashit( plugin()->assets_dir ) . 'build/blocks/blocks-manifest.php'
-		);
+		if ( function_exists( 'wp_register_block_metadata_collection' ) ) {
+			wp_register_block_metadata_collection(
+				trailingslashit( plugin()->assets_dir ) . 'build/blocks',
+				trailingslashit( plugin()->assets_dir ) . 'build/blocks/blocks-manifest.php'
+			);
+		}
 
 		register_block_type(
 			trailingslashit( plugin()->assets_dir ) . 'build/blocks/login-button',
