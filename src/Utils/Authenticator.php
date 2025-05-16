@@ -219,7 +219,7 @@ class Authenticator {
 
 		$profile_picture_filename = download_url( $profile_picture_url );
 
-		if ( str_ends_with( $profile_picture_filename, '.tmp' ) ) {
+		if ( str_ends_with( $profile_picture_filename, '.tmp' ) && $wp_filesystem ) {
 			$profile_picture_mime_type = wp_get_image_mime( $profile_picture_filename );
 
 			$mime_types = wp_get_mime_types();
