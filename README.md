@@ -29,20 +29,20 @@ passwords. Just one click and land into the site!
 
 1. Clone this repository.
 2. Run `composer install --no-dev` inside the cloned directory.
-3. Navigate to the `assets` directory by using `cd assets`.
-4. Use `nvm` to install the recommended node version.
-5. Run `npm run production` inside the `assets` directory.
+3. Use `nvm` to install the recommended node version.
+4. Use `npm i` to install the dev dependencies.
+5. Run `npm run production` inside the cloned directory.
 6. Upload the directory to the `wp-content/plugins` directory.
 7. Activate the plugin from the WordPress dashboard.
 
 ## Browser support
-[These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
+[These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported on Edge in iOS.
 
 ## Usage Instructions
 
 1. You will need to register a new application at https://console.cloud.google.com/apis/dashboard
 
-2. `Authorization callback URL` should be like `https://yourdomain.com/wp-login.php`, where
+2. `Authorization callback URL` should be like `https://yourdomain.com/wp-login.php` and the `Authorized JavaScript origins` should be like `https://yourdomain.com` where
 `https://yourdomain.com` will be replaced by your site URL.
 
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
@@ -93,6 +93,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_client_args` | Filter the arguments for sending in query. <br />This is useful in cases for example: choosing the correct prompt. | <ul><li>`client_args` - contains the list of query arguments to send to Google OAuth.</li></ul>
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
+| `rtcamp.google_redirect_url` | Filters the URL to which the user will be redirected post successful authentication | <ul><li> `redirect_uri` - contains the URL to be redirected to. Defaults to the current URL.</li></ul>
 
 #### Actions
 
