@@ -143,6 +143,9 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 
 = 1.4.1 =
 Fix: Resolved the issue of redirect_to parameters not working with the shortcode.
+Update: Migrated block implementation to modern block implementations.
+Update: Updated Composer and NPM dependencies.
+Chore: Documentation update.
 
 = 1.4.0 =
 Update: Migrated One Tap Login to use FedCM.
