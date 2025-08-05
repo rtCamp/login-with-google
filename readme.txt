@@ -223,6 +223,9 @@ Chore: Documentation update.
 
 == Upgrade Notice ==
 
+= 1.4.1 =
+Fix: Resolved the issue of redirect_to parameters not working with the shortcode.
+
 = 1.4.0 =
 Update: Migrated One Tap Login to use FedCM.
 Update: After a successful login or logout, users are now redirected to the page they originally intended to access.

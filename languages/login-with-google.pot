@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Login with Google 1.4.0\n"
+"Project-Id-Version: Login with Google 1.4.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
