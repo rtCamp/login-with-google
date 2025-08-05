@@ -105,7 +105,7 @@ class Shortcode implements ModuleInterface {
 
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		
-		Helper::set_redirect_state_filter( $redirect_to );
+		Helper::set_redirect_state_filter( $this->redirect_uri );
 
 		$attrs['login_url'] = $this->gh_client->authorization_url();
 
