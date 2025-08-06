@@ -145,6 +145,7 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 Fix: Resolved the issue of redirect_to parameters not working with the shortcode.
 Update: Migrated block implementation to modern block implementations.
 Update: Updated Composer and NPM dependencies.
+Fix: Fixed the issue of One-tap script not being enqueued if the user was logged out.
 Chore: Documentation update.
 
 = 1.4.0 =
@@ -230,6 +231,7 @@ Chore: Documentation update.
 Fix: Resolved the issue of redirect_to parameters not working with the shortcode.
 Update: Migrated block implementation to modern block implementations.
 Update: Updated Composer and NPM dependencies.
+Fix: Fixed the issue of One-tap script not being enqueued if the user was logged out.
 Chore: Documentation update.
 
 = 1.4.0 =
