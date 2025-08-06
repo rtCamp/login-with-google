@@ -27,19 +27,19 @@
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
-		"php": ">=7.4,<=8.2.27",
+		"php": ">=7.4",
 		"pimple/pimple": "3.5.*"
 	},
 	"require-dev": {
-		"squizlabs/php_codesniffer": "^3.11.3",
+		"squizlabs/php_codesniffer": "^3.12.2",
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0.0",
 		"wp-coding-standards/wpcs": "^3.1.0",
-		"sirbrillig/phpcs-variable-analysis": "^2.11.22",
+		"sirbrillig/phpcs-variable-analysis": "^v2.12.0",
 		"automattic/vipwpcs": "^3.0.1",
 		"phpcompatibility/phpcompatibility-wp": "^2.1.6",
-		"phpunit/phpunit": "9.5",
-		"10up/wp_mock": "0.4.2",
-		"wp-cli/i18n-command": "^v2.6"
+		"phpunit/phpunit": "9.6.23",
+		"10up/wp_mock": "1.1.0",
+		"wp-cli/i18n-command": "v2.6.5"
 	},
 	"config": {
 		"allow-plugins": {
@@ -64,7 +64,7 @@
 			"@cs",
 			"@tests:unit"
 		],
-		"pot": "./vendor/bin/wp i18n make-pot . --exclude=\"assets/src,assets/node_modules,tests,vendor\" ./languages/login-with-google.pot",
+		"pot": "./vendor/bin/wp i18n make-pot . --exclude=\"assets/src,assets/node_modules,node_modules,tests,vendor\" ./languages/login-with-google.pot",
 		"build-plugin-zip": "./bin/build-plugin-zip.sh"
 	}
 }

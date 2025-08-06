@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "google-login/login-button",
+	"version": "0.1.0",
+	"title": "Log in with Google",
+	"category": "widgets",
+	"icon": "admin-users",
+	"description": "Login with Google button block.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"buttonText": {
+			"type": "string"
+		},
+		"forceDisplay": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"textdomain": "login-with-google",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}
