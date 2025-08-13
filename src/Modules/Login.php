@@ -83,10 +83,11 @@ class Login implements ModuleInterface {
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
 		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
 		add_action( 'rtcamp.google_register_user', [ $this->authenticator, 'register' ] );
-		add_action( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_action( 'rtcamp.google_user_created', [ $this, 'user_meta' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 		add_action( 'wp_login', [ $this, 'login_redirect' ] );
+
+		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 	}
 
 	/**
