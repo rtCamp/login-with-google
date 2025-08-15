@@ -45,7 +45,15 @@ class Assets implements ModuleInterface {
 	 * @return void
 	 */
 	public function init(): void {
+		/**
+		 * Actions.
+		 */
 		add_action( 'login_enqueue_scripts', [ $this, 'enqueue_login_styles' ] );
+
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 	/**
