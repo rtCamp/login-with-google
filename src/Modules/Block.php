@@ -79,10 +79,10 @@ class Block implements Module {
 		 */
 		add_action( 'init', [ $this, 'register' ] );
 
-        /**
-         * Filters.
-         */
-        // Add filters here.
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 

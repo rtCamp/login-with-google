@@ -100,10 +100,10 @@ class OneTapLogin implements Module {
 			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
 		}
 
-        /**
-         * Filters.
-         */
-        // Add filters here.
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 	/**

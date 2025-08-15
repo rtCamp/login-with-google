@@ -87,10 +87,10 @@ class Settings implements ModuleInterface {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
 
-        /**
-         * Filters.
-         */
-        // Add filters here.
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 	/**
