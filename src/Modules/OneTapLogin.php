@@ -85,6 +85,9 @@ class OneTapLogin implements Module {
 	 * Everything will happen if and only if one tap is active in settings.
 	 */
 	public function init(): void {
+		/**
+		 * Actions.
+		 */
 		if ( $this->settings->one_tap_login ) {
 			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
 			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
@@ -96,6 +99,11 @@ class OneTapLogin implements Module {
 			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
 			add_action( 'rtcamp.id_token_verified', [ $this, 'authenticate' ] );
 		}
+
+        /**
+         * Filters.
+         */
+        // Add filters here.
 	}
 
 	/**
