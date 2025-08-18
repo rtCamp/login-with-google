@@ -80,8 +80,17 @@ class Settings implements ModuleInterface {
 	 */
 	public function init(): void {
 		$this->options = get_option( 'wp_google_login_settings', [] );
+
+		/**
+		 * Actions.
+		 */
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
+
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 	/**
