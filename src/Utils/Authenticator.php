@@ -113,6 +113,21 @@ class Authenticator {
 				);
 
 				/**
+				 * Filter to bypass the profile picture saving process.
+				 *
+				 * @since n.e.x.t
+				 *
+				 * @param boolean $save Whether to save profile picture or not.
+				 * @param int $uid WP User ID.
+				 * @param \stdClass User object return by Google.
+				 */
+				$save_profile_picture = apply_filters( 'rtcamp.google_save_user_profile_picture', true, $uid, $user );
+
+				if ( $save_profile_picture ) {
+					$this->save_user_profile_picture( $uid, $user );
+				}
+
+				/**
 				 * Fires once the user has been registered successfully.
 				 */
 				do_action( 'rtcamp.google_user_created', $uid, $user );
@@ -178,5 +193,58 @@ class Authenticator {
 		$email_parts         = array_map( 'strtolower', $email_parts );
 
 		return in_array( $email_parts[1], $whitelisted_domains, true );
+	}
+
+	/**
+	 * Save user profile picture.
+	 *
+	 * @param int       $user_id WP User ID.
+	 * @param \stdClass $user User object returned by google.
+	 * @return void
+	 */
+	private function save_user_profile_picture( $user_id, $user ): void {
+		global $wp_filesystem;
+
+		if ( is_null( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		// Using larger image size. By default, profile picture has 96 width size with cropped.
+		$profile_picture_url = str_replace( '=s96-c', '', $user->picture );
+
+		$profile_picture_filename = download_url( $profile_picture_url );
+
+		if ( str_ends_with( $profile_picture_filename, '.tmp' ) && $wp_filesystem ) {
+			$profile_picture_mime_type = wp_get_image_mime( $profile_picture_filename );
+
+			$mime_types = wp_get_mime_types();
+			foreach ( $mime_types as $ext => $mime_type ) {
+				if ( $profile_picture_mime_type === $mime_type ) {
+					$profile_picture_extension = current( explode( '|', $ext ) );
+					break;
+				}
+			}
+
+			$new_profile_picture_filename = str_replace( '.tmp', ".{$profile_picture_extension}", $profile_picture_filename );
+			$wp_filesystem->move( $profile_picture_filename, $new_profile_picture_filename, true );
+
+			$profile_picture_filename = $new_profile_picture_filename;
+		}
+
+		$file_array = array(
+			'name'     => basename( $profile_picture_filename ),
+			'tmp_name' => $profile_picture_filename,
+		);
+
+		$attachment_id = media_handle_sideload( $file_array );
+
+		if ( is_int( $attachment_id ) ) {
+			update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
+		}
 	}
 }
