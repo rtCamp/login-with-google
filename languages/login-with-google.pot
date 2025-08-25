@@ -2,21 +2,21 @@
 # This file is distributed under the GPLv2+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Login with Google 1.4.1\n"
+"Project-Id-Version: Login with Google 1.4.2\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/login-with-google\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-05T15:16:26+00:00\n"
+"POT-Creation-Date: 2025-08-19T16:58:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
 #: login-with-google.php
-#: src/Modules/Settings.php:315
+#: src/Modules/Settings.php:324
 #: templates/google-login-button.php:14
 #: assets/build/blocks/login-button/index.js:1
 #: assets/src/blocks/login-button/edit.js:48
@@ -51,86 +51,85 @@ msgstr ""
 msgid "Invalid Service %s Passed to the container"
 msgstr ""
 
-#: src/Modules/Login.php:159
+#: src/Modules/Login.php:166
 msgid "Could not authenticate the user, please try again."
 msgstr ""
 
-#: src/Modules/OneTapLogin.php:180
+#: src/Modules/OneTapLogin.php:188
 msgid "Cannot verify the credentials"
 msgstr ""
 
-#: src/Modules/OneTapLogin.php:222
+#: src/Modules/OneTapLogin.php:230
 msgid "User not found to authenticate"
 msgstr ""
 
-#: src/Modules/Settings.php:97
+#: src/Modules/Settings.php:106
 msgid "Log in with Google Settings"
 msgstr ""
 
-#: src/Modules/Settings.php:105
+#: src/Modules/Settings.php:114
 msgid "Client ID"
 msgstr ""
 
-#: src/Modules/Settings.php:114
+#: src/Modules/Settings.php:123
 msgid "Client Secret"
 msgstr ""
 
-#: src/Modules/Settings.php:123
+#: src/Modules/Settings.php:132
 msgid "Create New User"
 msgstr ""
 
-#: src/Modules/Settings.php:132
+#: src/Modules/Settings.php:141
 msgid "Enable One Tap Login"
 msgstr ""
 
-#: src/Modules/Settings.php:141
+#: src/Modules/Settings.php:150
 msgid "One Tap Login Locations"
 msgstr ""
 
-#: src/Modules/Settings.php:150
+#: src/Modules/Settings.php:159
 msgid "Whitelisted Domains"
 msgstr ""
 
-#: src/Modules/Settings.php:171
+#: src/Modules/Settings.php:180
 msgid "Create oAuth Client ID and Client Secret at"
 msgstr ""
 
-#: src/Modules/Settings.php:208
+#: src/Modules/Settings.php:217
 msgid "Create a new user account if it does not exist already"
 msgstr ""
 
 #. translators: %1s will be replaced by page link
-#: src/Modules/Settings.php:215
+#: src/Modules/Settings.php:224
 msgid "If this setting is checked, a new user will be created even if <a target=\"_blank\" href=\"%1s\">membership setting</a> is off."
 msgstr ""
 
-#: src/Modules/Settings.php:236
+#: src/Modules/Settings.php:245
 msgid "One Tap Login"
 msgstr ""
 
-#: src/Modules/Settings.php:256
+#: src/Modules/Settings.php:265
 msgid "Enable One Tap Login Only on Login Screen"
 msgstr ""
 
-#: src/Modules/Settings.php:263
+#: src/Modules/Settings.php:272
 msgid "Enable One Tap Login Site-wide"
 msgstr ""
 
-#: src/Modules/Settings.php:302
+#: src/Modules/Settings.php:311
 msgid "Add each domain comma separated"
 msgstr ""
 
-#: src/Modules/Settings.php:314
+#: src/Modules/Settings.php:323
 msgid "Login with Google settings"
 msgstr ""
 
-#: src/Modules/Shortcode.php:92
+#: src/Modules/Shortcode.php:101
 msgid "Login with google"
 msgstr ""
 
 #: src/Plugin.php:160
 #: assets/build/blocks/login-button/index.js:1
-#: assets/build/js/block-button.js:1
 #: assets/src/blocks/login-button/edit.js:67
 msgid "Settings"
 msgstr ""
@@ -191,19 +190,13 @@ msgid "Log out"
 msgstr ""
 
 #: assets/build/blocks/login-button/index.js:1
-#: assets/build/js/block-button.js:1
 #: assets/src/blocks/login-button/edit.js:52
 msgid "Display Logout"
 msgstr ""
 
 #: assets/build/blocks/login-button/index.js:1
-#: assets/build/js/block-button.js:1
 #: assets/src/blocks/login-button/edit.js:53
 msgid "If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’"
-msgstr ""
-
-#: assets/build/js/block-button.js:1
-msgid "Log in with Google"
 msgstr ""
 
 #: assets/build/js/onetap.js:22

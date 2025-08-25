@@ -74,7 +74,15 @@ class Block implements Module {
 	 * @return void
 	 */
 	public function init(): void {
+		/**
+		 * Actions.
+		 */
 		add_action( 'init', [ $this, 'register' ] );
+
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 
