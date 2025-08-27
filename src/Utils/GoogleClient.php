@@ -244,9 +244,12 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function state(): string {
-		$state_data['nonce']    = wp_create_nonce( 'login_with_google' );
+		$state_data['nonce']    = wp_generate_password( 32, false ); // Strong random token.
 		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data );
 		$state_data['provider'] = 'google';
+
+		// Store it in a transient keyed by the visitor.
+		set_transient( 'google_oauth_state_' . $state_data['nonce'], 1, 15 * MINUTE_IN_SECONDS );
 
 		return base64_encode( wp_json_encode( $state_data ) );
 	}
