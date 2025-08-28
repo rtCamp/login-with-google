@@ -244,6 +244,8 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function state(): string {
+		$state_data = [];
+
 		$state_data['nonce']    = wp_generate_password( 32, false ); // Strong random token.
 		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data );
 		$state_data['provider'] = 'google';
