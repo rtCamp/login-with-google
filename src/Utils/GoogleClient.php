@@ -251,7 +251,7 @@ class GoogleClient {
 		$state_data['provider'] = 'google';
 
 		// Store it in a transient keyed by the visitor.
-		set_transient( 'google_oauth_state_' . $state_data['nonce'], 1, 15 * MINUTE_IN_SECONDS );
+		set_transient( 'rtcamp_google_oauth_state_' . $state_data['nonce'], 1, 15 * MINUTE_IN_SECONDS );
 
 		return base64_encode( wp_json_encode( $state_data ) );
 	}

@@ -139,11 +139,11 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
-		if ( empty( $decoded_state['nonce'] ) || ! get_transient( 'google_oauth_state_' . $decoded_state['nonce'] ) ) {
+		if ( empty( $decoded_state['nonce'] ) || ! get_transient( 'rtcamp_google_oauth_state_' . $decoded_state['nonce'] ) ) {
 			return $user;
 		}
 
-		delete_transient( 'google_oauth_state_' . $decoded_state['nonce'] ); // One-time use only.
+		delete_transient( 'rtcamp_google_oauth_state_' . $decoded_state['nonce'] ); // One-time use only.
 
 		try {
 			$this->gh_client->set_access_token( $code );
