@@ -254,7 +254,7 @@ class GoogleClient {
 		set_transient(
 			'rtcamp_google_oauth_state_' . $state_data['nonce'],
 			1,
-			apply_filters( 'rtcamp.google_login_oauth_state_expiration', 15 * MINUTE_IN_SECONDS ),
+			apply_filters( 'rtcamp.google_login_oauth_state_expiration', 15 * MINUTE_IN_SECONDS )
 		);
 
 		return base64_encode( wp_json_encode( $state_data ) );
