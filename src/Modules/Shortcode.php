@@ -75,7 +75,16 @@ class Shortcode implements ModuleInterface {
 	 */
 	public function init(): void {
 		add_shortcode( self::TAG, [ $this, 'callback' ] );
+
+		/**
+		 * Actions.
+		 */
 		add_filter( 'do_shortcode_tag', [ $this, 'scan_shortcode' ], 10, 3 );
+
+		/**
+		 * Filters.
+		 */
+		// Add filters here.
 	}
 
 	/**
@@ -104,13 +113,13 @@ class Shortcode implements ModuleInterface {
 		$this->redirect_uri = $attrs['redirect_to'];
 
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
-		
+
 		Helper::set_redirect_state_filter( $this->redirect_uri );
 
 		$attrs['login_url'] = $this->gh_client->authorization_url();
 
 		Helper::remove_redirect_state_filter();
-		
+
 		remove_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		$template = trailingslashit( plugin()->template_dir ) . 'google-login-button.php';
 
