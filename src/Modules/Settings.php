@@ -15,30 +15,23 @@ namespace RtCamp\GoogleLogin\Modules;
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 
 /**
- * Class Settings.
- *
- * @property string|null whitelisted_domains
- * @property string|null client_id
- * @property string|null client_secret
- * @property bool|null registration_enabled
- * @property bool|null one_tap_login
- * @property string    one_tap_login_screen
+ * Class Settings
  *
  * @package RtCamp\GoogleLogin\Modules
  */
 class Settings implements ModuleInterface {
 
 	/**
-	 * Settings values.
+	 * Options array.
 	 *
 	 * @var array
 	 */
 	public $options;
 
 	/**
-	 * Getters for settings values.
+	 * List of getters for settings.
 	 *
-	 * @var string[]
+	 * @var array
 	 */
 	private $getters = [
 		'WP_GOOGLE_LOGIN_CLIENT_ID'         => 'client_id',
@@ -50,14 +43,15 @@ class Settings implements ModuleInterface {
 	];
 
 	/**
-	 * Getter method.
+	 * Magic getter to access settings as properties.
 	 *
-	 * @param string $name Name of option to fetch.
+	 * @param string $name Name of the property.
+	 *
+	 * @return mixed
 	 */
 	public function __get( string $name ) {
 		if ( in_array( $name, $this->getters, true ) ) {
 			$constant_name = array_search( $name, $this->getters, true );
-
 			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
 
@@ -65,67 +59,305 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Return module name.
+	 * Name of the module.
 	 *
 	 * @return string
 	 */
 	public function name(): string {
-		return 'settings';
-	}
+		return 'settings'; }
 
 	/**
-	 * Initialization of module.
-	 *
-	 * @return void
+	 * Initializes the settings module.
 	 */
 	public function init(): void {
 		$this->options = get_option( 'wp_google_login_settings', [] );
 
-		/**
-		 * Actions.
-		 */
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_menu', [ $this, 'settings_page' ] );
 
-		/**
-		 * Filters.
-		 */
-		// Add filters here.
+		if ( is_multisite() ) {
+			add_action( 'network_admin_menu', [ $this, 'register_network_settings_page' ] );
+			add_action( 'network_admin_menu', [ $this, 'register_network_settings' ] );
+			add_action( 'network_admin_edit_wp_google_login_network_settings', [ $this, 'save_network_settings' ] );
+		}
 	}
 
 	/**
-	 * Register the settings, section and fields.
+	 * Retrieves the Google OAuth Client ID, respecting multisite/global settings.
+	 *
+	 * @return string
+	 */
+	public function get_client_id() {
+		if ( is_multisite() ) {
+			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
+
+			if ( ! empty( $network_settings['apply_globally'] ) && ! empty( $network_settings['client_id'] ) ) {
+				return $network_settings['client_id'];
+			}
+		}
+
+		return $this->client_id;
+	}
+
+	/**
+	 * Retrieves the Google OAuth Client Secret, respecting multisite/global settings.
+	 *
+	 * @return string
+	 */
+	public function get_client_secret() {
+		if ( is_multisite() ) {
+			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
+
+			if ( ! empty( $network_settings['apply_globally'] ) && ! empty( $network_settings['client_secret'] ) ) {
+				return $network_settings['client_secret'];
+			}
+		}
+
+		return $this->client_secret;
+	}
+
+	/**
+	 * Registers the network settings page for multisite installations.
 	 *
 	 * @return void
 	 */
-	public function register_settings(): void {
-		register_setting( 'wp_google_login', 'wp_google_login_settings' );
+	public function register_network_settings_page(): void {
+		add_submenu_page(
+			'settings.php',
+			__( 'Login with Google Network Settings', 'login-with-google' ),
+			__( 'Login with Google', 'login-with-google' ),
+			'manage_network_options',
+			'login-with-google-network',
+			[ $this, 'output_network_settings' ]
+		);
+	}
+
+	/**
+	 * Outputs the network settings page HTML.
+	 */
+	public function output_network_settings(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( isset( $_GET['updated'] ) ) {
+			echo '<div id="message" class="updated notice is-dismissible"><p>' . esc_html__( 'Settings saved.', 'login-with-google' ) . '</p></div>';
+		}
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e( 'Login with Google Network Settings', 'login-with-google' ); ?></h1>
+			<form method="post" action="edit.php?action=wp_google_login_network_settings">
+				<?php
+				wp_nonce_field( 'wp_google_login_network-options' );
+				settings_fields( 'wp_google_login_network' );
+				do_settings_sections( 'login-with-google-network' );
+				submit_button();
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Registers the network settings for multisite installations.
+	 *
+	 * @return void
+	 */
+	public function register_network_settings(): void {
+		if ( ! is_multisite() || ! is_network_admin() ) {
+			return;
+		}
+
+		register_setting( 'wp_google_login_network', 'wp_google_login_network_settings' );
 
 		add_settings_section(
-			'wp_google_login_section',
-			__( 'Log in with Google Settings', 'login-with-google' ),
-			function () {
-			},
-			'login-with-google'
+			'wp_google_login_network_section',
+			__( 'Log in with Google Network Settings', 'login-with-google' ),
+			function () {},
+			'login-with-google-network'
 		);
 
 		add_settings_field(
 			'wp_google_login_client_id',
 			__( 'Client ID', 'login-with-google' ),
 			[ $this, 'client_id_field' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[ 'label_for' => 'client-id' ]
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'client-id',
+			]
 		);
 
 		add_settings_field(
 			'wp_google_login_client_secret',
 			__( 'Client Secret', 'login-with-google' ),
 			[ $this, 'client_secret_field' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[ 'label_for' => 'client-secret' ]
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'client-secret',
+			]
 		);
+
+		add_settings_field(
+			'wp_google_login_apply_globally',
+			__( 'Apply settings to all sites in the network', 'login-with-google' ),
+			[ $this, 'apply_globally_field' ],
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'apply-globally',
+			]
+		);
+
+		add_settings_field(
+			'wp_google_allow_registration',
+			__( 'Create New User', 'login-with-google' ),
+			[ $this, 'user_registration' ],
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'user-registration',
+			]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login',
+			__( 'Enable One Tap Login', 'login-with-google' ),
+			[ $this, 'one_tap_login' ],
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'one-tap-login',
+			]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login_screen',
+			__( 'One Tap Login Locations', 'login-with-google' ),
+			[ $this, 'one_tap_login_screens' ],
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'one-tap-login-screen',
+			]
+		);
+
+		add_settings_field(
+			'wp_google_whitelisted_domain',
+			__( 'Whitelisted Domains', 'login-with-google' ),
+			[ $this, 'whitelisted_domains' ],
+			'login-with-google-network',
+			'wp_google_login_network_section',
+			[
+				'context'   => 'network',
+				'label_for' => 'whitelisted-domains',
+			]
+		);
+	}
+
+	/**
+	 * Saves the network settings for multisite installations.
+	 *
+	 * @return void
+	 */
+	public function save_network_settings() {
+		if ( ! current_user_can( 'manage_network_options' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to manage network options.', 'login-with-google' ) );
+		}
+
+		check_admin_referer( 'wp_google_login_network-options' );
+
+		$defaults = [
+			'apply_globally'       => 0,
+			'one_tap_login'        => 0,
+			'registration_enabled' => 0,
+			'one_tap_login_screen' => 'login',
+			'whitelisted_domains'  => '',
+			'client_id'            => '',
+			'client_secret'        => '',
+		];
+
+		$settings = $_POST['wp_google_login_network_settings'] ?? []; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+		// Sanitize each field.
+		$sanitized_settings = [
+			'apply_globally'       => isset( $settings['apply_globally'] ) ? 1 : 0,
+			'one_tap_login'        => isset( $settings['one_tap_login'] ) ? 1 : 0,
+			'registration_enabled' => isset( $settings['registration_enabled'] ) ? 1 : 0,
+			'one_tap_login_screen' => isset( $settings['one_tap_login_screen'] ) ? sanitize_text_field( $settings['one_tap_login_screen'] ) : 'login',
+			'whitelisted_domains'  => isset( $settings['whitelisted_domains'] ) ? sanitize_text_field( $settings['whitelisted_domains'] ) : '',
+			'client_id'            => isset( $settings['client_id'] ) ? sanitize_text_field( $settings['client_id'] ) : '',
+			'client_secret'        => isset( $settings['client_secret'] ) ? sanitize_text_field( $settings['client_secret'] ) : '',
+		];
+
+		$settings = array_merge( $defaults, $sanitized_settings );
+
+		update_site_option( 'wp_google_login_network_settings', $settings );
+
+		wp_cache_delete( 'wp_google_login_network_settings', 'site-options' );
+
+		wp_safe_redirect(
+			add_query_arg(
+				[
+					'page'    => 'login-with-google-network',
+					'updated' => 'true',
+				],
+				network_admin_url( 'settings.php' ) 
+			) 
+		);
+		exit;
+	}
+
+	/**
+	 * Registers the settings for the single site installations.
+	 *
+	 * @return void
+	 */
+	public function register_settings(): void {
+		if ( is_multisite() && is_network_admin() ) {
+			return;
+		}
+
+		register_setting( 'wp_google_login', 'wp_google_login_settings' );
+
+		add_settings_section(
+			'wp_google_login_section',
+			__( 'Log in with Google Settings', 'login-with-google' ),
+			function () {},
+			'login-with-google'
+		);
+
+		if ( ! is_multisite() ) {
+			add_settings_field(
+				'wp_google_login_client_id',
+				__( 'Client ID', 'login-with-google' ),
+				[ $this, 'client_id_field' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[ 'label_for' => 'client-id' ]
+			);
+
+			add_settings_field(
+				'wp_google_login_client_secret',
+				__( 'Client Secret', 'login-with-google' ),
+				[ $this, 'client_secret_field' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[ 'label_for' => 'client-secret' ]
+			);
+		}
+
+		$apply_globally   = false;
+		$network_settings = [];
+
+		if ( is_multisite() ) {
+			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
+			$apply_globally   = ! empty( $network_settings['apply_globally'] );
+		}
 
 		add_settings_field(
 			'wp_google_allow_registration',
@@ -133,7 +365,11 @@ class Settings implements ModuleInterface {
 			[ $this, 'user_registration' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'user-registration' ]
+			[
+				'readonly'         => $apply_globally,
+				'network_settings' => $network_settings,
+				'label_for'        => 'user-registration',
+			]
 		);
 
 		add_settings_field(
@@ -142,7 +378,11 @@ class Settings implements ModuleInterface {
 			[ $this, 'one_tap_login' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login' ]
+			[
+				'readonly'         => $apply_globally,
+				'network_settings' => $network_settings,
+				'label_for'        => 'one-tap-login',
+			]
 		);
 
 		add_settings_field(
@@ -151,7 +391,11 @@ class Settings implements ModuleInterface {
 			[ $this, 'one_tap_login_screens' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'one-tap-login-screen' ]
+			[
+				'readonly'         => $apply_globally,
+				'network_settings' => $network_settings,
+				'label_for'        => 'one-tap-login-screen',
+			]
 		);
 
 		add_settings_field(
@@ -160,18 +404,30 @@ class Settings implements ModuleInterface {
 			[ $this, 'whitelisted_domains' ],
 			'login-with-google',
 			'wp_google_login_section',
-			[ 'label_for' => 'whitelisted-domains' ]
+			[
+				'readonly'         => $apply_globally,
+				'network_settings' => $network_settings,
+				'label_for'        => 'whitelisted-domains',
+			]
 		);
 	}
 
 	/**
-	 * Render client ID field.
+	 * Renders the input field for the Client ID setting.
+	 *
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function client_id_field(): void {
+	public function client_id_field( $args = [] ): void {
+		$is_network = isset( $args['context'] ) && 'network' === $args['context'];
+		$value      = $is_network
+			? ( get_site_option( 'wp_google_login_network_settings' )['client_id'] ?? '' )
+			: $this->get_client_id(); // Use the robust getter!
+		$name       = $is_network ? 'wp_google_login_network_settings[client_id]' : 'wp_google_login_settings[client_id]';
 		?>
-		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
+
+		<input type='text' name='<?php echo esc_attr( $name ); ?>' id="client-id" value='<?php echo esc_attr( $value ); ?>' autocomplete="off" />
 		<p class="description">
 			<?php
 			echo wp_kses_post(
@@ -188,27 +444,83 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Render client secret field.
+	 * Renders the input field for the Client Secret setting.
+	 *
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function client_secret_field(): void {
+	public function client_secret_field( $args = [] ): void {
+		$is_network = isset( $args['context'] ) && 'network' === $args['context'];
+		$value      = $is_network
+			? ( get_site_option( 'wp_google_login_network_settings' )['client_secret'] ?? '' )
+			: $this->get_client_secret();
+		$name       = $is_network ? 'wp_google_login_network_settings[client_secret]' : 'wp_google_login_settings[client_secret]';
 		?>
-		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<input type='password' name='<?php echo esc_attr( $name ); ?>' id="client-secret" value='<?php echo esc_attr( $value ); ?>' autocomplete="off" />
 		<?php
 	}
 
 	/**
-	 * User registration field.
+	 * Renders the input field for the "Apply Globally" setting.
 	 *
-	 * This will tell us whether or not to create the user
-	 * if the user does not exist on WP application.
-	 *
-	 * This is irrespective of registration flag present in Settings > General
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function user_registration(): void {
+	public function apply_globally_field( $args = [] ): void {
+		$network_options = get_site_option( 'wp_google_login_network_settings', [] );
+		?>
+		<input type="checkbox" name="wp_google_login_network_settings[apply_globally]" id="apply-globally" value="1" <?php checked( ! empty( $network_options['apply_globally'] ) ); ?> />
+		<?php
+		esc_html_e( 'Apply all settings to all sites in the network', 'login-with-google' );
+	}
+
+	/**
+	 * Renders the input field for the User Registration setting.
+	 *
+	 * @param array $args Additional arguments for the field.
+	 *
+	 * @return void
+	 */
+	public function user_registration( $args = [] ): void {
+		$is_network       = isset( $args['context'] ) && 'network' === $args['context'];
+		$readonly         = ! empty( $args['readonly'] );
+		$network_settings = $args['network_settings'] ?? [];
+
+		if ( $is_network ) {
+			$checked = ! empty( get_site_option( 'wp_google_login_network_settings', [] )['registration_enabled'] );
+			?>
+			<label style='display:block;margin-top:6px;'>
+				<input type='checkbox'
+					name='wp_google_login_network_settings[registration_enabled]'
+					id="user-registration" <?php checked( $checked ); ?>
+					value='1'>
+				<?php esc_html_e( 'Create a new user account if it does not exist already', 'login-with-google' ); ?>
+			</label>
+			<p class="description">
+				<?php
+				echo wp_kses_post(
+					sprintf(
+						// translators: %s is replaced with URL of membership settings page.
+						__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="%1s">membership setting</a> is off.', 'login-with-google' ),
+						'network/settings.php'
+					)
+				);
+				?>
+			</p>
+			<?php
+			return;
+		}
+
+		if ( $readonly ) {
+			$checked = ! empty( $network_settings['registration_enabled'] );
+			?>
+			<input type="checkbox" disabled <?php checked( $checked ); ?> />
+			<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
+			<?php
+			return;
+		}
 		?>
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'registration_enabled' ); ?> type='checkbox'
 															name='wp_google_login_settings[registration_enabled]'
@@ -220,7 +532,7 @@ class Settings implements ModuleInterface {
 			<?php
 			echo wp_kses_post(
 				sprintf(
-				/* translators: %1s will be replaced by page link */
+					// translators: %s is replaced with URL of membership settings page.
 					__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="%1s">membership setting</a> is off.', 'login-with-google' ),
 					is_multisite() ? 'network/settings.php' : 'options-general.php'
 				)
@@ -231,16 +543,46 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Toggle One Tap Login functionality.
+	 * Renders the input field for the One Tap Login setting.
+	 *
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function one_tap_login(): void {
+	public function one_tap_login( $args = [] ): void {
+		$is_network       = isset( $args['context'] ) && 'network' === $args['context'];
+		$readonly         = ! empty( $args['readonly'] );
+		$network_settings = $args['network_settings'] ?? [];
+
+		if ( $is_network ) {
+			$checked = ! empty( get_site_option( 'wp_google_login_network_settings', [] )['one_tap_login'] );
+			?>
+			<label style='display:block;margin-top:6px;'><input
+					type='checkbox'
+					name='wp_google_login_network_settings[one_tap_login]'
+					id="one-tap-login" <?php checked( $checked ); ?>
+					value='1'>
+				<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
+			</label>
+			<?php
+			return;
+		}
+
+		if ( $readonly ) {
+			$checked = ! empty( $network_settings['one_tap_login'] );
+			?>
+			<input type="checkbox" disabled <?php checked( $checked ); ?> />
+			<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
+			<?php
+			return;
+		}
+
+		$checked = $this->one_tap_login;
 		?>
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
 					type='checkbox'
 					name='wp_google_login_settings[one_tap_login]'
-					id="one-tap-login" <?php echo esc_attr( checked( $this->one_tap_login ) ); ?>
+					id="one-tap-login" <?php echo esc_attr( checked( $checked ) ); ?>
 					value='1'>
 			<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
 		</label>
@@ -248,73 +590,140 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * One tap login screens.
+	 * Renders the input field for the One Tap Login Screens setting.
 	 *
-	 * It can be enabled only for wp-login.php OR sitewide.
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function one_tap_login_screens(): void {
-		$default = $this->one_tap_login_screen ?? '';
+	public function one_tap_login_screens( $args = [] ): void {
+		$is_network       = isset( $args['context'] ) && 'network' === $args['context'];
+		$readonly         = ! empty( $args['readonly'] );
+		$network_settings = $args['network_settings'] ?? [];
+
+		// Readonly disables radios and adds notice.
+		if ( $readonly ) {
+			$one_tap_enabled = ! empty( $network_settings['one_tap_login'] );
+			$value           = $network_settings['one_tap_login_screen'] ?? '';
+			if ( $one_tap_enabled ) {
+				?>
+				<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
+					<input type='radio' disabled id="one-tap-login-screen" <?php checked( $value, 'login' ); ?> />
+					<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
+				</label>
+				<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
+					<input type='radio' disabled id="one-tap-login-screen-sitewide" <?php checked( $value, 'sitewide' ); ?> />
+					<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
+				</label>
+				<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
+				<?php
+			} else {
+				// Output a hidden input just for JS to find the <tr> to facilitate the hiding of the fields.
+				?>
+				<input type="hidden" id="one-tap-login-screen" />
+				<?php
+			}
+			?>
+			<script type="text/javascript">
+				(function($){
+					$(document).ready(function(){
+						var oneTapEnabled = <?php echo $one_tap_enabled ? 'true' : 'false'; ?>;
+						if(!oneTapEnabled) {
+							$("#one-tap-login-screen").parents("tr").hide();
+						}
+					});
+				})(jQuery);
+			</script>
+			<?php
+			return;
+		}
+		if ( $is_network ) {
+			$settings        = get_site_option( 'wp_google_login_network_settings', [] );
+			$one_tap_enabled = ! empty( $settings['one_tap_login'] );
+			$value           = $settings['one_tap_login_screen'] ?? '';
+			$name            = 'wp_google_login_network_settings[one_tap_login_screen]';
+		} else {
+			$one_tap_enabled = $this->one_tap_login;
+			$value           = $this->one_tap_login_screen ?? '';
+			$name            = 'wp_google_login_settings[one_tap_login_screen]';
+		}
 		?>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-					type='radio'
-					name='wp_google_login_settings[one_tap_login_screen]'
-					id="one-tap-login-screen-login" <?php echo esc_attr( checked( $this->one_tap_login_screen, $default ) ); ?>
-					value='login'>
+		<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
+			<input <?php $this->disabled( 'one_tap_login' ); ?>
+				type='radio'
+				name='<?php echo esc_attr( $name ); ?>'
+				id="one-tap-login-screen"
+				<?php checked( $value, 'login' ); ?>
+				value='login'>
 			<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
 		</label>
-		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'one_tap_login' ); ?>
-					type='radio'
-					name='wp_google_login_settings[one_tap_login_screen]'
-					id="one-tap-login-screen-sitewide" <?php echo esc_attr( checked( $this->one_tap_login_screen, 'sitewide' ) ); ?>
-					value='sitewide'>
+		<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
+			<input <?php $this->disabled( 'one_tap_login' ); ?>
+				type='radio'
+				name='<?php echo esc_attr( $name ); ?>'
+				id="one-tap-login-screen-sitewide"
+				<?php checked( $value, 'sitewide' ); ?>
+				value='sitewide'>
 			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
 		</label>
+		<script type="text/javascript">
+			jQuery(document).ready(function () {
+				var toggle = function () {
+					var enabled = jQuery("#one-tap-login").is(":checked");
+					var tr_elem = jQuery("#one-tap-login-screen").parents("tr");
+					if (enabled) {
+						tr_elem.show();
+					} else {
+						tr_elem.hide();
+					}
+				};
+				jQuery("#one-tap-login").on('change', toggle);
+				toggle();
+			});
+		</script>
 		<?php
-		// phpcs:disable
-		?>
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                var toggle = function () {
-                    var enabled = jQuery("#one-tap-login").is(":checked");
-                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
-                    if (enabled) {
-                        tr_elem.show();
-                        return;
-                    }
-
-                    tr_elem.hide();
-                };
-                jQuery("#one-tap-login").on('change', toggle);
-                toggle();
-            });
-        </script>
-		<?php
-		// phpcs:enable
 	}
 
 	/**
-	 * Whitelisted domains for registration.
+	 * Renders the input field for the Whitelisted Domains setting.
 	 *
-	 * Only emails belonging to these domains would be preferred
-	 * for registration.
-	 *
-	 * If left blank, all domains would be allowed.
+	 * @param array $args Additional arguments for the field.
 	 *
 	 * @return void
 	 */
-	public function whitelisted_domains(): void {
+	public function whitelisted_domains( $args = [] ): void {
+		$is_network       = isset( $args['context'] ) && 'network' === $args['context'];
+		$readonly         = ! empty( $args['readonly'] );
+		$network_settings = $args['network_settings'] ?? [];
+		$value            = $is_network
+			? ( get_site_option( 'wp_google_login_network_settings', [] )['whitelisted_domains'] ?? '' )
+			: ( $readonly ? ( $network_settings['whitelisted_domains'] ?? '' ) : $this->whitelisted_domains );
+		$name             = $is_network ? 'wp_google_login_network_settings[whitelisted_domains]' : 'wp_google_login_settings[whitelisted_domains]';
+
+		if ( $readonly ) {
+			?>
+			<input type='text' disabled value='<?php echo esc_attr( $value ); ?>' autocomplete="off" />
+			<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
+			<p class="description">
+				<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
+			</p>
+			<?php
+			return;
+		}
 		?>
-		<input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+		<input type='text'
+			name='<?php echo esc_attr( $name ); ?>'
+			id="whitelisted-domains"
+			value='<?php echo esc_attr( $value ); ?>'
+			autocomplete="off" />
 		<p class="description">
-			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
+			<?php esc_html_e( 'Add each domain comma separated', 'login-with-google' ); ?>
 		</p>
 		<?php
 	}
 
 	/**
-	 * Add settings sub-menu page in admin menu.
+	 * Adds the settings page to the WordPress admin menu.
 	 *
 	 * @return void
 	 */
@@ -329,29 +738,28 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Output the plugin settings.
+	 * Outputs the settings page HTML.
 	 *
 	 * @return void
 	 */
 	public function output(): void {
 		?>
 		<div class="wrap">
-		<form action='options.php' method='post'>
-			<?php
-			settings_fields( 'wp_google_login' );
-			do_settings_sections( 'login-with-google' );
-			submit_button();
-			?>
-		</form>
+			<form action='options.php' method='post'>
+				<?php
+				settings_fields( 'wp_google_login' );
+				do_settings_sections( 'login-with-google' );
+				submit_button();
+				?>
+			</form>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Outputs the disabled attribute if field needs to
-	 * be disabled.
+	 * Outputs 'disabled' attribute if the setting is defined as a constant.
 	 *
-	 * @param string $id Input ID.
+	 * @param string $id The setting identifier.
 	 *
 	 * @return void
 	 */
