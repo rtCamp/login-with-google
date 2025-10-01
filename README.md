@@ -47,6 +47,7 @@ passwords. Just one click and land into the site!
 
 3. Once you create the app, you will receive the `Client ID` and `Client Secret`, add these credentials
 in `Settings > Login with Google` settings page in their respective fields.
+   -  If you have a multisite setup, navigate to `Network Settings` for the site and place the credentials over there as they are globally applied. For the remaining settings mentioned below, you can choose for the subsites to have their individual configurations or have a standard configuration be applied globally to all subsites.
 
 4. `Create new user` enables new user registration irrespective of `Membership` settings in
    `Settings > General`; as sometimes enabling user registration can lead to lots of spam users.

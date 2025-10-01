@@ -274,6 +274,7 @@ class Settings implements ModuleInterface {
 		];
 
 		$settings = $_POST['wp_google_login_network_settings'] ?? []; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		// Sanitizing the settings array below.
 
 		// Sanitize each field.
 		$sanitized_settings = [
@@ -317,7 +318,6 @@ class Settings implements ModuleInterface {
 				// Network admin gets network settings, handled elsewhere.
 				return;
 			}
-			// Subsites do not register client_id/client_secret fields.
 		} else {
 			register_setting( 'wp_google_login', 'wp_google_login_settings' );
 
