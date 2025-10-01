@@ -54,7 +54,6 @@ class Settings implements ModuleInterface {
 			$constant_name = array_search( $name, $this->getters, true );
 			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
 		}
-
 		return null;
 	}
 
@@ -64,7 +63,8 @@ class Settings implements ModuleInterface {
 	 * @return string
 	 */
 	public function name(): string {
-		return 'settings'; }
+		return 'settings';
+	}
 
 	/**
 	 * Initializes the settings module.
@@ -83,36 +83,28 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
-	 * Retrieves the Google OAuth Client ID, respecting multisite/global settings.
+	 * Retrieves the Google OAuth Client ID, always from the network settings in multisite.
 	 *
 	 * @return string
 	 */
 	public function get_client_id() {
 		if ( is_multisite() ) {
 			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
-
-			if ( ! empty( $network_settings['apply_globally'] ) && ! empty( $network_settings['client_id'] ) ) {
-				return $network_settings['client_id'];
-			}
+			return $network_settings['client_id'] ?? '';
 		}
-
 		return $this->client_id;
 	}
 
 	/**
-	 * Retrieves the Google OAuth Client Secret, respecting multisite/global settings.
+	 * Retrieves the Google OAuth Client Secret, always from the network settings in multisite.
 	 *
 	 * @return string
 	 */
 	public function get_client_secret() {
 		if ( is_multisite() ) {
 			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
-
-			if ( ! empty( $network_settings['apply_globally'] ) && ! empty( $network_settings['client_secret'] ) ) {
-				return $network_settings['client_secret'];
-			}
+			return $network_settings['client_secret'] ?? '';
 		}
-
 		return $this->client_secret;
 	}
 
@@ -318,20 +310,24 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		if ( is_multisite() && is_network_admin() ) {
-			return;
-		}
+		// Do not register client_id/client_secret fields on subsites in multisite mode.
+		if ( is_multisite() ) {
+			// Only allow registration in network admin.
+			if ( is_network_admin() ) {
+				// Network admin gets network settings, handled elsewhere.
+				return;
+			}
+			// Subsites do not register client_id/client_secret fields.
+		} else {
+			register_setting( 'wp_google_login', 'wp_google_login_settings' );
 
-		register_setting( 'wp_google_login', 'wp_google_login_settings' );
+			add_settings_section(
+				'wp_google_login_section',
+				__( 'Log in with Google Settings', 'login-with-google' ),
+				function () {},
+				'login-with-google'
+			);
 
-		add_settings_section(
-			'wp_google_login_section',
-			__( 'Log in with Google Settings', 'login-with-google' ),
-			function () {},
-			'login-with-google'
-		);
-
-		if ( ! is_multisite() ) {
 			add_settings_field(
 				'wp_google_login_client_id',
 				__( 'Client ID', 'login-with-google' ),
@@ -349,67 +345,51 @@ class Settings implements ModuleInterface {
 				'wp_google_login_section',
 				[ 'label_for' => 'client-secret' ]
 			);
+
+			add_settings_field(
+				'wp_google_allow_registration',
+				__( 'Create New User', 'login-with-google' ),
+				[ $this, 'user_registration' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[
+					'label_for' => 'user-registration',
+				]
+			);
+
+			add_settings_field(
+				'wp_google_one_tap_login',
+				__( 'Enable One Tap Login', 'login-with-google' ),
+				[ $this, 'one_tap_login' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[
+					'label_for' => 'one-tap-login',
+				]
+			);
+
+			add_settings_field(
+				'wp_google_one_tap_login_screen',
+				__( 'One Tap Login Locations', 'login-with-google' ),
+				[ $this, 'one_tap_login_screens' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[
+					'label_for' => 'one-tap-login-screen',
+				]
+			);
+
+			add_settings_field(
+				'wp_google_whitelisted_domain',
+				__( 'Whitelisted Domains', 'login-with-google' ),
+				[ $this, 'whitelisted_domains' ],
+				'login-with-google',
+				'wp_google_login_section',
+				[
+					'label_for' => 'whitelisted-domains',
+				]
+			);
 		}
-
-		$apply_globally   = false;
-		$network_settings = [];
-
-		if ( is_multisite() ) {
-			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
-			$apply_globally   = ! empty( $network_settings['apply_globally'] );
-		}
-
-		add_settings_field(
-			'wp_google_allow_registration',
-			__( 'Create New User', 'login-with-google' ),
-			[ $this, 'user_registration' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[
-				'readonly'         => $apply_globally,
-				'network_settings' => $network_settings,
-				'label_for'        => 'user-registration',
-			]
-		);
-
-		add_settings_field(
-			'wp_google_one_tap_login',
-			__( 'Enable One Tap Login', 'login-with-google' ),
-			[ $this, 'one_tap_login' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[
-				'readonly'         => $apply_globally,
-				'network_settings' => $network_settings,
-				'label_for'        => 'one-tap-login',
-			]
-		);
-
-		add_settings_field(
-			'wp_google_one_tap_login_screen',
-			__( 'One Tap Login Locations', 'login-with-google' ),
-			[ $this, 'one_tap_login_screens' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[
-				'readonly'         => $apply_globally,
-				'network_settings' => $network_settings,
-				'label_for'        => 'one-tap-login-screen',
-			]
-		);
-
-		add_settings_field(
-			'wp_google_whitelisted_domain',
-			__( 'Whitelisted Domains', 'login-with-google' ),
-			[ $this, 'whitelisted_domains' ],
-			'login-with-google',
-			'wp_google_login_section',
-			[
-				'readonly'         => $apply_globally,
-				'network_settings' => $network_settings,
-				'label_for'        => 'whitelisted-domains',
-			]
-		);
 	}
 
 	/**
