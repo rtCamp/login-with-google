@@ -452,8 +452,31 @@ class Settings implements ModuleInterface {
 		$network_options = get_site_option( 'wp_google_login_network_settings', [] );
 		?>
 		<input type="checkbox" name="wp_google_login_network_settings[apply_globally]" id="apply-globally" value="1" <?php checked( ! empty( $network_options['apply_globally'] ) ); ?> />
+		<?php esc_html_e( 'Apply all settings to all sites in the network', 'login-with-google' ); ?>
+		<script type="text/javascript">
+			jQuery(document).ready(function($){
+				function toggleGlobalRows() {
+					var applyGloballyEnabled = $("#apply-globally").is(":checked");
+					var selectors = [
+						"#one-tap-login",
+						"#one-tap-login-screen",
+						"#user-registration",
+						"#whitelisted-domains"
+					];
+					selectors.forEach(function(sel){
+						var $row = $(sel).closest("tr");
+						if(applyGloballyEnabled) {
+							$row.show();
+						} else {
+							$row.hide();
+						}
+					});
+				}
+				$("#apply-globally").on('change', toggleGlobalRows);
+				toggleGlobalRows();
+			});
+		</script>
 		<?php
-		esc_html_e( 'Apply all settings to all sites in the network', 'login-with-google' );
 	}
 
 	/**
