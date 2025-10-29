@@ -118,7 +118,7 @@ class OneTapLogin implements Module {
 	 * @return void
 	 */
 	public function maybe_add_one_tap_to_frontend(): void {
-		 $show_on_this_page = apply_filters(
+		$show_on_this_page = apply_filters(
 			'rtcamp.google_one_tap_show',
 			( 'sitewide' === $this->settings->one_tap_login_screen )
 		);
