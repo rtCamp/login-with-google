@@ -113,6 +113,8 @@ class OneTapLogin implements Module {
 	/**
 	 * Maybe add one-tap to frontend based on settings.
 	 *
+	 * Use this filter as per requirement to show or hide one-tap on specific pages, the filter passes a boolean value.
+	 *
 	 * @return void
 	 */
 	public function maybe_add_one_tap_to_frontend(): void {
