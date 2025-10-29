@@ -94,6 +94,10 @@ class OneTapLogin implements Module {
 				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
 			}
+
+			// Defer the custom one-tap page addition to 'wp' action to ensure all conditionals work.
+			add_action( 'wp', [ $this, 'maybe_add_one_tap_to_frontend' ] );
+
 			add_action( 'login_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 			add_action( 'login_footer', [ $this, 'one_tap_prompt' ] );
 			add_action( 'wp_ajax_nopriv_validate_id_token', [ $this, 'validate_token' ] );
@@ -104,6 +108,23 @@ class OneTapLogin implements Module {
 		 * Filters.
 		 */
 		// Add filters here.
+	}
+
+	/**
+	 * Maybe add one-tap to frontend based on settings.
+	 *
+	 * @return void
+	 */
+	public function maybe_add_one_tap_to_frontend(): void {
+		 $show_on_this_page = apply_filters(
+			'rtcamp.google_one_tap_show',
+			( 'sitewide' === $this->settings->one_tap_login_screen )
+		);
+
+		if ( $show_on_this_page ) {
+			add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
+			add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
+		}
 	}
 
 	/**
