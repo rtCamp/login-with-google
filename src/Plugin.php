@@ -26,7 +26,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version = '1.4.0';
+	public $version = '1.4.2';
 
 	/**
 	 * Plugin directory path.
