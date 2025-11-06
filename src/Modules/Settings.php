@@ -311,23 +311,22 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		// Do not register client_id/client_secret fields on subsites in multisite mode.
-		if ( is_multisite() ) {
-			// Only allow registration in network admin.
-			if ( is_network_admin() ) {
-				// Network admin gets network settings, handled elsewhere.
-				return;
-			}
-		} else {
-			register_setting( 'wp_google_login', 'wp_google_login_settings' );
+		// Only allow registration in network admin for network settings.
+		if ( is_multisite() && is_network_admin() ) {
+			return;
+		}
 
-			add_settings_section(
-				'wp_google_login_section',
-				__( 'Log in with Google Settings', 'login-with-google' ),
-				function () {},
-				'login-with-google'
-			);
+		register_setting( 'wp_google_login', 'wp_google_login_settings' );
 
+		add_settings_section(
+			'wp_google_login_section',
+			__( 'Log in with Google Settings', 'login-with-google' ),
+			function () {},
+			'login-with-google'
+		);
+
+		// Only show client_id/client_secret on single site installs.
+		if ( ! is_multisite() ) {
 			add_settings_field(
 				'wp_google_login_client_id',
 				__( 'Client ID', 'login-with-google' ),
@@ -345,51 +344,67 @@ class Settings implements ModuleInterface {
 				'wp_google_login_section',
 				[ 'label_for' => 'client-secret' ]
 			);
-
-			add_settings_field(
-				'wp_google_allow_registration',
-				__( 'Create New User', 'login-with-google' ),
-				[ $this, 'user_registration' ],
-				'login-with-google',
-				'wp_google_login_section',
-				[
-					'label_for' => 'user-registration',
-				]
-			);
-
-			add_settings_field(
-				'wp_google_one_tap_login',
-				__( 'Enable One Tap Login', 'login-with-google' ),
-				[ $this, 'one_tap_login' ],
-				'login-with-google',
-				'wp_google_login_section',
-				[
-					'label_for' => 'one-tap-login',
-				]
-			);
-
-			add_settings_field(
-				'wp_google_one_tap_login_screen',
-				__( 'One Tap Login Locations', 'login-with-google' ),
-				[ $this, 'one_tap_login_screens' ],
-				'login-with-google',
-				'wp_google_login_section',
-				[
-					'label_for' => 'one-tap-login-screen',
-				]
-			);
-
-			add_settings_field(
-				'wp_google_whitelisted_domain',
-				__( 'Whitelisted Domains', 'login-with-google' ),
-				[ $this, 'whitelisted_domains' ],
-				'login-with-google',
-				'wp_google_login_section',
-				[
-					'label_for' => 'whitelisted-domains',
-				]
-			);
 		}
+
+		// For multisite subsites, check if apply_globally is enabled.
+		$readonly         = false;
+		$network_settings = [];
+		if ( is_multisite() && ! is_network_admin() ) {
+			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
+			$readonly         = ! empty( $network_settings['apply_globally'] );
+		}
+
+		add_settings_field(
+			'wp_google_allow_registration',
+			__( 'Create New User', 'login-with-google' ),
+			[ $this, 'user_registration' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[
+				'label_for'        => 'user-registration',
+				'readonly'         => $readonly,
+				'network_settings' => $network_settings,
+			]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login',
+			__( 'Enable One Tap Login', 'login-with-google' ),
+			[ $this, 'one_tap_login' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[
+				'label_for'        => 'one-tap-login',
+				'readonly'         => $readonly,
+				'network_settings' => $network_settings,
+			]
+		);
+
+		add_settings_field(
+			'wp_google_one_tap_login_screen',
+			__( 'One Tap Login Locations', 'login-with-google' ),
+			[ $this, 'one_tap_login_screens' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[
+				'label_for'        => 'one-tap-login-screen',
+				'readonly'         => $readonly,
+				'network_settings' => $network_settings,
+			]
+		);
+
+		add_settings_field(
+			'wp_google_whitelisted_domain',
+			__( 'Whitelisted Domains', 'login-with-google' ),
+			[ $this, 'whitelisted_domains' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[
+				'label_for'        => 'whitelisted-domains',
+				'readonly'         => $readonly,
+				'network_settings' => $network_settings,
+			]
+		);
 	}
 
 	/**
@@ -604,84 +619,67 @@ class Settings implements ModuleInterface {
 		$readonly         = ! empty( $args['readonly'] );
 		$network_settings = $args['network_settings'] ?? [];
 
-		// Readonly disables radios and adds notice.
-		if ( $readonly ) {
-			$one_tap_enabled = ! empty( $network_settings['one_tap_login'] );
-			$value           = $network_settings['one_tap_login_screen'] ?? '';
-			if ( $one_tap_enabled ) {
-				?>
-				<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
-					<input type='radio' disabled id="one-tap-login-screen" <?php checked( $value, 'login' ); ?> />
-					<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
-				</label>
-				<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
-					<input type='radio' disabled id="one-tap-login-screen-sitewide" <?php checked( $value, 'sitewide' ); ?> />
-					<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
-				</label>
-				<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
-				<?php
-			} else {
-				// Output a hidden input just for JS to find the <tr> to facilitate the hiding of the fields.
-				?>
-				<input type="hidden" id="one-tap-login-screen" />
-				<?php
-			}
-			?>
-			<script type="text/javascript">
-				(function($){
-					$(document).ready(function(){
-						var oneTapEnabled = <?php echo $one_tap_enabled ? 'true' : 'false'; ?>;
-						if(!oneTapEnabled) {
-							$("#one-tap-login-screen").parents("tr").hide();
-						}
-					});
-				})(jQuery);
-			</script>
-			<?php
-			return;
-		}
 		if ( $is_network ) {
-			$settings        = get_site_option( 'wp_google_login_network_settings', [] );
-			$one_tap_enabled = ! empty( $settings['one_tap_login'] );
-			$value           = $settings['one_tap_login_screen'] ?? '';
-			$name            = 'wp_google_login_network_settings[one_tap_login_screen]';
+			$settings = get_site_option( 'wp_google_login_network_settings', [] );
+			$value    = $settings['one_tap_login_screen'] ?? '';
+			$name     = 'wp_google_login_network_settings[one_tap_login_screen]';
 		} else {
-			$one_tap_enabled = $this->one_tap_login;
-			$value           = $this->one_tap_login_screen ?? '';
-			$name            = 'wp_google_login_settings[one_tap_login_screen]';
+			$value = $this->one_tap_login_screen ?? '';
+			$name  = 'wp_google_login_settings[one_tap_login_screen]';
 		}
+
 		?>
-		<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
-			<input <?php $this->disabled( 'one_tap_login' ); ?>
-				type='radio'
-				name='<?php echo esc_attr( $name ); ?>'
-				id="one-tap-login-screen"
-				<?php checked( $value, 'login' ); ?>
-				value='login'>
-			<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
-		</label>
-		<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
-			<input <?php $this->disabled( 'one_tap_login' ); ?>
-				type='radio'
-				name='<?php echo esc_attr( $name ); ?>'
-				id="one-tap-login-screen-sitewide"
-				<?php checked( $value, 'sitewide' ); ?>
-				value='sitewide'>
-			<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
-		</label>
+		<div id="one-tap-login-locations-container"
+		<?php
+		if ( $readonly ) {
+			echo ' style="pointer-events:none;opacity:0.7;"';}
+		?>
+		>
+			<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
+				<input type='radio'
+					name='<?php echo esc_attr( $name ); ?>'
+					id="one-tap-login-screen"
+					<?php checked( $value, 'login' ); ?>
+					value='login'
+					<?php
+					if ( $readonly ) {
+						echo 'disabled';}
+					?>
+					>
+				<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
+			</label>
+			<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
+				<input type='radio'
+					name='<?php echo esc_attr( $name ); ?>'
+					id="one-tap-login-screen-sitewide"
+					<?php checked( $value, 'sitewide' ); ?>
+					value='sitewide'
+					<?php
+					if ( $readonly ) {
+						echo 'disabled';}
+					?>
+					>
+				<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
+			</label>
+			<?php if ( $readonly ) : ?>
+				<span><?php esc_html_e( 'Managed globally by network admin.', 'login-with-google' ); ?></span>
+			<?php endif; ?>
+		</div>
 		<script type="text/javascript">
-			jQuery(document).ready(function () {
-				var toggle = function () {
-					var enabled = jQuery("#one-tap-login").is(":checked");
-					var tr_elem = jQuery("#one-tap-login-screen").parents("tr");
-					if (enabled) {
-						tr_elem.show();
+			jQuery(document).ready(function ($) {
+				function toggleOneTapLocationsRow() {
+					var $container = $("#one-tap-login-locations-container");
+					var applyGlobally = $("#apply-globally").length ? $("#apply-globally").is(":checked") : true;
+					var oneTapEnabled = $("#one-tap-login").is(":checked");
+
+					if ((applyGlobally && oneTapEnabled) || $container.css('pointer-events') === 'none') {
+						$container.show();
 					} else {
-						tr_elem.hide();
+						$container.hide();
 					}
-				};
-				jQuery("#one-tap-login").on('change', toggle);
-				toggle();
+				}
+				$("#apply-globally, #one-tap-login").on('change', toggleOneTapLocationsRow);
+				toggleOneTapLocationsRow();
 			});
 		</script>
 		<?php
