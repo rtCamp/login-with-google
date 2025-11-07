@@ -87,7 +87,7 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return string
 	 */
-	public function get_client_id() {
+	public function get_client_id(): string {
 		if ( is_multisite() ) {
 			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
 			return $network_settings['client_id'] ?? '';
@@ -100,7 +100,7 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return string
 	 */
-	public function get_client_secret() {
+	public function get_client_secret(): string {
 		if ( is_multisite() ) {
 			$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
 			return $network_settings['client_secret'] ?? '';
@@ -126,6 +126,8 @@ class Settings implements ModuleInterface {
 
 	/**
 	 * Outputs the network settings page HTML.
+	 *
+	 * @return void
 	 */
 	public function output_network_settings(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -256,7 +258,7 @@ class Settings implements ModuleInterface {
 	 *
 	 * @return void
 	 */
-	public function save_network_settings() {
+	public function save_network_settings(): void {
 		if ( ! current_user_can( 'manage_network_options' ) ) {
 			wp_die( esc_html__( 'Sorry, you are not allowed to manage network options.', 'login-with-google' ) );
 		}
@@ -632,7 +634,8 @@ class Settings implements ModuleInterface {
 		<div id="one-tap-login-locations-container"
 		<?php
 		if ( $readonly ) {
-			echo ' style="pointer-events:none;opacity:0.7;"';}
+			echo ' style="pointer-events:none;opacity:0.7;"';
+		}
 		?>
 		>
 			<label for="one-tap-login-screen" style='display:block;margin-top:6px;'>
@@ -643,7 +646,8 @@ class Settings implements ModuleInterface {
 					value='login'
 					<?php
 					if ( $readonly ) {
-						echo 'disabled';}
+						echo 'disabled';
+					}
 					?>
 					>
 				<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
@@ -656,7 +660,8 @@ class Settings implements ModuleInterface {
 					value='sitewide'
 					<?php
 					if ( $readonly ) {
-						echo 'disabled';}
+						echo 'disabled';
+					}
 					?>
 					>
 				<?php esc_html_e( 'Enable One Tap Login Site-wide', 'login-with-google' ); ?>
