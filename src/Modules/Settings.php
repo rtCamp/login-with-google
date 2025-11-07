@@ -668,14 +668,14 @@ class Settings implements ModuleInterface {
 		<script type="text/javascript">
 			jQuery(document).ready(function ($) {
 				function toggleOneTapLocationsRow() {
-					var $container = $("#one-tap-login-locations-container");
+					// Find the parent <tr> of the container and hide/show it
+					var $row = $("#one-tap-login-locations-container").closest("tr");
 					var applyGlobally = $("#apply-globally").length ? $("#apply-globally").is(":checked") : true;
 					var oneTapEnabled = $("#one-tap-login").is(":checked");
-
-					if ((applyGlobally && oneTapEnabled) || $container.css('pointer-events') === 'none') {
-						$container.show();
+					if ((applyGlobally && oneTapEnabled) || $("#one-tap-login-locations-container").css('pointer-events') === 'none') {
+						$row.show();
 					} else {
-						$container.hide();
+						$row.hide();
 					}
 				}
 				$("#apply-globally, #one-tap-login").on('change', toggleOneTapLocationsRow);
