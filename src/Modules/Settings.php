@@ -99,7 +99,14 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		register_setting( 'wp_google_login', 'wp_google_login_settings' );
+		register_setting(
+			'wp_google_login',
+			'wp_google_login_settings',
+			[
+				'sanitize_callback' => [ $this, 'validate_settings' ],
+				'default'           => [],
+			] 
+		);
 
 		add_settings_section(
 			'wp_google_login_section',
@@ -171,7 +178,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function client_id_field(): void {
 		?>
-		<input type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
+		<input class="regular-text" required type='text' name='wp_google_login_settings[client_id]' id="client-id" value='<?php echo esc_attr( $this->client_id ); ?>' autocomplete="off" <?php $this->disabled( 'client_id' ); ?> />
 		<p class="description">
 			<?php
 			echo wp_kses_post(
@@ -194,7 +201,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function client_secret_field(): void {
 		?>
-		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<input class="regular-text " required type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
 		<?php
 	}
 
@@ -274,22 +281,22 @@ class Settings implements ModuleInterface {
 		<?php
 		// phpcs:disable
 		?>
-        <script type="text/javascript">
-            jQuery(document).ready(function () {
-                var toggle = function () {
-                    var enabled = jQuery("#one-tap-login").is(":checked");
-                    var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
-                    if (enabled) {
-                        tr_elem.show();
-                        return;
-                    }
+		<script type="text/javascript">
+			jQuery(document).ready(function () {
+				var toggle = function () {
+					var enabled = jQuery("#one-tap-login").is(":checked");
+					var tr_elem = jQuery("#one-tap-login-screen-login").parents("tr");
+					if (enabled) {
+						tr_elem.show();
+						return;
+					}
 
-                    tr_elem.hide();
-                };
-                jQuery("#one-tap-login").on('change', toggle);
-                toggle();
-            });
-        </script>
+					tr_elem.hide();
+				};
+				jQuery("#one-tap-login").on('change', toggle);
+				toggle();
+			});
+		</script>
 		<?php
 		// phpcs:enable
 	}
@@ -306,7 +313,7 @@ class Settings implements ModuleInterface {
 	 */
 	public function whitelisted_domains(): void {
 		?>
-		<input <?php $this->disabled( 'whitelisted_domains' ); ?> type='text' name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off" />
+		<textarea class="regular-text" <?php $this->disabled( 'whitelisted_domains' ); ?> name='wp_google_login_settings[whitelisted_domains]' id="whitelisted-domains" value='<?php echo esc_attr( $this->whitelisted_domains ); ?>' autocomplete="off"> </textarea>
 		<p class="description">
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
 		</p>
@@ -367,5 +374,57 @@ class Settings implements ModuleInterface {
 				echo esc_attr( 'disabled="disabled"' );
 			}
 		}
+	}
+
+	/**
+	 * Validate settings before saving.
+	 * @param array $input Input settings.
+	 * @return array Validated settings.
+	 * 
+	 * @since Next release
+	 */
+	public function validate_settings( array $input ) : array {
+		$new_input = [];
+		$is_valid = true;
+
+		// Client ID Validation (Required Field) 
+		$client_id = sanitize_text_field( $input['client_id'] ?? '' );
+		if( empty( $client_id ) ) {
+			// Add error notice if saving with an emtpty ID
+			add_settings_error(
+				'wp_google_login_settings',
+				'client_id_required',
+				__( 'Client ID is required for the "Login with Google" plugin to function.', 'login-with-google' ),
+				'error'
+			);
+			$is_valid = false;
+		}
+		$new_input['client_id'] = $client_id;
+
+		// Client Secret Validation (Required Field)
+		$client_secret = sanitize_text_field( $input['client_secret'] ?? '' );
+		if ( empty( $client_secret ) ) {
+			add_settings_error(
+				'wp_google_login_settings',
+				'client_secret_required',
+				__( 'Client Secret is required for the "Login with Google" plugin to function.', 'login-with-google' ),
+				'error'
+			);
+			$is_valid = false;
+		}
+		$new_input['client_secret'] = $client_secret;
+
+		// Sanitize other fields
+		$new_input['whitelisted_domains'] = sanitize_textarea_field( $input['whitelisted_domains'] ?? '' );
+		$new_input['registration_enabled'] = ( isset( $input['registration_enabled'] ) && '1' === $input['registration_enabled'] ) ? '1' : '';
+		$new_input['one_tap_login'] = ( isset( $input['one_tap_login'] ) && '1' === $input['one_tap_login'] ) ? '1' : '';
+		$new_input['one_tap_login_screen'] = in_array( $input['one_tap_login_screen'] ?? '', [ 'login', 'sitewide' ], true ) ? $input['one_tap_login_screen'] : 'login';
+
+		// If validation failed, return the old options to prevent the empty fields from saving
+		if( ! $is_valid ) {
+			return $this->options;
+		}
+
+		return $new_input;
 	}
 }
