@@ -56,7 +56,7 @@ class Settings implements ModuleInterface {
 				return constant( $constant_name );
 			}
 
-			// --- Multisite: If apply_globally is enabled, use network settings ---
+			// Multisite: If apply_globally is enabled, use network settings.
 			if ( is_multisite() ) {
 				$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
 				if ( ! empty( $network_settings['apply_globally'] ) && array_key_exists( $name, $network_settings ) ) {
