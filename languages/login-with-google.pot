@@ -9,17 +9,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-08-19T16:58:53+00:00\n"
+"POT-Creation-Date: 2025-11-19T12:13:17+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.10.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: login-with-google\n"
 
 #. Plugin Name of the plugin
 #: login-with-google.php
-#: src/Modules/Settings.php:324
-#: templates/google-login-button.php:14
-#: assets/build/blocks/login-button/index.js:1
-#: assets/src/blocks/login-button/edit.js:48
+#: assets/build/blocks/login-button/index.js:86
+#: assets/build/blocks/login-button/index.js:48
 msgid "Login with Google"
 msgstr ""
 
@@ -48,7 +46,13 @@ msgstr ""
 
 #. translators: %$s is replaced with requested service name.
 #: src/Container.php:66
+#, php-format
 msgid "Invalid Service %s Passed to the container"
+msgstr ""
+
+#: src/Modules/Block.php:176
+msgctxt "Login button text displayed in block."
+msgid "Login with Google"
 msgstr ""
 
 #: src/Modules/Login.php:166
@@ -101,6 +105,7 @@ msgstr ""
 
 #. translators: %1s will be replaced by page link
 #: src/Modules/Settings.php:224
+#, php-format
 msgid "If this setting is checked, a new user will be created even if <a target=\"_blank\" href=\"%1s\">membership setting</a> is off."
 msgstr ""
 
@@ -124,13 +129,19 @@ msgstr ""
 msgid "Login with Google settings"
 msgstr ""
 
+#: src/Modules/Settings.php:324
+msgctxt "Menu title"
+msgid "Login with Google"
+msgstr ""
+
 #: src/Modules/Shortcode.php:101
-msgid "Login with google"
+msgctxt "Login button text displayed in shortcode."
+msgid "Login with Google"
 msgstr ""
 
 #: src/Plugin.php:160
-#: assets/build/blocks/login-button/index.js:1
-#: assets/src/blocks/login-button/edit.js:67
+#: assets/build/blocks/login-button/index.js:103
+#: assets/build/blocks/login-button/index.js:67
 msgid "Settings"
 msgstr ""
 
@@ -144,6 +155,7 @@ msgstr ""
 
 #. translators: %s is replaced with email ID of user trying to register
 #: src/Utils/Authenticator.php:124
+#, php-format
 msgid "Cannot register with this email: %s"
 msgstr ""
 
@@ -185,33 +197,35 @@ msgstr ""
 msgid "User data is stale! Please try again."
 msgstr ""
 
+#: templates/google-login-button.php:14
+msgctxt "Login button text displayed in login page."
+msgid "Login with Google"
+msgstr ""
+
 #: templates/google-login-button.php:24
 msgid "Log out"
 msgstr ""
 
-#: assets/build/blocks/login-button/index.js:1
-#: assets/src/blocks/login-button/edit.js:52
+#: assets/build/blocks/login-button/index.js:89
+#: assets/build/blocks/login-button/index.js:52
 msgid "Display Logout"
 msgstr ""
 
-#: assets/build/blocks/login-button/index.js:1
-#: assets/src/blocks/login-button/edit.js:53
+#: assets/build/blocks/login-button/index.js:90
+#: assets/build/blocks/login-button/index.js:53
 msgid "If the user is logged in, keeping this box unchecked will remove the Login with Google button from the page. If the box is checked, the button will show with title changed to ‘Logout’"
 msgstr ""
 
 #: assets/build/js/onetap.js:22
-#: assets/src/js/onetap.js:22
 msgid "Invalid URL for Redirection"
 msgstr ""
 
 #: assets/build/blocks/login-button/block.json
-#: assets/src/blocks/login-button/block.json
 msgctxt "block title"
 msgid "Log in with Google"
 msgstr ""
 
 #: assets/build/blocks/login-button/block.json
-#: assets/src/blocks/login-button/block.json
 msgctxt "block description"
 msgid "Login with Google button block."
 msgstr ""
