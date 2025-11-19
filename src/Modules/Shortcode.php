@@ -98,7 +98,7 @@ class Shortcode implements ModuleInterface {
 		$redirect_to = Helper::get_redirect_url();
 		$attrs       = shortcode_atts(
 			[
-				'button_text'   => __( 'Login with google', 'login-with-google' ),
+				'button_text'   => _x( 'Login with Google', 'Login button text displayed in shortcode.', 'login-with-google' ),
 				'force_display' => 'no',
 				'redirect_to'   => $redirect_to,
 			],

@@ -321,7 +321,7 @@ class Settings implements ModuleInterface {
 	public function settings_page(): void {
 		add_options_page(
 			__( 'Login with Google settings', 'login-with-google' ),
-			__( 'Login with Google', 'login-with-google' ),
+			_x( 'Login with Google', 'Menu title', 'login-with-google' ),
 			'manage_options',
 			'login-with-google',
 			[ $this, 'output' ]

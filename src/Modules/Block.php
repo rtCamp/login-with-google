@@ -173,7 +173,7 @@ class Block implements Module {
 			$args,
 			[
 				'login_url'       => '#',
-				'custom_btn_text' => '',
+				'custom_btn_text' => _x( 'Login with Google', 'Login button text displayed in block.', 'login-with-google' ),
 				'forceDisplay'    => false,
 			]
 		);
