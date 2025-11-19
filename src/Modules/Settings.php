@@ -97,6 +97,8 @@ class Settings implements ModuleInterface {
 	/**
 	 * Retrieves the Google OAuth Client ID, always from the network settings in multisite.
 	 *
+	 * @since n.e.x.t
+	 *
 	 * @return string
 	 */
 	public function get_client_id(): string {
