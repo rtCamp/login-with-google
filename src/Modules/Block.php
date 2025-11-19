@@ -141,7 +141,7 @@ class Block implements Module {
 			$markup = $this->markup(
 				[
 					'login_url'           => $this->client->authorization_url(),
-					'custom_btn_text'     => $attributes['buttonText'] ?? _x( 'Login with Google', 'Login button text displayed in block.', 'login-with-google' ),
+					'custom_btn_text'     => ! empty( $attributes['buttonText'] ) ? $attributes['buttonText'] : _x( 'Login with Google', 'Login button text displayed in block.', 'login-with-google' ),
 					'force_display_block' => $attributes['forceDisplay'] ?? false,
 				]
 			);
