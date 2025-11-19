@@ -52,7 +52,19 @@ class Settings implements ModuleInterface {
 	public function __get( string $name ) {
 		if ( in_array( $name, $this->getters, true ) ) {
 			$constant_name = array_search( $name, $this->getters, true );
-			return defined( $constant_name ) ? constant( $constant_name ) : ( $this->options[ $name ] ?? '' );
+			if ( defined( $constant_name ) ) {
+				return constant( $constant_name );
+			}
+
+			// --- Multisite: If apply_globally is enabled, use network settings ---
+			if ( is_multisite() ) {
+				$network_settings = get_site_option( 'wp_google_login_network_settings', [] );
+				if ( ! empty( $network_settings['apply_globally'] ) && array_key_exists( $name, $network_settings ) ) {
+					return $network_settings[ $name ];
+				}
+			}
+
+			return $this->options[ $name ] ?? null;
 		}
 		return null;
 	}
