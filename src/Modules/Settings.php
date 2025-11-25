@@ -131,7 +131,7 @@ class Settings implements ModuleInterface {
 		add_submenu_page(
 			'settings.php',
 			__( 'Login with Google Network Settings', 'login-with-google' ),
-			__( 'Login with Google', 'login-with-google' ),
+			_x( 'Login with Google', 'Page title', 'login-with-google' ),
 			'manage_network_options',
 			'login-with-google-network',
 			[ $this, 'output_network_settings' ]
@@ -177,7 +177,7 @@ class Settings implements ModuleInterface {
 
 		add_settings_section(
 			'wp_google_login_network_section',
-			__( 'Log in with Google Network Settings', 'login-with-google' ),
+			'',
 			function () {},
 			'login-with-google-network'
 		);
@@ -269,6 +269,8 @@ class Settings implements ModuleInterface {
 
 	/**
 	 * Saves the network settings for multisite installations.
+	 *
+	 * @since n.e.x.t
 	 *
 	 * @return void
 	 */
@@ -482,7 +484,13 @@ class Settings implements ModuleInterface {
 	public function apply_globally_field( $args = [] ): void {
 		$network_options = get_site_option( 'wp_google_login_network_settings', [] );
 		?>
-		<input type="checkbox" name="wp_google_login_network_settings[apply_globally]" id="apply-globally" value="1" <?php checked( ! empty( $network_options['apply_globally'] ) ); ?> />
+		<input
+			type="checkbox"
+			name="wp_google_login_network_settings[apply_globally]"
+			id="apply-globally"
+			value="1"
+			<?php checked( ! empty( $network_options['apply_globally'] ) ); ?>
+		/>
 		<?php esc_html_e( 'Apply all settings to all sites in the network', 'login-with-google' ); ?>
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
@@ -514,6 +522,7 @@ class Settings implements ModuleInterface {
 	 * Renders the input field for the User Registration setting.
 	 *
 	 * @param array $args Additional arguments for the field.
+	 * @since n.e.x.t
 	 *
 	 * @return void
 	 */
@@ -528,8 +537,10 @@ class Settings implements ModuleInterface {
 			<label style='display:block;margin-top:6px;'>
 				<input type='checkbox'
 					name='wp_google_login_network_settings[registration_enabled]'
-					id="user-registration" <?php checked( $checked ); ?>
-					value='1'>
+					id="user-registration"
+					<?php checked( $checked ); ?>
+					value='1'
+				>
 				<?php esc_html_e( 'Create a new user account if it does not exist already', 'login-with-google' ); ?>
 			</label>
 			<p class="description">
@@ -538,7 +549,7 @@ class Settings implements ModuleInterface {
 					sprintf(
 						// translators: %s is replaced with URL of membership settings page.
 						__( 'If this setting is checked, a new user will be created even if <a target="_blank" href="%1s">membership setting</a> is off.', 'login-with-google' ),
-						'network/settings.php'
+						'settings.php'
 					)
 				);
 				?>
@@ -591,11 +602,14 @@ class Settings implements ModuleInterface {
 		if ( $is_network ) {
 			$checked = ! empty( get_site_option( 'wp_google_login_network_settings', [] )['one_tap_login'] );
 			?>
-			<label style='display:block;margin-top:6px;'><input
+			<label style='display:block;margin-top:6px;'>
+				<input
 					type='checkbox'
 					name='wp_google_login_network_settings[one_tap_login]'
-					id="one-tap-login" <?php checked( $checked ); ?>
-					value='1'>
+					id="one-tap-login"
+					<?php checked( $checked ); ?>
+					value='1'
+				>
 				<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
 			</label>
 			<?php
@@ -658,12 +672,8 @@ class Settings implements ModuleInterface {
 					id="one-tap-login-screen"
 					<?php checked( $value, 'login' ); ?>
 					value='login'
-					<?php
-					if ( $readonly ) {
-						echo 'disabled';
-					}
-					?>
-					>
+					<?php echo ( $readonly ? 'disabled' : '' ); ?>
+				>
 				<?php esc_html_e( 'Enable One Tap Login Only on Login Screen', 'login-with-google' ); ?>
 			</label>
 			<label for="one-tap-login-screen-sitewide" style='display:block;margin-top:6px;'>
