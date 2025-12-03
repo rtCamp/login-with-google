@@ -216,6 +216,10 @@ class Authenticator {
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 		}
 
+		if ( ! isset( $user->picture ) || empty( $user->picture ) ) {
+			return;
+		}
+
 		// Using larger image size. By default, profile picture has 96 width size with cropped.
 		$profile_picture_url = str_replace( '=s96-c', '', $user->picture );
 
