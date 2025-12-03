@@ -210,9 +210,11 @@ class Authenticator {
 			WP_Filesystem();
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/media.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/image.php';
+		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+		}
 
 		// Using larger image size. By default, profile picture has 96 width size with cropped.
 		$profile_picture_url = str_replace( '=s96-c', '', $user->picture );
@@ -222,7 +224,8 @@ class Authenticator {
 		if ( str_ends_with( $profile_picture_filename, '.tmp' ) && $wp_filesystem ) {
 			$profile_picture_mime_type = wp_get_image_mime( $profile_picture_filename );
 
-			$mime_types = wp_get_mime_types();
+			$profile_picture_extension = 'jpg';                // Default extension.
+			$mime_types                = wp_get_mime_types();
 			foreach ( $mime_types as $ext => $mime_type ) {
 				if ( $profile_picture_mime_type === $mime_type ) {
 					$profile_picture_extension = current( explode( '|', $ext ) );
@@ -243,8 +246,12 @@ class Authenticator {
 
 		$attachment_id = media_handle_sideload( $file_array );
 
-		if ( is_int( $attachment_id ) ) {
-			update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
+		if ( is_wp_error( $attachment_id ) ) {
+			// Cleanup temporary file.
+			$wp_filesystem->delete( $profile_picture_filename );
+			return;
 		}
+
+		update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
 	}
 }
