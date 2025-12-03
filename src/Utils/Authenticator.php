@@ -199,7 +199,7 @@ class Authenticator {
 	 * Save user profile picture.
 	 *
 	 * @param int       $user_id WP User ID.
-	 * @param \stdClass $user User object returned by google.
+	 * @param \stdClass $user User object returned by Google.
 	 * @return void
 	 */
 	private function save_user_profile_picture( $user_id, $user ): void {
