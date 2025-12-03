@@ -180,7 +180,7 @@ class Plugin {
 		 *
 		 * @since n.e.x.t
 		 *
-		 * @param boolean $use_saved_profile_picture_for_avatar Whether to bypass the use the saved profile picture for avatar or not.
+		 * @param boolean $use_saved_profile_picture_for_avatar Whether to bypass the use of the saved profile picture for avatar or not.
 		 */
 		$use_avatar_url = apply_filters( 'rtcamp.google_use_saved_profile_picture_for_avatar', true );
 
