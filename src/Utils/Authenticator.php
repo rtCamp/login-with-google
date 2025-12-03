@@ -118,7 +118,7 @@ class Authenticator {
 				 * @since n.e.x.t
 				 *
 				 * @param boolean $save Whether to save profile picture or not.
-				 * @param int $uid WP User ID.
+				 * @param int $user_id WP User ID.
 				 * @param \stdClass User object returned by Google.
 				 */
 				$save_profile_picture = apply_filters( 'rtcamp.google_save_user_profile_picture', true, $uid, $user );
@@ -258,7 +258,9 @@ class Authenticator {
 			'tmp_name' => $profile_picture_filename,
 		);
 
-		$attachment_id = media_handle_sideload( $file_array );
+		// Intentionally passing 0 as $post_id to create an orphaned attachment for user profile picture.
+		// The attachment is tracked via user meta for management and cleanup.
+		$attachment_id = media_handle_sideload( $file_array, 0 );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			// Cleanup temporary file.
