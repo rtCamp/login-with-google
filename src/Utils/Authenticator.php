@@ -228,7 +228,7 @@ class Authenticator {
 		if ( str_ends_with( $profile_picture_filename, '.tmp' ) && $wp_filesystem ) {
 			$profile_picture_mime_type = wp_get_image_mime( $profile_picture_filename );
 
-			$profile_picture_extension = 'jpg';                // Default extension.
+			$profile_picture_extension = 'jpg'; // Default extension.
 			$mime_types                = wp_get_mime_types();
 			foreach ( $mime_types as $ext => $mime_type ) {
 				if ( $profile_picture_mime_type === $mime_type ) {
@@ -238,7 +238,13 @@ class Authenticator {
 			}
 
 			$new_profile_picture_filename = str_replace( '.tmp', ".{$profile_picture_extension}", $profile_picture_filename );
-			$wp_filesystem->move( $profile_picture_filename, $new_profile_picture_filename, true );
+			$is_file_moved                = $wp_filesystem->move( $profile_picture_filename, $new_profile_picture_filename, true );
+
+			if ( ! $is_file_moved ) {
+				// Cleanup temporary file.
+				$wp_filesystem->delete( $profile_picture_filename );
+				return;
+			}
 
 			$profile_picture_filename = $new_profile_picture_filename;
 		}
