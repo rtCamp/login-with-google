@@ -202,7 +202,10 @@ class Plugin {
 			$profile_picture_id = get_user_meta( $wp_user->ID, 'rtlwg_profile_picture_id', true );
 
 			if ( ! empty( $profile_picture_id ) ) {
-				$url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
+				$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
+				if ( $profile_picture_url ) {
+					$url = $profile_picture_url;
+				}
 			}
 		}
 
