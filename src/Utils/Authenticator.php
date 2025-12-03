@@ -121,7 +121,7 @@ class Authenticator {
 				 * @param int $user_id WP User ID.
 				 * @param \stdClass $user User object returned by Google.
 				 */
-				$save_profile_picture = apply_filters( 'rtcamp.google_save_user_profile_picture', true, $uid, $user );
+				$save_profile_picture = apply_filters( 'rtcamp.google_should_save_user_profile_picture', true, $uid, $user );
 
 				if ( $save_profile_picture ) {
 					$this->save_user_profile_picture( $uid, $user );
