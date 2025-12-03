@@ -248,7 +248,9 @@ class Authenticator {
 			'tmp_name' => $profile_picture_filename,
 		);
 
-		$attachment_id = media_handle_sideload( $file_array );
+		// Intentionally passing 0 as $post_id to create an orphaned attachment for user profile picture.
+		// The attachment is tracked via user meta for management and cleanup.
+		$attachment_id = media_handle_sideload( $file_array, 0 );
 
 		if ( is_wp_error( $attachment_id ) ) {
 			// Cleanup temporary file.
