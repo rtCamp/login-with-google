@@ -271,5 +271,8 @@ class Authenticator {
 		}
 
 		Helper::save_google_avatar_id( $user_id, $attachment_id );
+
+		// Setting avatar source to google for the first login.
+		Helper::save_avatar_source( $user_id, 'google' );
 	}
 }
