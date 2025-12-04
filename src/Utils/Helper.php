@@ -315,16 +315,14 @@ class Helper {
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
-	 * @return string|null
+	 * @return string Returns 'avatar' as default source.
 	 */
 	public static function get_avatar_source( int $user_id ): ?string {
 		$avatar_source = get_user_meta( $user_id, 'rtlg_avatar_source', true );
+		$avatar_source = trim( strval( $avatar_source ) );
+		$avatar_source = in_array( $avatar_source, [ 'google', 'gravatar' ], true ) ? $avatar_source : 'avatar';
 
-		if ( ! empty( $avatar_source ) ) {
-			return $avatar_source;
-		}
-
-		return null;
+		return $avatar_source;
 	}
 
 	/**
