@@ -6,6 +6,7 @@
  * @since n.e.x.t
  */
 
+$rtlg_profile_picture_id = get_user_meta( $wp_user->ID, 'rtlwg_profile_picture_id', true );
 ?>
 
 <div class="rtlg-user-profile-edit">
@@ -35,7 +36,11 @@
 					<label for="rtlg_google_avatar"><?php esc_html_e( 'Google Avatar', 'login-with-google' ); ?></label>
 				</th>
 				<td>
-					<img src="https://placehold.co/150x150" />
+				<?php if ( empty( $rtlg_profile_picture_id ) ) : ?>
+					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
+				<?php else : ?>
+					<?php echo wp_get_attachment_image( $rtlg_profile_picture_id, [ 96, 96 ] ); ?>
+				<?php endif; ?>
 				</td>
 			</tr>
 		</tbody>
