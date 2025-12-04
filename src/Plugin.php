@@ -114,6 +114,8 @@ class Plugin {
 		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
 
 		add_action( 'get_avatar_url', [ $this, 'return_avatar_url' ], 10, 3 );
+
+		add_action( 'show_user_profile', [ $this, 'render_user_profile_edit_template' ] );
 	}
 
 	/**
@@ -168,6 +170,8 @@ class Plugin {
 	/**
 	 * Return the stored profile picture during the account creation.
 	 *
+	 * @since n.e.x.t
+	 *
 	 * @param string $url The URL of the avatar.
 	 * @param mixed  $id_or_email The avatar to retrieve. Accepts a user ID, Gravatar SHA-256 or MD5 hash, user email, WP_User object, WP_Post object, or WP_Comment object.
 	 * @param array  $args Arguments passed to get_avatar_data() , after processing.
@@ -210,5 +214,16 @@ class Plugin {
 		}
 
 		return $url;
+	}
+
+	/**
+	 * Render user profile edit template
+	 *
+	 * @since n.e.x.t
+	 * @param WP_User $wp_user WP_User object.
+	 * @return void
+	 */
+	public function render_user_profile_edit_template( $wp_user ) {
+		require_once trailingslashit( $this->template_dir ) . 'user-profile-edit.php';
 	}
 }
