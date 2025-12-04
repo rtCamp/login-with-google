@@ -9,6 +9,7 @@
 use RtCamp\GoogleLogin\Utils\Helper;
 
 $rtlg_profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
+$rtlg_avatar_source      = Helper::get_avatar_source( $wp_user->ID );
 ?>
 
 <div class="rtlg-user-profile-edit">
@@ -24,11 +25,11 @@ $rtlg_profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
 					<select name="rtlg_avatar_source" style="width: 15em;">
 						<option
 							value="google"
-							<?php selected( get_user_meta( $wp_user->ID, 'rtlg_avatar_source', true ), 'google' ); ?>
+							<?php selected( $rtlg_avatar_source, 'google' ); ?>
 						><?php esc_html_e( 'Google', 'login-with-google' ); ?></option>
 						<option
 							value="gravatar"
-							<?php selected( get_user_meta( $wp_user->ID, 'rtlg_avatar_source', true ), 'gravatar' ); ?>
+							<?php selected( $rtlg_avatar_source, 'gravatar' ); ?>
 						><?php esc_html_e( 'Gravatar', 'login-with-google' ); ?></option>
 					</select>
 				</td>

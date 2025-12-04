@@ -299,11 +299,44 @@ class Helper {
 	/**
 	 * Save Google avatar attachment ID.
 	 *
+	 * @since n.e.x.t
+	 *
 	 * @param integer $user_id WP User ID.
 	 * @param integer $attachment_id Attachment ID.
 	 * @return void
 	 */
 	public static function save_google_avatar_id( int $user_id, int $attachment_id ): void {
 		update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
+	}
+
+	/**
+	 * Get saved avatar source.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param integer $user_id WP User ID.
+	 * @return string|null
+	 */
+	public static function get_avatar_source( int $user_id ): ?string {
+		$avatar_source = get_user_meta( $user_id, 'rtlg_avatar_source', true );
+
+		if ( ! empty( $avatar_source ) ) {
+			return $avatar_source;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Save avatar source.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param integer $user_id WP User ID.
+	 * @param string  $source Avatar source.
+	 * @return void
+	 */
+	public static function save_avatar_source( int $user_id, string $source ): void {
+		update_user_meta( $user_id, 'rtlg_avatar_source', $source );
 	}
 }

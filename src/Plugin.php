@@ -76,6 +76,7 @@ class Plugin {
 		'shortcode',
 		'one_tap_login',
 		'google_login_block',
+		'user_profile',
 	];
 
 	/**
@@ -113,11 +114,6 @@ class Plugin {
 		add_action( 'init', [ $this, 'load_translations' ] );
 
 		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
-
-		add_action( 'get_avatar_url', [ $this, 'return_avatar_url' ], 10, 3 );
-
-		add_action( 'show_user_profile', [ $this, 'render_user_profile_edit_template' ] );
-		add_action( 'edit_user_profile', [ $this, 'render_user_profile_edit_template' ] );
 	}
 
 	/**
@@ -167,92 +163,5 @@ class Plugin {
 		);
 
 		return array_merge( $new_actions, $actions );
-	}
-
-	/**
-	 * Return the stored profile picture during the account creation.
-	 *
-	 * @since n.e.x.t
-	 *
-	 * @param string $url The URL of the avatar.
-	 * @param mixed  $id_or_email The avatar to retrieve. Accepts a user ID, Gravatar SHA-256 or MD5 hash, user email, WP_User object, WP_Post object, or WP_Comment object.
-	 * @param array  $args Arguments passed to get_avatar_data() , after processing.
-	 *
-	 * @return string The URL of the avatar.
-	 */
-	public function return_avatar_url( $url, $id_or_email, $args ): string {
-		/**
-		 * Filter to bypass the use of saved profile picture for avatar.
-		 *
-		 * @since n.e.x.t
-		 *
-		 * @param boolean $use_saved_profile_picture_for_avatar Whether to bypass the use of the saved profile picture for avatar or not.
-		 */
-		$use_avatar_url = apply_filters( 'rtcamp.google_use_saved_profile_picture_for_avatar', true );
-
-		if ( ! $use_avatar_url ) {
-			return $url;
-		}
-
-		// Do not interfere on profile edit page.
-		if ( defined( 'IS_PROFILE_PAGE' ) && IS_PROFILE_PAGE ) {
-			return $url;
-		}
-
-		// Do not interfere on user edit screen in admin.
-		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $current_screen && 'user-edit' === $current_screen->id ) {
-			return $url;
-		}
-
-		$wp_user = null;
-		if ( is_int( $id_or_email ) ) {
-			$wp_user = get_user_by( 'id', $id_or_email );
-		} elseif ( is_string( $id_or_email ) && is_email( $id_or_email ) ) {
-			$wp_user = get_user_by( 'email', $id_or_email );
-		} elseif ( $id_or_email instanceof \WP_User ) {
-			$wp_user = $id_or_email;
-		} elseif ( $id_or_email instanceof \WP_Post ) {
-			$wp_user = get_user_by( 'id', (int) $id_or_email->post_author );
-		} elseif ( $id_or_email instanceof \WP_Comment ) {
-			$wp_user = get_user_by( 'id', (int) $id_or_email->user_id );
-		}
-
-		// Bail early if the user is not found.
-		if ( ! $wp_user ) {
-			return $url;
-		}
-
-		// Bail if user has chosen gravatar as avatar source.
-		$avatar_source = get_user_meta( $wp_user->ID, 'rtlg_avatar_source', true );
-		if ( $avatar_source && 'gravatar' === $avatar_source ) {
-			return $url;
-		}
-
-		// Return the saved google avatar URL.
-		$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 96;
-		$height = isset( $args['height'] ) ? absint( $args['height'] ) : 96;
-
-		$profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
-
-		if ( ! empty( $profile_picture_id ) ) {
-			$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
-			if ( $profile_picture_url ) {
-				$url = $profile_picture_url;
-			}
-		}
-
-		return $url;
-	}
-
-	/**
-	 * Render user profile edit template
-	 *
-	 * @since n.e.x.t
-	 * @param WP_User $wp_user WP_User object.
-	 * @return void
-	 */
-	public function render_user_profile_edit_template( $wp_user ) {
-		require_once trailingslashit( $this->template_dir ) . 'user-profile-edit.php';
 	}
 }
