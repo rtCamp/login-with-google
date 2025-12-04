@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin;
 
 use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
+use RtCamp\GoogleLogin\Utils\Helper;
 
 /**
  * Class Plugin.
@@ -116,6 +117,7 @@ class Plugin {
 		add_action( 'get_avatar_url', [ $this, 'return_avatar_url' ], 10, 3 );
 
 		add_action( 'show_user_profile', [ $this, 'render_user_profile_edit_template' ] );
+		add_action( 'edit_user_profile', [ $this, 'render_user_profile_edit_template' ] );
 	}
 
 	/**
@@ -192,24 +194,51 @@ class Plugin {
 			return $url;
 		}
 
+		// Do not interfere on profile edit page.
+		if ( defined( 'IS_PROFILE_PAGE' ) && IS_PROFILE_PAGE ) {
+			return $url;
+		}
+
+		// Do not interfere on user edit screen in admin.
+		$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( $current_screen && 'user-edit' === $current_screen->id ) {
+			return $url;
+		}
+
 		$wp_user = null;
 		if ( is_int( $id_or_email ) ) {
 			$wp_user = get_user_by( 'id', $id_or_email );
 		} elseif ( is_string( $id_or_email ) && is_email( $id_or_email ) ) {
 			$wp_user = get_user_by( 'email', $id_or_email );
+		} elseif ( $id_or_email instanceof \WP_User ) {
+			$wp_user = $id_or_email;
+		} elseif ( $id_or_email instanceof \WP_Post ) {
+			$wp_user = get_user_by( 'id', (int) $id_or_email->post_author );
+		} elseif ( $id_or_email instanceof \WP_Comment ) {
+			$wp_user = get_user_by( 'id', (int) $id_or_email->user_id );
 		}
 
-		if ( $wp_user ) {
-			$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 64;
-			$height = isset( $args['height'] ) ? absint( $args['height'] ) : 64;
+		// Bail early if the user is not found.
+		if ( ! $wp_user ) {
+			return $url;
+		}
 
-			$profile_picture_id = get_user_meta( $wp_user->ID, 'rtlwg_profile_picture_id', true );
+		// Bail if user has chosen gravatar as avatar source.
+		$avatar_source = get_user_meta( $wp_user->ID, 'rtlg_avatar_source', true );
+		if ( $avatar_source && 'gravatar' === $avatar_source ) {
+			return $url;
+		}
 
-			if ( ! empty( $profile_picture_id ) ) {
-				$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
-				if ( $profile_picture_url ) {
-					$url = $profile_picture_url;
-				}
+		// Return the saved google avatar URL.
+		$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 96;
+		$height = isset( $args['height'] ) ? absint( $args['height'] ) : 96;
+
+		$profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
+
+		if ( ! empty( $profile_picture_id ) ) {
+			$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
+			if ( $profile_picture_url ) {
+				$url = $profile_picture_url;
 			}
 		}
 

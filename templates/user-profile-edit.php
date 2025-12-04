@@ -6,11 +6,13 @@
  * @since n.e.x.t
  */
 
-$rtlg_profile_picture_id = get_user_meta( $wp_user->ID, 'rtlwg_profile_picture_id', true );
+use RtCamp\GoogleLogin\Utils\Helper;
+
+$rtlg_profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
 ?>
 
 <div class="rtlg-user-profile-edit">
-	<h2><?php esc_html_e( 'Login With Google', 'login-with-google'); ?></h2>
+	<h2><?php esc_html_e( 'Login With Google', 'login-with-google' ); ?></h2>
 	<p><?php esc_html_e( 'Login With Google profile settings.', 'login-with-google' ); ?></p>
 	<table class="form-table" role="presentation">
 		<tbody>

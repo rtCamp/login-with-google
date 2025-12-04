@@ -277,4 +277,33 @@ class Helper {
 	public static function remove_redirect_state_filter() {
 		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
 	}
+
+	/**
+	 * Saved Google avatar attachment ID.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param integer $user_id WP User ID.
+	 * @return integer|null
+	 */
+	public static function get_saved_google_avatar_id( int $user_id ): ?int {
+		$profile_picture_id = get_user_meta( $user_id, 'rtlwg_profile_picture_id', true );
+
+		if ( ! empty( $profile_picture_id ) ) {
+			return (int) $profile_picture_id;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Save Google avatar attachment ID.
+	 *
+	 * @param integer $user_id WP User ID.
+	 * @param integer $attachment_id Attachment ID.
+	 * @return void
+	 */
+	public static function save_google_avatar_id( int $user_id, int $attachment_id ): void {
+		update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
+	}
 }

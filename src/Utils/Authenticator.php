@@ -270,6 +270,6 @@ class Authenticator {
 			return;
 		}
 
-		update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
+		Helper::save_google_avatar_id( $user_id, $attachment_id );
 	}
 }
