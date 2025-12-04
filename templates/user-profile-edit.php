@@ -8,8 +8,8 @@
 
 use RtCamp\GoogleLogin\Utils\Helper;
 
-$rtlg_profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
-$rtlg_avatar_source      = Helper::get_avatar_source( $wp_user->ID );
+$rtlg_profile_picture_id = Helper::get_saved_google_profile_picture_id( $wp_user->ID );
+$rtlg_profile_picture_source      = Helper::get_profile_picture_source( $wp_user->ID );
 ?>
 
 <div class="rtlg-user-profile-edit">
@@ -19,30 +19,30 @@ $rtlg_avatar_source      = Helper::get_avatar_source( $wp_user->ID );
 		<tbody>
 			<tr>
 				<th>
-					<label for="rtlg_avatar_source"><?php esc_html_e( 'Avatar Source', 'login-with-google' ); ?></label>
+					<label for="rtlg_profile_picture_source"><?php esc_html_e( 'Profile Picture Source', 'login-with-google' ); ?></label>
 				</th>
 				<td>
-					<select name="rtlg_avatar_source" style="width: 15em;">
+					<select name="rtlg_profile_picture_source" style="width: 15em;">
 						<option
 							value="google"
-							<?php selected( $rtlg_avatar_source, 'google' ); ?>
+							<?php selected( $rtlg_profile_picture_source, 'google' ); ?>
 						><?php esc_html_e( 'Google', 'login-with-google' ); ?></option>
 						<option
 							value="gravatar"
-							<?php selected( $rtlg_avatar_source, 'gravatar' ); ?>
+							<?php selected( $rtlg_profile_picture_source, 'gravatar' ); ?>
 						><?php esc_html_e( 'Gravatar', 'login-with-google' ); ?></option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<th>
-					<label for="rtlg_google_avatar"><?php esc_html_e( 'Google Avatar', 'login-with-google' ); ?></label>
-				</th>
+					<label for="rtlg_google_profile_picture"><?php esc_html_e( 'Google Profile Picture', 'login-with-google' ); ?></label>				</th>
 				<td>
 				<?php if ( empty( $rtlg_profile_picture_id ) ) : ?>
 					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
 				<?php else : ?>
 					<?php echo wp_get_attachment_image( $rtlg_profile_picture_id, [ 96, 96 ] ); ?>
+					<p><?php esc_html_e( 'Note: This image is fetched from your Google account during your first login and is not synced afterward.', 'login-with-google' ); ?></p>
 				<?php endif; ?>
 				</td>
 			</tr>

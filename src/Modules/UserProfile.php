@@ -106,8 +106,8 @@ class UserProfile implements ModuleInterface {
 		}
 
 		// Bail if user has chosen gravatar as avatar source.
-		$avatar_source = get_user_meta( $wp_user->ID, 'rtlg_avatar_source', true );
-		if ( $avatar_source && 'gravatar' === $avatar_source ) {
+		$profile_picture_source = Helper::get_profile_picture_source( $wp_user->ID );
+		if ( $profile_picture_source && 'gravatar' === $profile_picture_source ) {
 			return $url;
 		}
 
@@ -115,7 +115,7 @@ class UserProfile implements ModuleInterface {
 		$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 96;
 		$height = isset( $args['height'] ) ? absint( $args['height'] ) : 96;
 
-		$profile_picture_id = Helper::get_saved_google_avatar_id( $wp_user->ID );
+		$profile_picture_id = Helper::get_saved_google_profile_picture_id( $wp_user->ID );
 
 		if ( ! empty( $profile_picture_id ) ) {
 			$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );
@@ -155,9 +155,9 @@ class UserProfile implements ModuleInterface {
 			return false;
 		}
 
-		if ( isset( $_POST['rtlg_avatar_source'] ) ) {
-			$avatar_source = sanitize_text_field( wp_unslash( $_POST['rtlg_avatar_source'] ) );
-			Helper::save_avatar_source( $user_id, $avatar_source );
+		if ( isset( $_POST['rtlg_profile_picture_source'] ) ) {
+			$avatar_source = sanitize_text_field( wp_unslash( $_POST['rtlg_profile_picture_source'] ) );
+			Helper::save_profile_picture_source( $user_id, $avatar_source );
 		}
 
 		return true;

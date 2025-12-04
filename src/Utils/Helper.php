@@ -279,14 +279,14 @@ class Helper {
 	}
 
 	/**
-	 * Saved Google avatar attachment ID.
+	 * Return Google profile picture which is saved attachment ID.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
 	 * @return integer|null
 	 */
-	public static function get_saved_google_avatar_id( int $user_id ): ?int {
+	public static function get_saved_google_profile_picture_id( int $user_id ): ?int {
 		$profile_picture_id = get_user_meta( $user_id, 'rtlwg_profile_picture_id', true );
 
 		if ( ! empty( $profile_picture_id ) ) {
@@ -297,44 +297,48 @@ class Helper {
 	}
 
 	/**
-	 * Save Google avatar attachment ID.
+	 * Stores the Google profile picture as a WordPress attachment for the specified user.
+	 *
+	 * This method handles saving a user's Google profile picture by creating a WordPress
+	 * media attachment and associating it with the user account.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
-	 * @param integer $attachment_id Attachment ID.
+	 * @param integer $attachment_id Attachment ID of the saved profile picture.
+	 *
 	 * @return void
 	 */
-	public static function save_google_avatar_id( int $user_id, int $attachment_id ): void {
+	public static function save_google_profile_picture_id( int $user_id, int $attachment_id ): void {
 		update_user_meta( $user_id, 'rtlwg_profile_picture_id', $attachment_id );
 	}
 
 	/**
-	 * Get saved avatar source.
+	 * Get saved profile picture source.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
-	 * @return string Returns 'avatar' as default source.
+	 * @return string Returns 'gravatar' as default source.
 	 */
-	public static function get_avatar_source( int $user_id ): ?string {
-		$avatar_source = get_user_meta( $user_id, 'rtlg_avatar_source', true );
-		$avatar_source = trim( strval( $avatar_source ) );
-		$avatar_source = in_array( $avatar_source, [ 'google', 'gravatar' ], true ) ? $avatar_source : 'avatar';
+	public static function get_profile_picture_source( int $user_id ): ?string {
+		$profile_picture_source = get_user_meta( $user_id, 'rtlg_profile_picture_source', true );
+		$profile_picture_source = trim( strval( $profile_picture_source ) );
+		$profile_picture_source = in_array( $profile_picture_source, [ 'google', 'gravatar' ], true ) ? $profile_picture_source : 'gravatar';
 
-		return $avatar_source;
+		return $profile_picture_source;
 	}
 
 	/**
-	 * Save avatar source.
+	 * Save profile picture source.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
-	 * @param string  $source Avatar source.
+	 * @param string  $source Profile picture source.
 	 * @return void
 	 */
-	public static function save_avatar_source( int $user_id, string $source ): void {
-		update_user_meta( $user_id, 'rtlg_avatar_source', $source );
+	public static function save_profile_picture_source( int $user_id, string $source ): void {
+		update_user_meta( $user_id, 'rtlg_profile_picture_source', $source );
 	}
 }
