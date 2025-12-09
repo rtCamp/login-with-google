@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Modules;
 
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
-use RtCamp\GoogleLogin\Utils\Helper;
+use RtCamp\GoogleLogin\Utils\UserProfileHelper;
 use function RtCamp\GoogleLogin\plugin;
 
 /**
@@ -106,7 +106,7 @@ class UserProfile implements ModuleInterface {
 		}
 
 		// Bail if user has chosen gravatar as avatar source.
-		$profile_picture_source = Helper::get_profile_picture_source( $wp_user->ID );
+		$profile_picture_source = UserProfileHelper::get_profile_picture_source( $wp_user->ID );
 		if ( $profile_picture_source && 'gravatar' === $profile_picture_source ) {
 			return $url;
 		}
@@ -115,7 +115,7 @@ class UserProfile implements ModuleInterface {
 		$width  = isset( $args['width'] ) ? absint( $args['width'] ) : 96;
 		$height = isset( $args['height'] ) ? absint( $args['height'] ) : 96;
 
-		$profile_picture_id = Helper::get_saved_google_profile_picture_id( $wp_user->ID );
+		$profile_picture_id = UserProfileHelper::get_saved_google_profile_picture_id( $wp_user->ID );
 
 		if ( ! empty( $profile_picture_id ) ) {
 			$profile_picture_url = wp_get_attachment_image_url( $profile_picture_id, [ $width, $height ] );

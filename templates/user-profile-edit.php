@@ -6,10 +6,10 @@
  * @since n.e.x.t
  */
 
-use RtCamp\GoogleLogin\Utils\Helper;
+use RtCamp\GoogleLogin\Utils\UserProfileHelper;
 
-$rtlg_profile_picture_id = Helper::get_saved_google_profile_picture_id( $wp_user->ID );
-$rtlg_profile_picture_source      = Helper::get_profile_picture_source( $wp_user->ID );
+$rtlg_profile_picture_id     = UserProfileHelper::get_saved_google_profile_picture_id( $wp_user->ID );
+$rtlg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $wp_user->ID );
 ?>
 
 <div class="rtlg-user-profile-edit">
@@ -42,7 +42,6 @@ $rtlg_profile_picture_source      = Helper::get_profile_picture_source( $wp_user
 					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
 				<?php else : ?>
 					<?php echo wp_get_attachment_image( $rtlg_profile_picture_id, [ 96, 96 ] ); ?>
-					<p><?php esc_html_e( 'Note: This image is fetched from your Google account during your first login and is not synced afterward.', 'login-with-google' ); ?></p>
 				<?php endif; ?>
 				</td>
 			</tr>

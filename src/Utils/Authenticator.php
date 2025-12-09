@@ -19,6 +19,7 @@ use Exception;
 use Throwable;
 use InvalidArgumentException;
 use RtCamp\GoogleLogin\Modules\Settings;
+use WP_Error;
 
 /**
  * Class Authenticator
@@ -60,6 +61,8 @@ class Authenticator {
 
 		if ( email_exists( $user->email ) ) {
 			$user_wp = get_user_by( 'email', $user->email );
+
+			$this->save_user_profile_picture( $user_wp->ID, $user );
 
 			/**
 			 * Fires once the user has been authenticated.
@@ -112,20 +115,10 @@ class Authenticator {
 					]
 				);
 
-				/**
-				 * Filter to bypass the profile picture saving process.
-				 *
-				 * @since n.e.x.t
-				 *
-				 * @param boolean $save Whether to save profile picture or not.
-				 * @param int $user_id WP User ID.
-				 * @param \stdClass $user User object returned by Google.
-				 */
-				$save_profile_picture = apply_filters( 'rtcamp.google_should_save_user_profile_picture', true, $uid, $user );
+				$this->save_user_profile_picture( $uid, $user );
 
-				if ( $save_profile_picture ) {
-					$this->save_user_profile_picture( $uid, $user );
-				}
+				// Save the profile picture source to google for the first login where the user registration happens.
+				UserProfileHelper::save_profile_picture_source( $uid, 'google' );
 
 				/**
 				 * Fires once the user has been registered successfully.
@@ -207,6 +200,21 @@ class Authenticator {
 	private function save_user_profile_picture( $user_id, $user ): void {
 		global $wp_filesystem;
 
+		/**
+		 * Filter to bypass the profile picture saving process.
+		 *
+		 * @since n.e.x.t
+		 *
+		 * @param boolean $save Whether to save profile picture or not.
+		 * @param int $user_id WP User ID.
+		 * @param \stdClass $user User object returned by Google.
+		 */
+		$save_profile_picture = apply_filters( 'rtcamp.google_should_save_user_profile_picture', true, $user_id, $user );
+
+		if ( ! $save_profile_picture ) {
+			return;
+		}
+
 		if ( is_null( $wp_filesystem ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			WP_Filesystem();
@@ -222,13 +230,74 @@ class Authenticator {
 			return;
 		}
 
-		// Using larger image size. By default, profile picture has 96 width size with cropped.
-		$profile_picture_url = str_replace( '=s96-c', '', $user->picture );
 
-		$profile_picture_filename = download_url( $profile_picture_url );
+		$profile_picture_filename            = null;
+		$original_google_profile_picture_url = UserProfileHelper::get_original_google_profile_picture_url( $user_id );
+
+		/**
+		 * Filter to force download and save profile picture even if it is already saved.
+		 *
+		 * @since n.e.x.t
+		 *
+		 * @param boolean $force_download_profile_picture Whether to force download profile picture.
+		 * @param int $user_id WP User ID.
+		 * @param \stdClass $user User object returned by Google.
+		 */
+		$force_download_profile_picture = apply_filters( 'rtcamp.google_force_download_profile_picture', false, $user_id, $user );
+
+		if ( $force_download_profile_picture || ( $original_google_profile_picture_url !== $user->picture ) ) {
+			$profile_picture_filename = $this->download_profile_picture( $user->picture );
+		}
+
+		if ( null === $profile_picture_filename ) {
+			return;
+		}
+
+		$file_array = array(
+			'name'     => basename( $profile_picture_filename ),
+			'tmp_name' => $profile_picture_filename,
+		);
+
+		// Intentionally passing 0 as $post_id to create an orphaned attachment for user profile picture.
+		// The attachment is tracked via user meta for management and cleanup.
+		$attachment_id = media_handle_sideload( $file_array, 0 );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			// Cleanup temporary file.
+			$wp_filesystem->delete( $profile_picture_filename );
+			return;
+		}
+
+		// Set the google profile picture attachment to the user.
+		UserProfileHelper::set_google_profile_picture_to_user( $user_id, $attachment_id );
+
+		// Save the original google profile picture URL.
+		UserProfileHelper::save_original_google_profile_picture_url( $user_id, $user->picture );
+	}
+
+	/**
+	 * Download profile picture from given URL and return the saved profile picture file path.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $profile_picture_url Profile picture URL.
+	 * @return string|null Profile picture file path or null on failure.
+	 */
+	private function download_profile_picture( $profile_picture_url ) {
+		global $wp_filesystem;
+
+		if ( is_null( $wp_filesystem ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		// Using larger image size. By default, profile picture has 96 width size with cropped.
+		$stripped_picture_url = str_replace( '=s96-c', '', $profile_picture_url );
+
+		$profile_picture_filename = download_url( $stripped_picture_url );
 
 		if ( is_wp_error( $profile_picture_filename ) ) {
-			return;
+			return null;
 		}
 
 		if ( str_ends_with( $profile_picture_filename, '.tmp' ) && $wp_filesystem ) {
@@ -249,30 +318,12 @@ class Authenticator {
 			if ( ! $is_file_moved ) {
 				// Cleanup temporary file.
 				$wp_filesystem->delete( $profile_picture_filename );
-				return;
+				return null;
 			}
 
 			$profile_picture_filename = $new_profile_picture_filename;
 		}
 
-		$file_array = array(
-			'name'     => basename( $profile_picture_filename ),
-			'tmp_name' => $profile_picture_filename,
-		);
-
-		// Intentionally passing 0 as $post_id to create an orphaned attachment for user profile picture.
-		// The attachment is tracked via user meta for management and cleanup.
-		$attachment_id = media_handle_sideload( $file_array, 0 );
-
-		if ( is_wp_error( $attachment_id ) ) {
-			// Cleanup temporary file.
-			$wp_filesystem->delete( $profile_picture_filename );
-			return;
-		}
-
-		Helper::save_google_profile_picture_id( $user_id, $attachment_id );
-
-		// Setting profile picture source to google for the first login.
-		Helper::save_profile_picture_source( $user_id, 'google' );
+		return $profile_picture_filename;
 	}
 }
