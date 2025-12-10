@@ -178,7 +178,6 @@ class UserProfile implements ModuleInterface {
 		$profile_picture_source     = UserProfileHelper::get_profile_picture_source( get_current_user_id() );
 		$has_google_profile_picture = UserProfileHelper::has_google_profile_picture( get_current_user_id() );
 
-
 		// Bail early if the current screen is not profile screen.
 		if ( null === $screen || 'profile' !== $screen->id ) {
 			return;
