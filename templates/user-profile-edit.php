@@ -36,7 +36,8 @@ $rtlwg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $
 			</tr>
 			<tr>
 				<th>
-					<label for="rtlwg_google_profile_picture"><?php esc_html_e( 'Google Profile Picture', 'login-with-google' ); ?></label>				</th>
+					<label for="rtlwg_google_profile_picture"><?php esc_html_e( 'Google Profile Picture', 'login-with-google' ); ?></label>
+				</th>
 				<td>
 				<?php if ( empty( $rtlwg_profile_picture_id ) ) : ?>
 					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
