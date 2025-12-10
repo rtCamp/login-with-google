@@ -58,7 +58,7 @@ class UserProfileHelper {
 	 * @return string Returns 'gravatar' as default source.
 	 */
 	public static function get_profile_picture_source( int $user_id ): ?string {
-		$profile_picture_source = get_user_meta( $user_id, 'rtlg_profile_picture_source', true );
+		$profile_picture_source = get_user_meta( $user_id, 'rtlwg_profile_picture_source', true );
 		$profile_picture_source = trim( strval( $profile_picture_source ) );
 		$profile_picture_source = in_array( $profile_picture_source, [ 'google', 'gravatar' ], true ) ? $profile_picture_source : 'gravatar';
 
@@ -75,7 +75,7 @@ class UserProfileHelper {
 	 * @return void
 	 */
 	public static function save_original_google_profile_picture_url( int $user_id, string $url ): void {
-		update_user_meta( $user_id, 'rtlg_original_google_profile_picture_url', esc_url_raw( $url ) );
+		update_user_meta( $user_id, 'rtlwg_original_google_profile_picture_url', esc_url_raw( $url ) );
 	}
 
 	/**
@@ -87,7 +87,7 @@ class UserProfileHelper {
 	 * @return string|null
 	 */
 	public static function get_saved_original_google_profile_picture_url( int $user_id ): ?string {
-		$original_url = get_user_meta( $user_id, 'rtlg_original_google_profile_picture_url', true );
+		$original_url = get_user_meta( $user_id, 'rtlwg_original_google_profile_picture_url', true );
 
 		if ( empty( $original_url ) ) {
 			return null;
@@ -106,7 +106,7 @@ class UserProfileHelper {
 	 * @return void
 	 */
 	public static function save_profile_picture_source( int $user_id, string $source ): void {
-		update_user_meta( $user_id, 'rtlg_profile_picture_source', $source );
+		update_user_meta( $user_id, 'rtlwg_profile_picture_source', $source );
 	}
 
 	/**
