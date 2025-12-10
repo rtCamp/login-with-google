@@ -173,8 +173,10 @@ class UserProfile implements ModuleInterface {
 	 * @return void
 	 */
 	public function display_google_profile_picture_notice(): void {
-		$screen                 = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		$profile_picture_source = UserProfileHelper::get_profile_picture_source( get_current_user_id() );
+		$screen                     = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$profile_picture_source     = UserProfileHelper::get_profile_picture_source( get_current_user_id() );
+		$has_google_profile_picture = UserProfileHelper::has_google_profile_picture( get_current_user_id() );
+
 
 		// Bail early if the current screen is not profile screen.
 		if ( null === $screen || 'profile' !== $screen->id ) {
@@ -183,6 +185,10 @@ class UserProfile implements ModuleInterface {
 
 		// Bail early if user has set google profile picture source.
 		if ( 'google' === $profile_picture_source ) {
+			return;
+		}
+
+		if ( ! $has_google_profile_picture ) {
 			return;
 		}
 
