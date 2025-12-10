@@ -42,6 +42,7 @@ $rtlg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $w
 					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
 				<?php else : ?>
 					<?php echo wp_get_attachment_image( $rtlg_profile_picture_id, [ 96, 96 ] ); ?>
+					<p><?php esc_html_e( 'Note: This image is fetched from your Google account during your first login and is not synced afterward.', 'login-with-google' ); ?></p>
 				<?php endif; ?>
 				</td>
 			</tr>

@@ -230,24 +230,30 @@ class Authenticator {
 			return;
 		}
 
-
-		$profile_picture_filename            = null;
-		$original_google_profile_picture_url = UserProfileHelper::get_original_google_profile_picture_url( $user_id );
+		$user_has_google_profile_picture = UserProfileHelper::has_google_profile_picture( $user_id );
 
 		/**
-		 * Filter to force download and save profile picture even if it is already saved.
+		 * Filter to download profile picture even if it is not already downloaded.
 		 *
 		 * @since n.e.x.t
 		 *
-		 * @param boolean $force_download_profile_picture Whether to force download profile picture.
+		 * @param boolean $download_profile_picture Whether to download profile picture.
 		 * @param int $user_id WP User ID.
 		 * @param \stdClass $user User object returned by Google.
 		 */
-		$force_download_profile_picture = apply_filters( 'rtcamp.google_force_download_profile_picture', false, $user_id, $user );
+		$download_profile_picture = apply_filters(
+			'rtcamp.google_download_profile_picture',
+			! $user_has_google_profile_picture,
+			$user_id,
+			$user
+		);
 
-		if ( $force_download_profile_picture || ( $original_google_profile_picture_url !== $user->picture ) ) {
-			$profile_picture_filename = $this->download_profile_picture( $user->picture );
+		// Bail early if we are not to download the profile picture.
+		if ( false === $download_profile_picture ) {
+			return;
 		}
+
+		$profile_picture_filename = $this->download_profile_picture( $user->picture );
 
 		if ( null === $profile_picture_filename ) {
 			return;

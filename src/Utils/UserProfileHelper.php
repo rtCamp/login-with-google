@@ -79,14 +79,14 @@ class UserProfileHelper {
 	}
 
 	/**
-	 * Get original Google profile picture URL.
+	 * Get saved original Google profile picture URL.
 	 *
 	 * @since n.e.x.t
 	 *
 	 * @param integer $user_id WP User ID.
 	 * @return string|null
 	 */
-	public static function get_original_google_profile_picture_url( int $user_id ): ?string {
+	public static function get_saved_original_google_profile_picture_url( int $user_id ): ?string {
 		$original_url = get_user_meta( $user_id, 'rtlg_original_google_profile_picture_url', true );
 
 		if ( empty( $original_url ) ) {
@@ -107,5 +107,20 @@ class UserProfileHelper {
 	 */
 	public static function save_profile_picture_source( int $user_id, string $source ): void {
 		update_user_meta( $user_id, 'rtlg_profile_picture_source', $source );
+	}
+
+	/**
+	 * Check if user has Google profile picture set.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @param integer $user_id WP User ID.
+	 * @return boolean
+	 */
+	public static function has_google_profile_picture( int $user_id ): bool {
+		$profile_picture_id                  = self::get_saved_google_profile_picture_id( $user_id );
+		$original_google_profile_picture_url = self::get_saved_original_google_profile_picture_url( $user_id );
+
+		return ! ( empty( $profile_picture_id ) || empty( $original_google_profile_picture_url ) );
 	}
 }
