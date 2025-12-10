@@ -2,8 +2,6 @@
 /**
  * Helper class for user profile functions.
  *
-
- *
  * @package RtCamp\GoogleLogin
  * @since n.e.x.t
  */

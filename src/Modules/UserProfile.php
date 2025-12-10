@@ -161,8 +161,6 @@ class UserProfile implements ModuleInterface {
 			$avatar_source = sanitize_text_field( wp_unslash( $_POST['rtlwg_profile_picture_source'] ) );
 			UserProfileHelper::save_profile_picture_source( $user_id, $avatar_source );
 		}
-
-		return true;
 	}
 
 	/**
