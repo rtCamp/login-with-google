@@ -233,7 +233,8 @@ class Authenticator {
 		$user_has_google_profile_picture = UserProfileHelper::has_google_profile_picture( $user_id );
 
 		/**
-		 * Filter to download profile picture even if it is not already downloaded.
+		 * Filter to control downloading the profile picture if it is not already downloaded.
+		 * By default, the profile picture is downloaded only if it has not already been downloaded.
 		 *
 		 * @since n.e.x.t
 		 *
