@@ -49,6 +49,8 @@ class UserProfile implements ModuleInterface {
 		// Save the profile edit options.
 		add_action( 'personal_options_update', [ $this, 'save_user_profile_edit_options' ] );
 		add_action( 'edit_user_profile_update', [ $this, 'save_user_profile_edit_options' ] );
+
+		add_action( 'admin_notices', [ $this, 'display_google_profile_picture_notice' ] );
 	}
 
 	/**
@@ -161,5 +163,38 @@ class UserProfile implements ModuleInterface {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Display notice to the user that profile picture has been downloaded and they can use that.
+	 *
+	 * @since n.e.x.t
+	 *
+	 * @return void
+	 */
+	public function display_google_profile_picture_notice(): void {
+		$screen                 = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		$profile_picture_source = UserProfileHelper::get_profile_picture_source( get_current_user_id() );
+
+		// Bail early if the current screen is not profile screen.
+		if ( null === $screen || 'profile' !== $screen->id ) {
+			return;
+		}
+
+		// Bail early if user has set google profile picture source.
+		if ( 'google' === $profile_picture_source ) {
+			return;
+		}
+
+		?>
+			<div class="notice notice-info is-dismissible">
+				<p>
+					<?php esc_html_e( 'Note: Your Google profile picture was downloaded and is available for use on your profile.', 'login-with-google' ); ?>
+					<a href="#rtlg-user-profile-edit">
+						<?php esc_html_e( 'You can select it from your profile settings.', 'login-with-google' ); ?>
+					</a>
+				</p>
+			</div>
+		<?php
 	}
 }

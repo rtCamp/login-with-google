@@ -12,7 +12,7 @@ $rtlg_profile_picture_id     = UserProfileHelper::get_saved_google_profile_pictu
 $rtlg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $wp_user->ID );
 ?>
 
-<div class="rtlg-user-profile-edit">
+<div class="rtlg-user-profile-edit-wrapper" id="rtlg-user-profile-edit">
 	<h2><?php esc_html_e( 'Login With Google', 'login-with-google' ); ?></h2>
 	<p><?php esc_html_e( 'Login With Google profile settings.', 'login-with-google' ); ?></p>
 	<table class="form-table" role="presentation">
