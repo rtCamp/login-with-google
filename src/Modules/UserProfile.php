@@ -133,7 +133,7 @@ class UserProfile implements ModuleInterface {
 	 * Render user profile edit template
 	 *
 	 * @since n.e.x.t
-	 * @param WP_User $wp_user WP_User object.
+	 * @param \WP_User $wp_user WP_User object.
 	 * @return void
 	 */
 	public function render_user_profile_edit_options( \WP_User $wp_user ) {
