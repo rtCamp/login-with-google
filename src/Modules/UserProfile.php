@@ -154,7 +154,7 @@ class UserProfile implements ModuleInterface {
 		}
 
 		if ( ! current_user_can( 'edit_user', $user_id ) ) {
-			return false;
+			return;
 		}
 
 		if ( isset( $_POST['rtlg_profile_picture_source'] ) ) {
