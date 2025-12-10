@@ -198,7 +198,7 @@ class Container implements ContainerInterface {
 		 *
 		 * @return UserProfile
 		 */
-		$this->container['user_profile'] = function ( PimpleContainer $c ) {
+		$this->container['user_profile'] = function ( PimpleContainer $c ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 			return new UserProfile();
 		};
 
