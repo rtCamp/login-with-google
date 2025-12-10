@@ -159,6 +159,9 @@ class UserProfile implements ModuleInterface {
 
 		if ( isset( $_POST['rtlwg_profile_picture_source'] ) ) {
 			$avatar_source = sanitize_text_field( wp_unslash( $_POST['rtlwg_profile_picture_source'] ) );
+			if ( ! in_array( $avatar_source, [ 'google', 'gravatar' ], true ) ) {
+				return;
+			}
 			UserProfileHelper::save_profile_picture_source( $user_id, $avatar_source );
 		}
 	}
