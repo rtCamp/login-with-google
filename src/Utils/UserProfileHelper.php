@@ -2,7 +2,7 @@
 /**
  * Helper class for user profile functions.
  *
- * This class has been taken from Login with Google plugin.
+
  *
  * @package RtCamp\GoogleLogin
  * @since n.e.x.t
@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Utils;
 
 /**
- * Class Helper
+ * Class UserProfileHelper
  */
 class UserProfileHelper {
 

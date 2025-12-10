@@ -148,7 +148,7 @@ class UserProfile implements ModuleInterface {
 	 * @param int $user_id User ID.
 	 * @return void
 	 */
-	public function save_user_profile_edit_options( $user_id ) {
+	public function save_user_profile_edit_options( int $user_id ) {
 		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['_wpnonce'] ), 'update-user_' . $user_id ) ) {
 			return;
 		}

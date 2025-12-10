@@ -284,12 +284,12 @@ class Authenticator {
 	/**
 	 * Download profile picture from given URL and return the saved profile picture file path.
 	 *
-	 * @since x.x.x
+	 * @since n.e.x.t
 	 *
 	 * @param string $profile_picture_url Profile picture URL.
 	 * @return string|null Profile picture file path or null on failure.
 	 */
-	private function download_profile_picture( $profile_picture_url ) {
+	private function download_profile_picture( string $profile_picture_url ) {
 		global $wp_filesystem;
 
 		if ( is_null( $wp_filesystem ) ) {

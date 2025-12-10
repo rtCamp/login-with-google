@@ -22,7 +22,7 @@ $rtlg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $w
 					<label for="rtlg_profile_picture_source"><?php esc_html_e( 'Profile Picture Source', 'login-with-google' ); ?></label>
 				</th>
 				<td>
-					<select name="rtlg_profile_picture_source" style="width: 15em;">
+					<select name="rtlg_profile_picture_source" id="rtlg_profile_picture_source" style="width: 15em;">
 						<option
 							value="google"
 							<?php selected( $rtlg_profile_picture_source, 'google' ); ?>
