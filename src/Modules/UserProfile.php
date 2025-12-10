@@ -136,7 +136,7 @@ class UserProfile implements ModuleInterface {
 	 * @param WP_User $wp_user WP_User object.
 	 * @return void
 	 */
-	public function render_user_profile_edit_options( $wp_user ) {
+	public function render_user_profile_edit_options( \WP_User $wp_user ) {
 		require_once plugin()->template_dir . 'user-profile-edit.php'; //phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingCustomFunction
 	}
 
