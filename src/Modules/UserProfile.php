@@ -159,7 +159,7 @@ class UserProfile implements ModuleInterface {
 
 		if ( isset( $_POST['rtlg_profile_picture_source'] ) ) {
 			$avatar_source = sanitize_text_field( wp_unslash( $_POST['rtlg_profile_picture_source'] ) );
-			Helper::save_profile_picture_source( $user_id, $avatar_source );
+			UserProfileHelper::save_profile_picture_source( $user_id, $avatar_source );
 		}
 
 		return true;
