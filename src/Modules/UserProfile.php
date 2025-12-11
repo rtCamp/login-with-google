@@ -71,8 +71,11 @@ class UserProfile implements ModuleInterface {
 		 * @since n.e.x.t
 		 *
 		 * @param boolean $use_saved_profile_picture_for_avatar Whether to bypass the use of the saved profile picture for avatar or not.
+		 * @param string  $url The URL of the avatar.
+		 * @param mixed   $id_or_email The avatar to retrieve. Accepts a user ID or, user email, WP_User object, WP_User object, WP_Post object, or WP_Comment object.
+		 * @param array   $args Arguments passed to get_avatar_data() , after processing.
 		 */
-		$use_avatar_url = apply_filters( 'rtcamp.google_use_saved_profile_picture_for_avatar', true );
+		$use_avatar_url = apply_filters( 'rtcamp.google_use_saved_profile_picture_for_avatar', true, $url, $id_or_email, $args );
 
 		if ( ! $use_avatar_url ) {
 			return $url;
