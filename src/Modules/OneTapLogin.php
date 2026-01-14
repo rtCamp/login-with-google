@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Modules;
 
 use Exception;
-use PHPUnit\TextUI\Help;
 use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Utils\Helper;
