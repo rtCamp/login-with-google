@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Modules;
 
 use Exception;
+use PHPUnit\TextUI\Help;
 use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Utils\Helper;
@@ -197,7 +198,7 @@ class OneTapLogin implements Module {
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
-			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+			$redirect_to   = Helper::get_redirect_url();
 			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 
