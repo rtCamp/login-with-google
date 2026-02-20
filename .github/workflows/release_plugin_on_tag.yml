@@ -6,8 +6,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v6
     - name: Set up PHP
       uses: shivammathur/setup-php@2.32.0
       with:
@@ -15,7 +17,7 @@ jobs:
         coverage: xdebug
         tools: composer,cs2pr
     - name: Set up Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version-file: './.nvmrc'
     - name: Install dependencies & build assets
@@ -36,13 +38,13 @@ jobs:
         VERSION: '${{ github.ref_name }}'
     - name: Upload Test Artifact
       if: startsWith(github.ref, 'refs/tags/dry')
-      uses: actions/upload-artifact@v4.6.1
+      uses: actions/upload-artifact@v6
       with:
         name: plugin
         path: '${{ steps.deploy.outputs.zip-path }}'
     - name: Upload Release Artifact
       if: startsWith(github.ref, 'refs/tags/dry') == false
-      uses: softprops/action-gh-release@v2.2.1
+      uses: softprops/action-gh-release@v2.5.0
       with:
         files: |
           ${{ steps.deploy.outputs.zip-path }}

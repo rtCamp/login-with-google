@@ -216,7 +216,7 @@ class Settings implements ModuleInterface {
 															value='1'>
 			<?php esc_html_e( 'Create a new user account if it does not exist already', 'login-with-google' ); ?>
 		</label>
-		<p class="description">
+		<p class="<?php echo esc_attr( 'error-message' ); ?>">
 			<?php
 			echo wp_kses_post(
 				sprintf(
@@ -244,6 +244,9 @@ class Settings implements ModuleInterface {
 					value='1'>
 			<?php esc_html_e( 'One Tap Login', 'login-with-google' ); ?>
 		</label>
+		<p class="<?php echo esc_attr( 'error-message' ); ?>">
+			<?php esc_html_e( 'Warning: One Tap login is more convenient, but it bypasses two-factor authentication (2FA).', 'login-with-google' ); ?>
+		</p>
 		<?php
 	}
 
