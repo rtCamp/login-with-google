@@ -11,6 +11,9 @@
 		"lint:style": "wp-scripts lint-style ./src/blocks",
 		"lint:js:fix": "npm run lint:js -- --fix ./src/blocks"
 	},
+	"overrides": {
+		"webpack-dev-server": ">=5.2.1"
+	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.5.0",
 		"concurrently": "^9.2.1",
