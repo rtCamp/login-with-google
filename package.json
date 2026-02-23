@@ -14,16 +14,7 @@
 	"overrides": {
 		"webpack-dev-server": "^5.2.3",
 		"minimatch": ">=10.2.1",
-		"bn.js" : ">=5.2.3",
-		"@wp-playground/blueprints": {
-			"ajv": ">=8.18.0"
-		},
-		"@wp-playground/tools": {
-			"ajv": ">=8.18.0"
-		},
-		"@wp-playground/cli": {
-			"ajv": ">=8.18.0"
-		}
+		"bn.js" : ">=5.2.3"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.5.0",
