@@ -76,10 +76,10 @@ class AssetsTest extends TestCase {
 			'wp_register_style',
 			[
 				'login-with-google',
-				'https://example.com/assets/build/css/login.css',
+				'https://example.com/assets/build/js/style-login.css',
 				[],
 				false,
-				true,
+				'all',
 			],
 			1,
 			true
@@ -235,10 +235,10 @@ class AssetsTest extends TestCase {
 			'wp_register_style',
 			[
 				'login-with-google',
-				'https://example.com/assets/build/css/login.css',
+				'https://example.com/assets/build/js/style-login.css',
 				[],
 				false,
-				true,
+				'all',
 			],
 			1,
 			true
