@@ -18,10 +18,10 @@ body:
     validations:
       required: true
   - type: textarea
-    id: solution
+    id: alternatives
     attributes:
       label: Describe alternatives you've considered
-      description: Describe the solution you'd like.
+      description: Describe any alternative solutions or approaches you've considered.
     validations:
       required: false
   - type: textarea
