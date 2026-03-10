@@ -2,5 +2,5 @@ blank_issues_enabled: true
 
 contact_links:
   - name: Report a security vulnerability
-    url: https://github.com/rtCamp/carousel-kit/security/policy
+    url: https://github.com/rtCamp/login-with-google/security/policy
     about: Please use GitHub Security Advisories to privately report vulnerabilities
