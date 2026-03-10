@@ -69,7 +69,7 @@ body:
     id: terms
     attributes:
       label: Contribution Guidelines
-      description: By submitting this issue, you agree to follow our [contribution guidelines](https://github.com/rtCamp/carousel-kit/blob/main/docs/CONTRIBUTING.md).
+      description: By submitting this issue, you agree to follow our [contribution guidelines](https://github.com/rtCamp/login-with-google/blob/main/docs/CONTRIBUTING.md).
       options:
         - label: I have read the contribution guidelines
           required: true
