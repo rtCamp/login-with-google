@@ -2,11 +2,11 @@
 	"private": true,
 	"scripts": {
 		"build-blocks-manifest": "wp-scripts build-blocks-manifest --input=./assets/src/blocks --output=./assets/build/blocks/blocks-manifest.php",
-		"development": "mix && cross-env NODE_ENV=development wp-scripts build --source-path=./assets/src/blocks --output-path=./assets/build/blocks",
+		"development": "wp-scripts build --config webpack.assets.config.js --mode=development && wp-scripts build --source-path=./assets/src/blocks --output-path=./assets/build/blocks --mode=development",
 		"postdevelopment": "npm run build-blocks-manifest",
-		"production": "mix --production && wp-scripts build --source-path=./assets/src/blocks --output-path=./assets/build/blocks",
+		"production": "wp-scripts build --config webpack.assets.config.js && wp-scripts build --source-path=./assets/src/blocks --output-path=./assets/build/blocks",
 		"postproduction": "npm run build-blocks-manifest",
-		"watch": "concurrently \"mix watch\" \"wp-scripts start --source-path=./assets/src/blocks --output-path=./assets/build/blocks\"",
+		"watch": "concurrently \"wp-scripts build --config webpack.assets.config.js --mode=development --watch\" \"wp-scripts start --source-path=./assets/src/blocks --output-path=./assets/build/blocks\"",
 		"lint:js": "wp-scripts lint-js ./assets/src/blocks",
 		"lint:style": "wp-scripts lint-style ./assets/src/blocks",
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
@@ -14,14 +14,11 @@
 	"overrides": {
 		"webpack-dev-server": "^5.2.3",
 		"minimatch": ">=10.2.1",
-		"bn.js": ">=5.2.3",
 		"serialize-javascript": "^7.0.3"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.6.0",
 		"concurrently": "^9.2.1",
-		"cross-env": "^10.1.0",
-		"laravel-mix": "^6.0.49",
 		"lodash": "^4.17.23",
 		"sass": "^1.97.3",
 		"sass-loader": "^16.0.7",

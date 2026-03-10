@@ -127,7 +127,6 @@ class OneTapLogin implements Module {
 			return;
 		}
 
-		$filename     = ( defined( 'WP_SCRIPT_DEBUG' ) && true === WP_SCRIPT_DEBUG ) ? 'onetap.min.js' : 'onetap.js';
 		$redirects_to = Helper::get_redirect_url();
 
 		Helper::set_redirect_state_filter( $redirects_to );
@@ -150,7 +149,7 @@ class OneTapLogin implements Module {
 
 		wp_register_script(
 			'login-with-google-one-tap-js',
-			trailingslashit( plugin()->url ) . 'assets/build/js/' . $filename,
+			trailingslashit( plugin()->url ) . 'assets/build/js/onetap.js',
 			[
 				'wp-i18n',
 			],

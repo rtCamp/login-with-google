@@ -4,6 +4,8 @@
  * @package login-with-google
  */
 
+import '../scss/button/style.scss';
+
 const wpGoogleLogin = {
 
 	/**
