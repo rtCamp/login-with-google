@@ -1,0 +1,75 @@
+name: Bug Report
+description: File a bug report.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: describe-the-bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of the bug.
+      placeholder: Tell us what went wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behaviour
+      description: What did you expect to happen?
+      placeholder: Describe the expected result.
+    validations:
+      required: true
+  - type: textarea
+    id: actual-behaviour
+    attributes:
+      label: Actual behaviour
+      description: What actually happened?
+      placeholder: Describe the actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reproduce this behavior?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: environment-information
+    attributes:
+      label: Environment information
+      description: Share your operating environment details.
+      placeholder: |
+        OS:
+        Browser:
+        Plugin version:
+    validations:
+      required: false
+  - type: textarea
+    id: wordpress-environment
+    attributes:
+      label: WordPress Environment
+      description: Share your WordPress environment details.
+      placeholder: |
+        WordPress version:
+        PHP version:
+        Active theme:
+        Active plugins:
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Contribution Guidelines
+      description: By submitting this issue, you agree to follow our [contribution guidelines](https://github.com/rtCamp/carousel-kit/blob/main/docs/CONTRIBUTING.md).
+      options:
+        - label: I have read the contribution guidelines
+          required: true
