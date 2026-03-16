@@ -15,7 +15,8 @@
 		"webpack-dev-server": "^5.2.3",
 		"minimatch": ">=10.2.1",
 		"bn.js": ">=5.2.3",
-		"serialize-javascript": "^7.0.3"
+		"serialize-javascript": "^7.0.3",
+		"yauzl": "^3.2.1"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.6.0",
