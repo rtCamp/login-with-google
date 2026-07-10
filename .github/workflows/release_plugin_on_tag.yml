@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
     - name: Set up PHP
-      uses: shivammathur/setup-php@2.32.0
+      uses: shivammathur/setup-php@2.37.1
       with:
         php-version: '7.4'
         coverage: xdebug

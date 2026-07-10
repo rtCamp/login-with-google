@@ -12,11 +12,12 @@
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
 	},
 	"overrides": {
-		"webpack-dev-server": "^5.2.3",
+		"webpack-dev-server": "^5.2.5",
 		"minimatch": ">=10.2.1",
 		"bn.js": ">=5.2.3",
 		"serialize-javascript": "^7.0.3",
-		"yauzl": "^3.2.1"
+		"yauzl": "^3.2.1",
+		"http-proxy-middleware": "^2.0.10"
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.6.0",
@@ -26,6 +27,6 @@
 		"lodash": "^4.18.1",
 		"sass": "^1.98.0",
 		"sass-loader": "^16.0.7",
-		"webpack-dev-server": "^5.2.3"
+		"webpack-dev-server": "^5.2.5"
 	}
 }
