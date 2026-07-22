@@ -3,7 +3,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-i18n/
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 
 /**
  * Editor styles for the block.
@@ -45,7 +45,7 @@ export default function Edit( { attributes, setAttributes, className } ) {
 			setAttributes( { buttonText: value } );
 		},
 		value: buttonText,
-		placeholder: __( 'Login with Google', 'login-with-google' ),
+		placeholder: _x( 'Login with Google', 'Login button text displayed in block.', 'login-with-google' ),
 	};
 
 	const forceDisplayAttributes = {
