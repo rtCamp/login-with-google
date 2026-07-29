@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-20T14:41:42+00:00\n"
+"POT-Creation-Date: 2026-07-29T09:20:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: login-with-google\n"
@@ -151,7 +151,7 @@ msgid "Registration is not allowed."
 msgstr ""
 
 #. translators: %s is replaced with email ID of user trying to register
-#: src/Utils/Authenticator.php:124
+#: src/Utils/Authenticator.php:128
 #, php-format
 msgid "Cannot register with this email: %s"
 msgstr ""
