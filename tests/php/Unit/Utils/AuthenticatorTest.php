@@ -76,7 +76,7 @@ class AuthenticatorTest extends TestCase {
 		];
 
 		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Google account email must be verified.' );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
 
 		$this->testee->authenticate( $user );
 	}
@@ -91,7 +91,7 @@ class AuthenticatorTest extends TestCase {
 		];
 
 		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Google account email must be verified.' );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
 
 		$this->testee->authenticate( $user );
 	}
@@ -105,7 +105,7 @@ class AuthenticatorTest extends TestCase {
 		];
 
 		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Google account email must be verified.' );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
 
 		$this->testee->authenticate( $user );
 	}
@@ -113,7 +113,7 @@ class AuthenticatorTest extends TestCase {
 	/**
 	 * @covers ::authenticate
 	 */
-	public function testAuthentiCateReturnsUserObject() {
+	public function testAuthenticateReturnsUserObject() {
 		$user = (object) [
 			'name'           => 'Test',
 			'email'          => 'test@example.com',
