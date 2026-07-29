@@ -143,6 +143,7 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 
 = 1.4.3 =
 Security: Reject Google identities without a verified email address.
+Update: Updated Composer and NPM dependencies.
 Chore: Confirm compatibility with WordPress 7.0.2.
 
 = 1.4.2 =
@@ -237,6 +238,7 @@ Chore: Documentation update.
 
 = 1.4.3 =
 Security: Reject Google identities without a verified email address.
+Update: Updated Composer and NPM dependencies.
 Chore: Confirm compatibility with WordPress 7.0.2.
 
 = 1.4.2 =
