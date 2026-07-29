@@ -58,6 +58,10 @@ class Authenticator {
 			throw new InvalidArgumentException( esc_html__( 'Email needs to be present for the user.', 'login-with-google' ) );
 		}
 
+		if ( true !== ( $user->email_verified ?? false ) && true !== ( $user->verified_email ?? false ) ) {
+			throw new InvalidArgumentException( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
+		}
+
 		if ( email_exists( $user->email ) ) {
 			$user_wp = get_user_by( 'email', $user->email );
 

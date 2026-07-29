@@ -69,10 +69,55 @@ class AuthenticatorTest extends TestCase {
 	/**
 	 * @covers ::authenticate
 	 */
-	public function testAuthentiCateReturnsUserObject() {
+	public function testAuthenticateRejectsUnverifiedEmail() {
 		$user = (object) [
-			'name'  => 'Test',
+			'email'          => 'test@example.com',
+			'email_verified' => false,
+		];
+
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
+
+		$this->testee->authenticate( $user );
+	}
+
+	/**
+	 * @covers ::authenticate
+	 */
+	public function testAuthenticateRejectsUnverifiedUserInfoEmail() {
+		$user = (object) [
+			'email'          => 'test@example.com',
+			'verified_email' => false,
+		];
+
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
+
+		$this->testee->authenticate( $user );
+	}
+
+	/**
+	 * @covers ::authenticate
+	 */
+	public function testAuthenticateRejectsMissingEmailVerification() {
+		$user = (object) [
 			'email' => 'test@example.com',
+		];
+
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
+
+		$this->testee->authenticate( $user );
+	}
+
+	/**
+	 * @covers ::authenticate
+	 */
+	public function testAuthenticateReturnsUserObject() {
+		$user = (object) [
+			'name'           => 'Test',
+			'email'          => 'test@example.com',
+			'verified_email' => true,
 		];
 
 		$wp_user = Mockery::mock( \WP_User::class );
@@ -107,8 +152,9 @@ class AuthenticatorTest extends TestCase {
 	 */
 	public function testAuthenticateFilterApplied() {
 		$user = (object) [
-			'name'  => 'Test',
-			'email' => 'test@example.com',
+			'name'           => 'Test',
+			'email'          => 'test@example.com',
+			'email_verified' => true,
 		];
 
 		$this->wpMockFunction(
