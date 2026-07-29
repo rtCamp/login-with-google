@@ -4,9 +4,9 @@ Unlinked contributors: Jeppehimer, dev-alamin
 Donate link: https://rtcamp.com/
 Tags: Google login, sign in, sso, oauth, authentication, sign-in, single sign-on, log in
 Requires at least: 5.5
-Tested up to: 6.7.2
+Tested up to: 7.0.2
 Requires PHP: 7.4
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,10 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 
 == Changelog ==
 
+= 1.4.3 =
+Security: Reject Google identities without a verified email address.
+Update: Updated Composer and NPM dependencies.
+
 = 1.4.2 =
 Fix: Migrated rtcamp.google_redirect_url from action to filter.
 Chore: Documentation update.
@@ -230,6 +234,10 @@ Chore: Documentation update.
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.4.3 =
+Security: Reject Google identities without a verified email address.
+Update: Updated Composer and NPM dependencies.
 
 = 1.4.2 =
 Fix: Migrated rtcamp.google_redirect_url from action to filter.
