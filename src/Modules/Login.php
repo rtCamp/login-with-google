@@ -166,7 +166,28 @@ class Login implements ModuleInterface {
 			throw new Exception( __( 'Could not authenticate the user, please try again.', 'login-with-google' ) );
 
 		} catch ( Throwable $e ) {
-			return new WP_Error( 'google_login_failed', $e->getMessage() );
+			$error = new WP_Error( 'google_login_failed', $e->getMessage() );
+
+			/**
+			 * Filter the URL to redirect the user to when Google authentication fails.
+			 *
+			 * By default an empty string is returned and WordPress renders the
+			 * default login error. Return a non-empty URL to redirect the user to
+			 * a custom page (e.g. a friendly error page) instead.
+			 *
+			 * @since 1.4.4
+			 *
+			 * @param string   $redirect_to Redirect URL. Default empty string (no redirect).
+			 * @param WP_Error $error       Error object describing the authentication failure.
+			 */
+			$redirect_to = apply_filters( 'rtcamp.google_login_failed_redirect', '', $error );
+
+			if ( is_string( $redirect_to ) && '' !== $redirect_to ) {
+				wp_safe_redirect( $redirect_to, 302, 'Login with Google' );
+				exit;
+			}
+
+			return $error;
 		}
 	}
 
