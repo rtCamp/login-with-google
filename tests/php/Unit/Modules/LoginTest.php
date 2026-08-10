@@ -393,6 +393,12 @@ class LoginTest extends TestCase {
 		       ->withAnyArgs()
 		       ->reply( 'https://example.com/custom-error' );
 
+		// The redirect target is validated before use; return it unchanged.
+		WP_Mock::userFunction( 'wp_validate_redirect' )
+		       ->once()
+		       ->with( 'https://example.com/custom-error', '' )
+		       ->andReturn( 'https://example.com/custom-error' );
+
 		// wp_safe_redirect() is followed by exit; throw to simulate the halt.
 		WP_Mock::userFunction( 'wp_safe_redirect' )
 		       ->once()
