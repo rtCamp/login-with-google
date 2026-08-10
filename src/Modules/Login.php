@@ -183,8 +183,12 @@ class Login implements ModuleInterface {
 			$redirect_to = apply_filters( 'rtcamp.google_login_failed_redirect', '', $error );
 
 			if ( is_string( $redirect_to ) && '' !== $redirect_to ) {
-				wp_safe_redirect( $redirect_to, 302, 'Login with Google' );
-				exit;
+				$redirect_to = wp_validate_redirect( $redirect_to, '' );
+
+				if ( '' !== $redirect_to ) {
+					wp_safe_redirect( $redirect_to, 302, 'Login with Google' );
+					exit;
+				}
 			}
 
 			return $error;
