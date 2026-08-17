@@ -349,6 +349,69 @@ class LoginTest extends TestCase {
 	}
 
 	/**
+	 * When the failure-redirect filter returns a URL, the user should be
+	 * redirected there instead of receiving the default WP_Error.
+	 *
+	 * @covers ::authenticate
+	 */
+	public function testAuthenticationExceptionRedirectsWhenFilterReturnsUrl() {
+		$helperMock = Mockery::mock( 'alias:' . Helper::class );
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'code',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
+			]
+		)->andReturn( 'abc' );
+
+		$helperMock->expects( 'filter_input' )->once()->withArgs(
+			[
+				INPUT_GET,
+				'state',
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS
+			]
+		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+
+		$this->wpMockFunction(
+			'wp_verify_nonce',
+			[
+				'testnonce',
+				'login_with_google',
+			],
+			1,
+			true
+		);
+
+		$this->ghClientMock->expects( $this->once() )
+		                   ->method( 'set_access_token' )
+		                   ->with( 'abc' )
+		                   ->willThrowException( new Exception( 'Exception for test' ) );
+
+		Mockery::mock( 'WP_Error' );
+
+		WP_Mock::onFilter( 'rtcamp.google_login_failed_redirect' )
+		       ->withAnyArgs()
+		       ->reply( 'https://example.com/custom-error' );
+
+		// The redirect target is validated before use; return it unchanged.
+		WP_Mock::userFunction( 'wp_validate_redirect' )
+		       ->once()
+		       ->with( 'https://example.com/custom-error', '' )
+		       ->andReturn( 'https://example.com/custom-error' );
+
+		// wp_safe_redirect() is followed by exit; throw to simulate the halt.
+		WP_Mock::userFunction( 'wp_safe_redirect' )
+		       ->once()
+		       ->with( 'https://example.com/custom-error', 302, 'Login with Google' )
+		       ->andThrow( new Exception( 'redirect-exit' ) );
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'redirect-exit' );
+
+		$this->testee->authenticate();
+	}
+
+	/**
 	 * @covers ::user_meta
 	 */
 	public function testUserMeta() {
