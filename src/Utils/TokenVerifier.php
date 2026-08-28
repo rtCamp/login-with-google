@@ -75,13 +75,11 @@ class TokenVerifier {
 	 * @param string $algo Algorithm.
 	 */
 	public static function get_supported_algorithm( string $algo = '' ) {
-		$find_algo = array_key_exists( $algo, self::SUPPORTED_ALGORITHMS );
-
-		if ( ! $find_algo ) {
-			return apply_filters( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, $algo );
+		if ( isset( self::SUPPORTED_ALGORITHMS[ $algo ] ) ) {
+			return self::SUPPORTED_ALGORITHMS[ $algo ];
 		}
 
-		return self::SUPPORTED_ALGORITHMS[ $algo ];
+		return apply_filters( 'rtcamp.default_algorithm', OPENSSL_ALGO_SHA256, $algo );
 	}
 
 	/**
@@ -121,7 +119,7 @@ class TokenVerifier {
 	}
 
 	/**
-	 * Base64 URL Encode a string.
+	 * Base64 URL Decode a string.
 	 *
 	 * @param string $str Input string to decode.
 	 *

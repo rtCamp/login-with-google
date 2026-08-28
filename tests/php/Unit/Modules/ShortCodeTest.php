@@ -103,7 +103,7 @@ class ShortCodeTest extends TestCase {
 			[
 				'args'       => [
 					[
-						'button_text'   => __( 'Login with google', 'login-with-google' ),
+						'button_text'   => '',
 						'force_display' => 'no',
 						'redirect_to'   => 'https://example.com/',
 					],
@@ -137,7 +137,7 @@ class ShortCodeTest extends TestCase {
 			[
 				'args'       => [
 					[
-						'button_text'   => __( 'Login with google', 'login-with-google' ),
+						'button_text'   => '',
 						'force_display' => 'no',
 						'redirect_to'   => null,
 					],
@@ -184,7 +184,7 @@ class ShortCodeTest extends TestCase {
 			[
 				'/some/path/templates/google-login-button.php',
 				[
-					'button_text'   => 'Login with google',
+					'button_text'   => '',
 					'force_display' => 'no',
 					'redirect_to'   => null,
 					'login_url'     => 'https://google.com/auth/',

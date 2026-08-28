@@ -87,6 +87,6 @@ trait PrivateAccess {
 	 */
 	protected function get_static_private_property( $class, $property_name ) {
 		$properties = ( new ReflectionClass( $class ) )->getStaticProperties();
-		return array_key_exists( $property_name, $properties ) ? $properties[ $property_name ] : null;
+		return $properties[ $property_name ] ?? null;
 	}
 }
