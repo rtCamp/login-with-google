@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin;
 
 use RtCamp\GoogleLogin\Interfaces\Container as ContainerInterface;
+use RtCamp\GoogleLogin\Utils\Helper;
 
 /**
  * Class Plugin.
@@ -75,6 +76,7 @@ class Plugin {
 		'shortcode',
 		'one_tap_login',
 		'google_login_block',
+		'user_profile',
 	];
 
 	/**
