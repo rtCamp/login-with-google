@@ -1,24 +1,14 @@
 <?xml version="1.0" ?>
-<ruleset name="Login with github">
-    <config name="minimum_supported_wp_version" value="5.4.2" />
+<ruleset name="Login with Google">
+    <config name="minimum_supported_wp_version" value="5.5.0" />
     <!-- Check for PHP cross-version compatibility. -->
-    <config name="testVersion" value="7.1-"/>
+    <config name="testVersion" value="7.4-"/>
     <rule ref="PHPCompatibilityWP"/>
 
-    <file>src</file>
-    <file>login-with-google.php</file>
-
-    <rule ref="WordPress-Core">
-        <exclude name="Universal.Operators.DisallowShortTernary" />
+    <rule ref="WordPress">
         <exclude name="Universal.Arrays.DisallowShortArraySyntax.Found" />
-    </rule>
 
-    <rule ref="WordPress-Docs">
-        <exclude-pattern>tests/*</exclude-pattern>
-    </rule>
-
-    <!-- For PSR-4 autoloading. -->
-    <rule ref="WordPress-Extra">
+        <!-- For PSR-4 autoloading. -->
         <exclude name="WordPress.Files.FileName" />
         <exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
     </rule>
@@ -39,7 +29,6 @@
     </rule>
 
     <rule ref="WordPress-VIP-Go">
-        <exclude-pattern>tests/*</exclude-pattern>
     </rule>
 
     <rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis" />
