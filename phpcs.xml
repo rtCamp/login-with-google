@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<ruleset name="Login with github">
+<ruleset name="Login with Google">
     <config name="minimum_supported_wp_version" value="5.4.2" />
     <!-- Check for PHP cross-version compatibility. -->
     <config name="testVersion" value="7.1-"/>
