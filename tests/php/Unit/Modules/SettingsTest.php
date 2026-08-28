@@ -7,6 +7,7 @@ declare( strict_types=1 );
 
 namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
+use RtCamp\GoogleLogin\Tests\PrivateAccess;
 use WP_Mock;
 use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
 use RtCamp\GoogleLogin\Tests\TestCase;
@@ -20,6 +21,8 @@ use RtCamp\GoogleLogin\Modules\Settings as Testee;
  * @package RtCamp\GoogleLogin\Tests\Unit\Modules
  */
 class SettingsTest extends TestCase {
+	use PrivateAccess;
+
 	/**
 	 * Object in test.
 	 *
@@ -315,4 +318,42 @@ class SettingsTest extends TestCase {
 		$this->assertConditionsMet();
 	}
 
+	/**
+	 * @covers ::one_tap_login
+	 * @covers ::disabled
+	 */
+	public function testOneTapLogin() {
+		define( 'WP_GOOGLE_ONE_TAP_LOGIN', true );
+
+		$this->wpMockFunction( 'checked', [ true ], 1, 'checked' );
+
+		ob_start();
+		$this->testee->one_tap_login();
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertIsString( $html );
+
+		$this->assertStringContainsString( 'checked', $html );
+	}
+
+	/**
+	 * @covers ::one_tap_login_screens
+	 * @covers ::disabled
+	 */
+	public function testOneTapLoginScreen() {
+		define( 'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN', 'login' );
+
+		$this->wpMockFunction( 'checked', [ 'login', 'login' ], 1, 'checked' );
+		$this->wpMockFunction( 'checked', [ 'login', 'sitewide' ], 1, 'checked' );
+
+		ob_start();
+		$this->testee->one_tap_login_screens();
+		$html = ob_get_contents();
+		ob_end_clean();
+
+		$this->assertIsString( $html );
+
+		$this->assertStringContainsString( 'checked', $html );
+	}
 }
