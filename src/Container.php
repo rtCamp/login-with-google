@@ -116,8 +116,8 @@ class Container implements ContainerInterface {
 
 			return new GoogleClient(
 				[
-					'client_id'     => $settings->client_id,
-					'client_secret' => $settings->client_secret,
+					'client_id'     => $settings->get_client_id(),
+					'client_secret' => $settings->get_client_secret(),
 					'redirect_uri'  => wp_login_url(),
 				]
 			);

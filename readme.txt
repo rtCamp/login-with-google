@@ -29,12 +29,13 @@ Ultra minimal plugin to let your users login to WordPress applications using the
 3. This will give you **Client ID** and **Secret key**.
 
 
-4. Input these values either in `WP Admin > Settings > WP Google Login`, or in `wp-config.php` using the following code snippet:
+4. Input these values either in `WP Admin > Settings > Login With Google`, or in `wp-config.php` using the following code snippet:
 
 ```
 define( 'WP_GOOGLE_LOGIN_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID' );
 define( 'WP_GOOGLE_LOGIN_SECRET', 'YOUR_SECRET_KEY' );
 ```
+If you have a multisite setup, only `Network Administrator` will be able to modify these credentials from `Network Admin > Settings > Login With Google`.
 
 ### Browser support
 [These browsers are supported](https://developers.google.com/identity/gsi/web/guides/supported-browsers). Note, for example, that One Tap Login is not supported in Safari.
