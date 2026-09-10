@@ -4,21 +4,22 @@
  *
  * @package RtCamp\GithubLogin
  * @since 1.0.0
+ * @var array<string, string> $variables
  */
 
 use RtCamp\GoogleLogin\Utils\Helper;
 
-if ( isset( $custom_btn_text ) && $custom_btn_text ) {
-	$button_text = esc_html( $custom_btn_text );
+if (!empty($variables['custom_btn_text'])) {
+	$button_text = esc_html($variables['custom_btn_text']);
 } else {
-	$button_text = ( ! empty( $button_text ) ) ? $button_text : __( 'Login with Google', 'login-with-google' );
+	$button_text = $variables['button_text'] ?? __( 'Login with Google', 'login-with-google' );
 }
 
-if ( empty( $login_url ) ) {
+if (empty($variables['login_url'])) {
 	return;
 }
 
-$button_url = $login_url;
+$button_url = $variables['login_url'];
 
 if ( is_user_logged_in() ) {
 	$button_text  = __( 'Log out', 'login-with-google' );
