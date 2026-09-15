@@ -94,6 +94,9 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
 | `rtcamp.google_redirect_url` | Filters the URL to which the user will be redirected post successful authentication | <ul><li> `redirect_uri` - contains the URL to be redirected to. Defaults to the current URL.</li></ul>
+| `rtcamp.google_use_saved_profile_picture_for_avatar` | Filter to bypass the use of saved profile picture for avatar |  <ul><li> `bypass` - Whether to bypass using the google profile picture or not.</li><li> `url` - The URL of the avatar</li><li> `$id_or_email` - The avatar to retrieve. Accepts a user ID or, user email, WP_User object, WP_User object, WP_Post object, or WP_Comment object.</li><li> `args` - Arguments passed to get_avatar_data() , after processing.</li></ul>
+| `rtcamp.google_should_save_user_profile_picture` | Filter to bypass the profile picture saving process. | <ul><li>`save` - Whether to save profile picture or not.</li><li> `user_id` - WP User ID.</li><li> `user` - User object returned by Google.</li></ul>
+| `rtcamp.google_download_profile_picture` | Filter to control downloading the profile picture if it is not already downloaded. By default, the profile picture is downloaded only if it has not already been downloaded | <ul><li> `download_profile_picture` - Whether to download profile picture.</li><li> `user_id` - WP User ID.</li><li> `user` - User object returned by Google.</li></ul>
 
 #### Actions
 
