@@ -20,7 +20,7 @@
 		"http-proxy-middleware": "^2.0.10"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^31.6.0",
+		"@wordpress/scripts": "^35.0.0",
 		"concurrently": "^10.0.3",
 		"cross-env": "^10.1.0",
 		"laravel-mix": "^6.0.49",
