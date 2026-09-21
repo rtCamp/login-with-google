@@ -68,7 +68,7 @@ class GoogleClientTest extends TestCase {
 	 * @covers ::gt_redirect_url
 	 */
 	public function testCallWithOtherMethods() {
-		WP_Mock::expectFilterNotAdded( 'rtcamp.github_redirect_url', '' );
+		WP_Mock::expectFilterNotAdded( 'rtcamp.google_redirect_url', '' );
 		$this->testee->__call( 'some_other_method', null );
 
 		$this->assertConditionsMet();

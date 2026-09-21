@@ -41,12 +41,6 @@ class Helper {
 			return '';
 		}
 
-		if ( ! empty( $variables ) ) {
-			// This will needed for provide variables to the template.
-			// Will skips those variables, those already defined.
-			extract( $variables, EXTR_SKIP ); // phpcs:ignore
-		}
-
 		if ( true === $should_echo ) {
 
 			// Load template and output the data.

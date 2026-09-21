@@ -140,9 +140,9 @@ class Block implements Module {
 		) {
 			$markup = $this->markup(
 				[
-					'login_url'           => $this->client->authorization_url(),
-					'custom_btn_text'     => $attributes['buttonText'] ?? false,
-					'force_display_block' => $attributes['forceDisplay'] ?? false,
+					'login_url'       => $this->client->authorization_url(),
+					'custom_btn_text' => $attributes['buttonText'] ?? '',
+					'force_display'   => $force_display,
 				]
 			);
 
@@ -174,7 +174,7 @@ class Block implements Module {
 			[
 				'login_url'       => '#',
 				'custom_btn_text' => '',
-				'forceDisplay'    => false,
+				'force_display'   => false,
 			]
 		);
 

@@ -95,12 +95,10 @@ class Shortcode implements ModuleInterface {
 	 * @return string
 	 */
 	public function callback( $attrs = [] ): string {
-		$redirect_to = Helper::get_redirect_url();
-		$attrs       = shortcode_atts(
+		$attrs = shortcode_atts(
 			[
-				'button_text'   => __( 'Login with google', 'login-with-google' ),
+				'button_text'   => '',
 				'force_display' => 'no',
-				'redirect_to'   => $redirect_to,
 			],
 			$attrs,
 			self::TAG
