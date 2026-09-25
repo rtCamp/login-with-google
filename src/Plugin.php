@@ -26,7 +26,7 @@ class Plugin {
 	 *
 	 * @var string
 	 */
-	public $version = '1.4.3';
+	public $version = '1.4.4';
 
 	/**
 	 * Plugin directory path.
@@ -70,6 +70,7 @@ class Plugin {
 	 */
 	public $active_modules = [
 		'settings',
+		'notes_slack',
 		'login_flow',
 		'assets',
 		'shortcode',

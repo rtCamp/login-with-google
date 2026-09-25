@@ -167,6 +167,8 @@ class SettingsTest extends TestCase {
 	 * @covers ::output
 	 */
 	public function testOutput() {
+		WP_Mock::userFunction( 'admin_url', [ 'times' => 2, 'return' => 'https://example.test/wp-admin/options-general.php' ] );
+		WP_Mock::userFunction( 'esc_url', [ 'times' => 2, 'return' => 'https://example.test/wp-admin/options-general.php' ] );
 		$this->wpMockFunction(
 			'settings_fields',
 			[

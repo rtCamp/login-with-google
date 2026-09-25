@@ -337,15 +337,26 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function output(): void {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The tab only selects a read-only settings view.
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'google';
 		?>
 		<div class="wrap">
-		<form action='options.php' method='post'>
-			<?php
-			settings_fields( 'wp_google_login' );
-			do_settings_sections( 'login-with-google' );
-			submit_button();
-			?>
-		</form>
+			<h1><?php esc_html_e( 'Login with Google', 'login-with-google' ); ?></h1>
+			<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'Plugin settings', 'login-with-google' ); ?>">
+				<a class="nav-tab <?php echo 'notes-slack' !== $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=login-with-google' ) ); ?>"><?php esc_html_e( 'Google sign-in', 'login-with-google' ); ?></a>
+				<a class="nav-tab <?php echo 'notes-slack' === $tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=login-with-google&tab=notes-slack' ) ); ?>"><?php esc_html_e( 'Notes → Slack', 'login-with-google' ); ?></a>
+			</nav>
+			<?php if ( 'notes-slack' === $tab ) : ?>
+				<?php \RtCamp\GoogleLogin\plugin()->container()->get( 'notes_slack' )->render_settings(); ?>
+			<?php else : ?>
+			<form action='options.php' method='post'>
+				<?php
+				settings_fields( 'wp_google_login' );
+				do_settings_sections( 'login-with-google' );
+				submit_button();
+				?>
+			</form>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
