@@ -54,6 +54,7 @@ class NotesSlack implements ModuleInterface {
 		add_action( 'admin_post_rtcamp_google_notes_slack_disconnect', [ $this, 'disconnect' ] );
 		add_action( 'admin_post_rtcamp_google_notes_slack_test', [ $this, 'send_test' ] );
 		add_action( 'admin_post_rtcamp_google_notes_slack_match', [ $this, 'match_people' ] );
+		add_action( 'admin_post_rtcamp_google_notes_slack_overrides', [ $this, 'save_overrides' ] );
 		add_action( 'edit_user_profile', [ $this, 'render_user_field' ] );
 		add_action( 'show_user_profile', [ $this, 'render_user_field' ] );
 		add_action( 'edit_user_profile_update', [ $this, 'save_user_field' ] );
@@ -80,7 +81,7 @@ class NotesSlack implements ModuleInterface {
 	 * @return bool
 	 */
 	private function is_enabled(): bool {
-		return ! empty( $this->settings['enabled'] ) && '' !== $this->token();
+		return ! empty( $this->settings['enabled'] ) && '' !== $this->token() && ! empty( $this->settings['team_id'] );
 	}
 
 	/**
@@ -219,14 +220,68 @@ class NotesSlack implements ModuleInterface {
 	 * @return string|WP_Error
 	 */
 	private function slack_user_id( WP_User $user, SlackClient $client ) {
-		$override = (string) get_user_meta( $user->ID, self::USER_OVERRIDE, true );
+		$override = $this->override_id( $user );
 		if ( '' !== $override ) {
 			return $override;
 		}
+		return $this->email_match_id( $user, $client );
+	}
 
+	/**
+	 * Return an override only when it belongs to the connected workspace.
+	 *
+	 * @param WP_User $user WordPress user.
+	 * @return string
+	 */
+	private function override_id( WP_User $user ): string {
+		$value = get_user_meta( $user->ID, self::USER_OVERRIDE, true );
+		if ( ! is_array( $value ) || ( $value['team_id'] ?? '' ) !== ( $this->settings['team_id'] ?? '' ) ) {
+			return '';
+		}
+		$id = (string) ( $value['id'] ?? '' );
+		return preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ? $id : '';
+	}
+
+	/**
+	 * Store a manual mapping with its connected workspace.
+	 *
+	 * @param int    $user_id WordPress user ID.
+	 * @param string $id Slack user ID.
+	 * @return void
+	 */
+	private function set_override( int $user_id, string $id ): void {
+		if ( '' === $id ) {
+			delete_user_meta( $user_id, self::USER_OVERRIDE );
+			return;
+		}
+		update_user_meta(
+			$user_id,
+			self::USER_OVERRIDE,
+			[
+				'id'      => $id,
+				'team_id' => (string) $this->settings['team_id'],
+			]
+		);
+	}
+
+	/**
+	 * Find a user by WordPress email, even when an override is present.
+	 *
+	 * @param WP_User     $user WordPress user.
+	 * @param SlackClient $client Slack client.
+	 * @param bool        $refresh Recheck Slack even when a match is cached.
+	 * @return string|WP_Error
+	 */
+	private function email_match_id( WP_User $user, SlackClient $client, bool $refresh = false ) {
+		if ( '' === trim( $user->user_email ) ) {
+			return new WP_Error( 'slack_users_not_found' );
+		}
 		$match = get_user_meta( $user->ID, self::USER_MATCH, true );
-		if ( is_array( $match ) && ( $match['email'] ?? '' ) === $user->user_email && ( $match['team_id'] ?? '' ) === ( $this->settings['team_id'] ?? '' ) && ! empty( $match['id'] ) ) {
+		if ( ! $refresh && is_array( $match ) && ( $match['email'] ?? '' ) === $user->user_email && ( $match['team_id'] ?? '' ) === ( $this->settings['team_id'] ?? '' ) && ! empty( $match['id'] ) ) {
 			return $match['id'];
+		}
+		if ( ! $refresh && is_array( $match ) && ( $match['email'] ?? '' ) === $user->user_email && ( $match['team_id'] ?? '' ) === ( $this->settings['team_id'] ?? '' ) && ( $match['error'] ?? '' ) === 'slack_users_not_found' && (int) ( $match['checked_at'] ?? 0 ) > time() - 3600 ) {
+			return new WP_Error( 'slack_users_not_found' );
 		}
 
 		$found = $client->user_by_email( $user->user_email );
@@ -235,9 +290,10 @@ class NotesSlack implements ModuleInterface {
 				$user->ID,
 				self::USER_MATCH,
 				[
-					'email'   => $user->user_email,
-					'team_id' => $this->settings['team_id'] ?? '',
-					'error'   => $found->get_error_code(),
+					'email'      => $user->user_email,
+					'team_id'    => $this->settings['team_id'] ?? '',
+					'error'      => $found->get_error_code(),
+					'checked_at' => time(),
 				]
 			);
 			return $found;
@@ -251,12 +307,27 @@ class NotesSlack implements ModuleInterface {
 			$user->ID,
 			self::USER_MATCH,
 			[
-				'id'      => $id,
-				'email'   => $user->user_email,
-				'team_id' => $this->settings['team_id'] ?? '',
+				'id'         => $id,
+				'email'      => $user->user_email,
+				'team_id'    => $this->settings['team_id'] ?? '',
+				'checked_at' => time(),
 			]
 		);
 		return $id;
+	}
+
+	/**
+	 * Return the cached email match for the connected workspace.
+	 *
+	 * @param WP_User $user WordPress user.
+	 * @return string
+	 */
+	private function cached_match_id( WP_User $user ): string {
+		$match = get_user_meta( $user->ID, self::USER_MATCH, true );
+		if ( ! is_array( $match ) || ( $match['email'] ?? '' ) !== $user->user_email || ( $match['team_id'] ?? '' ) !== ( $this->settings['team_id'] ?? '' ) ) {
+			return '';
+		}
+		return (string) ( $match['id'] ?? '' );
 	}
 
 	/**
@@ -342,15 +413,17 @@ class NotesSlack implements ModuleInterface {
 	 *
 	 * @param string $status Status code.
 	 * @param int    $people_page Current People page.
+	 * @param string $view Settings view.
 	 * @return void
 	 */
-	private function redirect( string $status, int $people_page = 1 ): void {
+	private function redirect( string $status, int $people_page = 1, string $view = 'notifications' ): void {
 		$url = add_query_arg(
 			[
 				'page'            => 'login-with-google',
 				'tab'             => 'notes-slack',
 				'lwg_status'      => $status,
 				'lwg_people_page' => max( 1, $people_page ),
+				'lwg_view'        => 'people' === $view ? 'people' : 'notifications',
 			],
 			admin_url( 'options-general.php' )
 		);
@@ -383,7 +456,7 @@ class NotesSlack implements ModuleInterface {
 			$settings['team_id']   = sanitize_text_field( $auth['team_id'] );
 			$settings['team_name'] = sanitize_text_field( $auth['team'] ?? '' );
 		}
-		if ( defined( 'WP_GOOGLE_LOGIN_SLACK_BOT_TOKEN' ) && empty( $settings['team_id'] ) ) {
+		if ( defined( 'WP_GOOGLE_LOGIN_SLACK_BOT_TOKEN' ) ) {
 			$auth = ( new SlackClient( $this->token() ) )->auth_test();
 			if ( is_wp_error( $auth ) || empty( $auth['team_id'] ) ) {
 				$this->redirect( 'invalid_token' );
@@ -396,6 +469,9 @@ class NotesSlack implements ModuleInterface {
 		$settings['notify_mentions']      = empty( $input['notify_mentions'] ) ? 0 : 1;
 		$settings['notify_thread_author'] = empty( $input['notify_thread_author'] ) ? 0 : 1;
 		$settings['enabled']              = ! empty( $input['enabled'] ) && ( ! empty( $settings['token'] ) || '' !== $this->token() ) ? 1 : 0;
+		$contact_id                       = isset( $input['contact_admin_id'] ) ? absint( $input['contact_admin_id'] ) : 0;
+		$contact                          = $contact_id ? get_userdata( $contact_id ) : null;
+		$settings['contact_admin_id']     = $contact instanceof WP_User && in_array( 'administrator', (array) $contact->roles, true ) ? $contact_id : 0;
 
 		update_option( self::OPTION, $settings, false );
 		$this->settings = $settings;
@@ -465,31 +541,157 @@ class NotesSlack implements ModuleInterface {
 			]
 		);
 		foreach ( $users as $user ) {
-			$this->slack_user_id( $user, $client );
+			$this->email_match_id( $user, $client, true );
 		}
-		$this->redirect( 'matched', $people_page );
+		$this->redirect( 'matched', $people_page, 'people' );
 	}
 
 	/**
-	 * Admin-only manual mapping for email aliases.
+	 * Save manual Slack IDs from the People mapping screen.
+	 *
+	 * @return void
+	 */
+	public function save_overrides(): void {
+		$this->verify_admin( 'rtcamp_google_notes_slack_overrides' );
+		if ( '' === $this->token() || empty( $this->settings['team_id'] ) ) {
+			$this->redirect( 'no_connection', 1, 'people' );
+		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verify_admin() checks the form nonce.
+		$people_page = isset( $_POST['lwg_people_page'] ) ? max( 1, absint( $_POST['lwg_people_page'] ) ) : 1;
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- verify_admin() checks the nonce; values are sanitized below.
+		$input   = isset( $_POST['slack_overrides'] ) && is_array( $_POST['slack_overrides'] ) ? wp_unslash( $_POST['slack_overrides'] ) : [];
+		$changes = [];
+		foreach ( $input as $user_id => $raw_id ) {
+			$user_id = absint( $user_id );
+			if ( ! $user_id || ! current_user_can( 'edit_user', $user_id ) || ! get_userdata( $user_id ) || ! is_string( $raw_id ) ) {
+				$this->redirect( 'invalid_override', $people_page, 'people' );
+			}
+			$id = strtoupper( sanitize_text_field( $raw_id ) );
+			if ( '' !== $id && ! preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ) {
+				$this->redirect( 'invalid_override', $people_page, 'people' );
+			}
+			$changes[ $user_id ] = $id;
+		}
+		foreach ( $changes as $user_id => $id ) {
+			$this->set_override( $user_id, $id );
+		}
+		$this->redirect( 'mapping_saved', $people_page, 'people' );
+	}
+
+	/**
+	 * Show the Slack identity used for this WordPress profile.
 	 *
 	 * @param WP_User $user Profile owner.
 	 * @return void
 	 */
 	public function render_user_field( WP_User $user ): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-		$id = (string) get_user_meta( $user->ID, self::USER_OVERRIDE, true );
+		$admin     = current_user_can( 'manage_options' );
+		$connected = '' !== $this->token() && ! empty( $this->settings['team_id'] );
+		$override  = $this->override_id( $user );
+		$slack_id  = $connected ? $this->slack_user_id( $user, new SlackClient( $this->token() ) ) : '';
+		$contact   = $connected ? $this->contact_admin( $user ) : null;
+		$team_name = (string) ( $this->settings['team_name'] ?? '' );
+		$team_id   = (string) ( $this->settings['team_id'] ?? '' );
 		?>
 		<h2><?php esc_html_e( 'WordPress Notes in Slack', 'login-with-google' ); ?></h2>
-		<?php wp_nonce_field( 'rtcamp_google_slack_user_' . $user->ID, 'rtcamp_google_slack_nonce' ); ?>
-		<table class="form-table"><tr>
-			<th><label for="rtcamp-google-slack-user-id"><?php esc_html_e( 'Slack user ID override', 'login-with-google' ); ?></label></th>
-			<td><input id="rtcamp-google-slack-user-id" name="rtcamp_google_slack_user_id" type="text" class="regular-text" value="<?php echo esc_attr( $id ); ?>" placeholder="U0123456789" />
-			<p class="description"><?php esc_html_e( 'Leave blank to match by WordPress email.', 'login-with-google' ); ?></p></td>
-		</tr></table>
+		<table class="form-table">
+			<tr><th><?php esc_html_e( 'Workspace', 'login-with-google' ); ?></th><td><?php echo $connected ? esc_html( $team_name . ' (' . $team_id . ')' ) : esc_html__( 'Not connected', 'login-with-google' ); ?></td></tr>
+			<tr><th><?php esc_html_e( 'Slack user ID', 'login-with-google' ); ?></th><td>
+				<?php if ( ! $connected ) : ?>
+					<?php esc_html_e( 'Slack is not connected for this site.', 'login-with-google' ); ?>
+				<?php elseif ( is_string( $slack_id ) && '' !== $slack_id ) : ?>
+					<code><?php echo esc_html( $slack_id ); ?></code>
+					<span class="description"><?php echo $override ? esc_html__( 'Administrator override', 'login-with-google' ) : esc_html__( 'Matched by WordPress email', 'login-with-google' ); ?></span>
+				<?php elseif ( is_wp_error( $slack_id ) && 'slack_users_not_found' !== $slack_id->get_error_code() ) : ?>
+					<?php esc_html_e( 'Slack lookup is unavailable. Ask your website administrator to check the connection.', 'login-with-google' ); ?>
+				<?php else : ?>
+					<?php esc_html_e( 'No Slack account matched your WordPress email.', 'login-with-google' ); ?>
+				<?php endif; ?>
+			</td></tr>
+			<?php if ( $admin && $connected ) : ?>
+				<tr><th><label for="rtcamp-google-slack-user-id"><?php esc_html_e( 'Slack user ID override', 'login-with-google' ); ?></label></th><td>
+					<?php wp_nonce_field( 'rtcamp_google_slack_user_' . $user->ID, 'rtcamp_google_slack_nonce' ); ?>
+					<input id="rtcamp-google-slack-user-id" name="rtcamp_google_slack_user_id" type="text" class="regular-text" value="<?php echo esc_attr( $override ); ?>" placeholder="U0123456789" />
+					<p class="description"><?php esc_html_e( 'Leave blank to match by WordPress email.', 'login-with-google' ); ?></p>
+				</td></tr>
+			<?php endif; ?>
+		</table>
+		<?php if ( $contact ) : ?>
+			<p><a href="<?php echo esc_url( $contact['url'], [ 'slack' ] ); ?>"><?php esc_html_e( 'Incorrect? Contact your website admin in Slack', 'login-with-google' ); ?></a> <span class="description">(<?php echo esc_html( $contact['user']->display_name ); ?>)</span></p>
+		<?php elseif ( $connected && ! $admin ) : ?>
+			<p class="description"><?php esc_html_e( 'If this mapping looks wrong, ask your website administrator to set a Slack contact.', 'login-with-google' ); ?></p>
+		<?php elseif ( $connected ) : ?>
+			<p class="description"><?php esc_html_e( 'You can correct Slack IDs on the Notes → Slack → People mapping screen.', 'login-with-google' ); ?></p>
+		<?php endif; ?>
 		<?php
+	}
+
+	/**
+	 * Find a mapped WordPress administrator to receive mapping questions.
+	 *
+	 * @param WP_User $profile_user User viewing the profile.
+	 * @return array|null
+	 */
+	private function contact_admin( WP_User $profile_user ): ?array {
+		$team_id = (string) ( $this->settings['team_id'] ?? '' );
+		if ( ! preg_match( '/^T[A-Z0-9]+$/', $team_id ) ) {
+			return null;
+		}
+
+		$preferred_id = (int) ( $this->settings['contact_admin_id'] ?? 0 );
+		$preferred    = $preferred_id ? get_userdata( $preferred_id ) : null;
+		if ( $preferred instanceof WP_User && in_array( 'administrator', (array) $preferred->roles, true ) && $preferred->ID !== $profile_user->ID ) {
+			$id = $this->slack_user_id( $preferred, new SlackClient( $this->token() ) );
+			if ( is_string( $id ) && preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ) {
+				return [
+					'user' => $preferred,
+					'url'  => 'slack://user?team=' . $team_id . '&id=' . $id,
+				];
+			}
+		}
+
+		$admins = get_users(
+			[
+				'role'    => 'administrator',
+				'number'  => 20,
+				'orderby' => 'display_name',
+			]
+		);
+
+		foreach ( $admins as $admin ) {
+			if ( $admin->ID === $profile_user->ID ) {
+				continue;
+			}
+			$id = $this->override_id( $admin );
+			if ( '' === $id ) {
+				$id = $this->cached_match_id( $admin );
+			}
+			if ( preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ) {
+				return [
+					'user' => $admin,
+					'url'  => 'slack://user?team=' . $team_id . '&id=' . $id,
+				];
+			}
+		}
+
+		$admin = null;
+		foreach ( $admins as $candidate ) {
+			if ( $candidate->ID !== $profile_user->ID ) {
+				$admin = $candidate;
+				break;
+			}
+		}
+		if ( ! $admin instanceof WP_User ) {
+			return null;
+		}
+		$id = $this->slack_user_id( $admin, new SlackClient( $this->token() ) );
+		if ( is_wp_error( $id ) || ! preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ) {
+			return null;
+		}
+		return [
+			'user' => $admin,
+			'url'  => 'slack://user?team=' . $team_id . '&id=' . $id,
+		];
 	}
 
 	/**
@@ -499,14 +701,14 @@ class NotesSlack implements ModuleInterface {
 	 * @return void
 	 */
 	public function save_user_field( int $user_id ): void {
-		if ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_user', $user_id ) || ! isset( $_POST['rtcamp_google_slack_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['rtcamp_google_slack_nonce'] ) ), 'rtcamp_google_slack_user_' . $user_id ) ) {
+		if ( ! current_user_can( 'manage_options' ) || ! current_user_can( 'edit_user', $user_id ) || empty( $this->settings['team_id'] ) || ! isset( $_POST['rtcamp_google_slack_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['rtcamp_google_slack_nonce'] ) ), 'rtcamp_google_slack_user_' . $user_id ) ) {
 			return;
 		}
 		$id = isset( $_POST['rtcamp_google_slack_user_id'] ) ? strtoupper( sanitize_text_field( wp_unslash( $_POST['rtcamp_google_slack_user_id'] ) ) ) : '';
 		if ( '' === $id ) {
-			delete_user_meta( $user_id, self::USER_OVERRIDE );
+			$this->set_override( $user_id, '' );
 		} elseif ( preg_match( '/^[UW][A-Z0-9]{8,}$/', $id ) ) {
-			update_user_meta( $user_id, self::USER_OVERRIDE, $id );
+			$this->set_override( $user_id, $id );
 		}
 	}
 
@@ -516,19 +718,31 @@ class NotesSlack implements ModuleInterface {
 	 * @return void
 	 */
 	public function render_settings(): void {
-		$connected = '' !== $this->token();
+		$connected = '' !== $this->token() && ! empty( $this->settings['team_id'] );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This only selects a read-only People page.
 		$people_page = isset( $_GET['lwg_people_page'] ) ? max( 1, absint( $_GET['lwg_people_page'] ) ) : 1;
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Status only controls a read-only admin notice.
-		$status   = isset( $_GET['lwg_status'] ) ? sanitize_key( wp_unslash( $_GET['lwg_status'] ) ) : '';
-		$messages = [
-			'saved'         => __( 'Notes notification settings saved.', 'login-with-google' ),
-			'disconnected'  => __( 'Slack disconnected.', 'login-with-google' ),
-			'invalid_token' => __( 'Slack could not verify that bot token.', 'login-with-google' ),
-			'test_sent'     => __( 'Test DM sent.', 'login-with-google' ),
-			'test_failed'   => __( 'Test DM failed. Check the user mapping and bot permissions.', 'login-with-google' ),
-			'no_connection' => __( 'Connect Slack first.', 'login-with-google' ),
-			'matched'       => __( 'Checked the WordPress users shown below.', 'login-with-google' ),
+		$status = isset( $_GET['lwg_status'] ) ? sanitize_key( wp_unslash( $_GET['lwg_status'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The view only selects a read-only settings screen.
+		$view       = isset( $_GET['lwg_view'] ) && 'people' === sanitize_key( wp_unslash( $_GET['lwg_view'] ) ) ? 'people' : 'notifications';
+		$notes_url  = add_query_arg(
+			[
+				'page' => 'login-with-google',
+				'tab'  => 'notes-slack',
+			],
+			admin_url( 'options-general.php' )
+		);
+		$people_url = add_query_arg( 'lwg_view', 'people', $notes_url );
+		$messages   = [
+			'saved'            => __( 'Notes notification settings saved.', 'login-with-google' ),
+			'disconnected'     => __( 'Slack disconnected.', 'login-with-google' ),
+			'invalid_token'    => __( 'Slack could not verify that bot token.', 'login-with-google' ),
+			'test_sent'        => __( 'Test DM sent.', 'login-with-google' ),
+			'test_failed'      => __( 'Test DM failed. Check the user mapping and bot permissions.', 'login-with-google' ),
+			'no_connection'    => __( 'Connect Slack first.', 'login-with-google' ),
+			'matched'          => __( 'Checked the WordPress users shown below.', 'login-with-google' ),
+			'mapping_saved'    => __( 'Slack user ID overrides saved.', 'login-with-google' ),
+			'invalid_override' => __( 'Enter a valid Slack user ID, such as U0123456789. No changes were saved.', 'login-with-google' ),
 		];
 		if ( isset( $messages[ $status ] ) ) {
 			printf( '<div class="notice notice-info"><p>%s</p></div>', esc_html( $messages[ $status ] ) );
@@ -536,6 +750,16 @@ class NotesSlack implements ModuleInterface {
 		?>
 		<h2><?php esc_html_e( 'WordPress Notes → Slack', 'login-with-google' ); ?></h2>
 		<p><?php esc_html_e( 'Send private Slack DMs about new editor Notes and replies. Google sign-in settings do not change.', 'login-with-google' ); ?></p>
+		<nav class="nav-tab-wrapper" aria-label="<?php esc_attr_e( 'Notes Slack settings', 'login-with-google' ); ?>">
+			<a class="nav-tab <?php echo 'notifications' === $view ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $notes_url ); ?>"><?php esc_html_e( 'Notifications', 'login-with-google' ); ?></a>
+			<a class="nav-tab <?php echo 'people' === $view ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( $people_url ); ?>"><?php esc_html_e( 'People mapping', 'login-with-google' ); ?></a>
+		</nav>
+		<?php
+		if ( 'people' === $view ) {
+			$this->render_people_settings( $people_page, $connected );
+			return;
+		}
+		?>
 		<?php if ( version_compare( get_bloginfo( 'version' ), '6.9', '<' ) ) : ?>
 			<div class="notice notice-warning inline"><p><?php esc_html_e( 'WordPress 6.9 or newer is needed for Notes.', 'login-with-google' ); ?></p></div>
 		<?php endif; ?>
@@ -555,6 +779,22 @@ class NotesSlack implements ModuleInterface {
 					<label><input type="checkbox" name="notes_slack[notify_thread_author]" value="1" <?php checked( $this->settings['notify_thread_author'] ?? 1 ); ?> /> <?php esc_html_e( 'Original Note author when someone replies', 'login-with-google' ); ?></label>
 				</td></tr>
 				<tr><th><?php esc_html_e( 'Notifications', 'login-with-google' ); ?></th><td><label><input type="checkbox" name="notes_slack[enabled]" value="1" <?php checked( $this->settings['enabled'] ?? 0 ); ?> /> <?php esc_html_e( 'Send Slack DMs for new Notes', 'login-with-google' ); ?></label></td></tr>
+				<tr><th><label for="lwg-slack-contact"><?php esc_html_e( 'Slack contact for mapping issues', 'login-with-google' ); ?></label></th><td>
+					<select id="lwg-slack-contact" name="notes_slack[contact_admin_id]">
+						<option value="0"><?php esc_html_e( 'First available WordPress administrator', 'login-with-google' ); ?></option>
+						<?php
+						foreach ( get_users(
+							[
+								'role'    => 'administrator',
+								'orderby' => 'display_name',
+							]
+						) as $admin_user ) :
+							?>
+							<option value="<?php echo esc_attr( $admin_user->ID ); ?>" <?php selected( (int) ( $this->settings['contact_admin_id'] ?? get_current_user_id() ), $admin_user->ID ); ?>><?php echo esc_html( $admin_user->display_name ); ?></option>
+						<?php endforeach; ?>
+					</select>
+					<p class="description"><?php esc_html_e( 'Profile links open a direct message with this WordPress administrator in the connected Slack workspace.', 'login-with-google' ); ?></p>
+				</td></tr>
 			</table>
 			<?php submit_button( __( 'Save Notes settings', 'login-with-google' ) ); ?>
 		</form>
@@ -563,12 +803,6 @@ class NotesSlack implements ModuleInterface {
 			<?php if ( ! defined( 'WP_GOOGLE_LOGIN_SLACK_BOT_TOKEN' ) ) : ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;"><input type="hidden" name="action" value="rtcamp_google_notes_slack_disconnect" /><?php wp_nonce_field( 'rtcamp_google_notes_slack_disconnect' ); ?><?php submit_button( __( 'Disconnect Slack', 'login-with-google' ), 'secondary', 'submit', false ); ?></form>
 			<?php endif; ?>
-		<?php endif; ?>
-		<h2><?php esc_html_e( 'People', 'login-with-google' ); ?></h2>
-		<p><?php esc_html_e( 'WordPress users are matched to Slack by email when first notified. Edit a user profile to set a Slack user ID for an email alias.', 'login-with-google' ); ?></p>
-		<?php $this->render_people( $people_page ); ?>
-		<?php if ( $connected ) : ?>
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>"><input type="hidden" name="action" value="rtcamp_google_notes_slack_match" /><input type="hidden" name="lwg_people_page" value="<?php echo esc_attr( $people_page ); ?>" /><?php wp_nonce_field( 'rtcamp_google_notes_slack_match' ); ?><?php submit_button( __( 'Check people on this page', 'login-with-google' ), 'secondary' ); ?></form>
 		<?php endif; ?>
 		<?php $last_error = get_option( 'wp_google_login_slack_last_error', '' ); ?>
 		<?php
@@ -585,72 +819,99 @@ class NotesSlack implements ModuleInterface {
 	}
 
 	/**
-	 * Render current mapping status without making Slack calls on page load.
+	 * Admin screen for reviewing and correcting WordPress to Slack mappings.
 	 *
-	 * @param int $page People page number.
+	 * @param int  $page People page number.
+	 * @param bool $connected Whether Slack is connected.
 	 * @return void
 	 */
-	private function render_people( int $page ): void {
-		$users    = get_users(
+	private function render_people_settings( int $page, bool $connected ): void {
+		?>
+		<h3><?php esc_html_e( 'People mapping', 'login-with-google' ); ?></h3>
+		<p><strong><?php esc_html_e( 'Workspace:', 'login-with-google' ); ?></strong> <?php echo $connected ? esc_html( ( $this->settings['team_name'] ?? '' ) . ' (' . ( $this->settings['team_id'] ?? '' ) . ')' ) : esc_html__( 'Not connected', 'login-with-google' ); ?></p>
+		<p><?php esc_html_e( 'WordPress profile emails are matched to Slack user IDs when people are notified. Set an override if a person uses a different email in Slack. Clearing an override returns to the email match.', 'login-with-google' ); ?></p>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<input type="hidden" name="action" value="rtcamp_google_notes_slack_overrides" />
+			<input type="hidden" name="lwg_people_page" value="<?php echo esc_attr( $page ); ?>" />
+			<?php wp_nonce_field( 'rtcamp_google_notes_slack_overrides' ); ?>
+			<?php $this->render_people( $page, $connected ); ?>
+			<?php
+			if ( $connected ) :
+				?>
+				<?php submit_button( __( 'Save overrides', 'login-with-google' ), 'primary' ); ?><?php endif; ?>
+		</form>
+		<?php if ( $connected ) : ?>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="rtcamp_google_notes_slack_match" />
+				<input type="hidden" name="lwg_people_page" value="<?php echo esc_attr( $page ); ?>" />
+				<?php wp_nonce_field( 'rtcamp_google_notes_slack_match' ); ?>
+				<?php submit_button( __( 'Check email matches on this page', 'login-with-google' ), 'secondary' ); ?>
+			</form>
+		<?php endif; ?>
+		<?php
+	}
+
+	/**
+	 * Render current mapping status without making Slack calls on page load.
+	 *
+	 * @param int  $page People page number.
+	 * @param bool $connected Whether Slack is connected.
+	 * @return void
+	 */
+	private function render_people( int $page, bool $connected ): void {
+		$users        = get_users(
 			[
 				'number'  => 21,
 				'offset'  => ( $page - 1 ) * 20,
 				'orderby' => 'display_name',
 			]
 		);
-		$has_next = count( $users ) > 20;
-		$users    = array_slice( $users, 0, 20 );
+		$has_next     = count( $users ) > 20;
+		$users        = array_slice( $users, 0, 20 );
+		$people_url   = add_query_arg(
+			[
+				'page'     => 'login-with-google',
+				'tab'      => 'notes-slack',
+				'lwg_view' => 'people',
+			],
+			admin_url( 'options-general.php' )
+		);
+		$previous_url = add_query_arg( 'lwg_people_page', $page - 1, $people_url );
+		$next_url     = add_query_arg( 'lwg_people_page', $page + 1, $people_url );
 		?>
-		<table class="widefat striped"><thead><tr><th><?php esc_html_e( 'WordPress user', 'login-with-google' ); ?></th><th><?php esc_html_e( 'Email', 'login-with-google' ); ?></th><th><?php esc_html_e( 'Slack match', 'login-with-google' ); ?></th></tr></thead><tbody>
+		<table class="widefat striped"><thead><tr><th><?php esc_html_e( 'WordPress user', 'login-with-google' ); ?></th><th><?php esc_html_e( 'WordPress email', 'login-with-google' ); ?></th><th><?php esc_html_e( 'Email match', 'login-with-google' ); ?></th><th><?php esc_html_e( 'Slack ID override', 'login-with-google' ); ?></th><th><?php esc_html_e( 'Effective Slack ID', 'login-with-google' ); ?></th></tr></thead><tbody>
 		<?php foreach ( $users as $user ) : ?>
 			<?php
-			$override           = get_user_meta( $user->ID, self::USER_OVERRIDE, true );
+			$override           = $this->override_id( $user );
 			$match              = get_user_meta( $user->ID, self::USER_MATCH, true );
 			$matching_workspace = is_array( $match ) && ( $match['email'] ?? '' ) === $user->user_email && ( $match['team_id'] ?? '' ) === ( $this->settings['team_id'] ?? '' );
-			$matched            = $matching_workspace ? ( $match['id'] ?? '' ) : '';
-			$match_status       = $override ? __( 'Manual: ', 'login-with-google' ) . $override : ( $matched ? __( 'Matched: ', 'login-with-google' ) . $matched : __( 'Not checked', 'login-with-google' ) );
-			if ( ! $override && ! $matched && $matching_workspace && ! empty( $match['error'] ) ) {
+			$matched            = $this->cached_match_id( $user );
+			$match_status       = $matched ? $matched : __( 'Not checked', 'login-with-google' );
+			if ( ! $matched && $matching_workspace && ! empty( $match['error'] ) ) {
 				$match_status = 'slack_users_not_found' === $match['error'] ? __( 'No Slack match', 'login-with-google' ) : __( 'Needs attention', 'login-with-google' );
 			}
+			$effective_id = $override ? $override : $matched;
+			/* translators: %s: WordPress user display name. */
+			$override_label = sprintf( __( 'Slack ID override for %s', 'login-with-google' ), $user->display_name );
 			?>
-			<tr><td><a href="<?php echo esc_url( get_edit_user_link( $user->ID ) ); ?>"><?php echo esc_html( $user->display_name ); ?></a></td><td><?php echo esc_html( $user->user_email ); ?></td><td><?php echo esc_html( $match_status ); ?></td></tr>
+			<tr>
+				<td><a href="<?php echo esc_url( get_edit_user_link( $user->ID ) ); ?>"><?php echo esc_html( $user->display_name ); ?></a></td>
+				<td><?php echo esc_html( $user->user_email ); ?></td>
+				<td><?php echo esc_html( $match_status ); ?></td>
+				<td><input type="text" name="slack_overrides[<?php echo esc_attr( $user->ID ); ?>]" value="<?php echo esc_attr( $override ); ?>" placeholder="U0123456789" aria-label="<?php echo esc_attr( $override_label ); ?>" <?php disabled( ! $connected ); ?> /></td>
+				<td><?php echo $effective_id ? '<code>' . esc_html( $effective_id ) . '</code>' : esc_html__( 'No match', 'login-with-google' ); ?></td>
+			</tr>
 		<?php endforeach; ?>
 		</tbody></table>
 		<p class="tablenav">
 			<?php
 			if ( $page > 1 ) :
 				?>
-				<a class="button" href="
-				<?php
-				echo esc_url(
-					add_query_arg(
-						[
-							'page'            => 'login-with-google',
-							'tab'             => 'notes-slack',
-							'lwg_people_page' => $page - 1,
-						],
-						admin_url( 'options-general.php' )
-					)
-				);
-				?>
-				"><?php esc_html_e( 'Previous people', 'login-with-google' ); ?></a><?php endif; ?>
+				<a class="button" href="<?php echo esc_url( $previous_url ); ?>"><?php esc_html_e( 'Previous people', 'login-with-google' ); ?></a><?php endif; ?>
 			<?php
 			if ( $has_next ) :
 				?>
-				<a class="button" href="
-				<?php
-				echo esc_url(
-					add_query_arg(
-						[
-							'page'            => 'login-with-google',
-							'tab'             => 'notes-slack',
-							'lwg_people_page' => $page + 1,
-						],
-						admin_url( 'options-general.php' )
-					)
-				);
-				?>
-				"><?php esc_html_e( 'Next people', 'login-with-google' ); ?></a><?php endif; ?>
+				<a class="button" href="<?php echo esc_url( $next_url ); ?>"><?php esc_html_e( 'Next people', 'login-with-google' ); ?></a><?php endif; ?>
 		</p>
 		<?php
 	}

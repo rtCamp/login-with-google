@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace RtCamp\GoogleLogin\Tests\Unit\Modules;
 
 use Mockery;
+use ReflectionMethod;
 use WP_Mock;
 use RtCamp\GoogleLogin\Modules\NotesSlack;
 use RtCamp\GoogleLogin\Tests\TestCase;
@@ -18,6 +19,49 @@ use RtCamp\GoogleLogin\Tests\TestCase;
  * @coversDefaultClass \RtCamp\GoogleLogin\Modules\NotesSlack
  */
 class NotesSlackTest extends TestCase {
+	/**
+	 * An override from another Slack workspace must never be used.
+	 *
+	 * @covers ::override_id
+	 */
+	public function testOverrideIsScopedToConnectedWorkspace(): void {
+		$module = new NotesSlack();
+		$this->setTesteeProperty( $module, 'settings', [ 'team_id' => 'TNEW12345' ] );
+		$user = Mockery::mock( 'WP_User' );
+		$user->ID = 7;
+		WP_Mock::userFunction( 'get_user_meta', [
+			'args'   => [ 7, '_rtcamp_google_slack_user_id', true ],
+			'return' => [ 'team_id' => 'TOLD12345', 'id' => 'U12345678' ],
+		] );
+		$method = new ReflectionMethod( NotesSlack::class, 'override_id' );
+		$method->setAccessible( true );
+		$this->assertSame( '', $method->invoke( $module, $user ) );
+	}
+
+	/**
+	 * The profile's contact link opens a DM in the right workspace.
+	 *
+	 * @covers ::contact_admin
+	 */
+	public function testContactAdminUsesConfiguredAdministratorMapping(): void {
+		$module = new NotesSlack();
+		$this->setTesteeProperty( $module, 'settings', [ 'team_id' => 'T12345678', 'contact_admin_id' => 8, 'token' => 'xoxb-test' ] );
+		$profile = Mockery::mock( 'WP_User' );
+		$profile->ID = 7;
+		$admin = Mockery::mock( 'WP_User' );
+		$admin->ID = 8;
+		$admin->roles = [ 'administrator' ];
+		WP_Mock::userFunction( 'get_userdata', [ 'args' => [ 8 ], 'return' => $admin ] );
+		WP_Mock::userFunction( 'get_user_meta', [
+			'args'   => [ 8, '_rtcamp_google_slack_user_id', true ],
+			'return' => [ 'team_id' => 'T12345678', 'id' => 'U12345678' ],
+		] );
+		$method = new ReflectionMethod( NotesSlack::class, 'contact_admin' );
+		$method->setAccessible( true );
+		$contact = $method->invoke( $module, $profile );
+		$this->assertSame( 'slack://user?team=T12345678&id=U12345678', $contact['url'] );
+	}
+
 	/**
 	 * @covers ::recipient_ids
 	 */

@@ -23,8 +23,9 @@ in after setup.
    the token and save. You can set `WP_GOOGLE_LOGIN_SLACK_BOT_TOKEN` in
    `wp-config.php` instead; WordPress settings will not store the token in that
    case.
-5. Select the recipient types, enable notifications, and save. Send a test DM
-   to confirm the bot can reach your Slack account.
+5. Select the recipient types, enable notifications, and choose a WordPress
+   administrator to contact about incorrect Slack mappings. Save, then send a
+   test DM to confirm the bot can reach your Slack account.
 
 No incoming webhook, Slack event subscription, or channel is needed. The site
 sends Notes directly to Slack's Web API. A bot token entered on the settings
@@ -41,9 +42,19 @@ recipient WordPress IDs with `rtcamp.google_notes_slack_recipient_ids`.
 
 The plugin looks up a recipient by their WordPress email when their first
 notification is sent, then caches the Slack user ID for that email and
-workspace. An administrator may enter a Slack user ID override on the person's
-WordPress profile if their emails differ. The People section displays users in
-pages of 20 with their cached matching state; each page can be checked manually.
+workspace. Each WordPress profile shows its effective Slack user ID, connected
+workspace, and whether the ID came from email matching or an override. If the
+mapping is wrong, the profile has a link that opens a Slack DM with the chosen
+WordPress administrator. This link requires the Slack app on the recipient's
+device.
+
+Administrators can use **Settings → Login with Google → Notes → Slack → People
+mapping** to see WordPress emails, Slack email matches, and effective IDs in
+pages of 20. They can check email matches on each page and save optional Slack
+ID overrides inline. An override is tied to the connected Slack workspace;
+clearing it restores the email match. Administrators can also edit an override
+on an individual WordPress profile. A Slack contact link appears only when a
+WordPress administrator has a valid mapping in the connected workspace.
 
 ## Message links and delivery
 
