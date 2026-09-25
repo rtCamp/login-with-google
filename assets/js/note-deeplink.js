@@ -28,14 +28,17 @@
 		attempts++;
 		try {
 			const interfaceStore = window.wp.data.dispatch( 'core/interface' );
-			if ( ! sidebarRequested && interfaceStore?.enableComplementaryArea ) {
+			if (
+				! sidebarRequested &&
+				interfaceStore?.enableComplementaryArea
+			) {
 				interfaceStore.enableComplementaryArea(
 					'core',
 					'edit-post/collab-history-sidebar'
 				);
 				sidebarRequested = true;
 			}
-		} catch ( error ) {
+		} catch {
 			// The editor's stores may still be loading.
 		}
 
@@ -55,7 +58,9 @@
 	}
 
 	if ( document.readyState === 'loading' ) {
-		document.addEventListener( 'DOMContentLoaded', openNoteSidebar, { once: true } );
+		document.addEventListener( 'DOMContentLoaded', openNoteSidebar, {
+			once: true,
+		} );
 	} else {
 		openNoteSidebar();
 	}
