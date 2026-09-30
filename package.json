@@ -12,6 +12,15 @@
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
 	},
 	"overrides": {
+		"markdownlint-cli": {
+			"js-yaml": "^5.4.2"
+		},
+		"node-notifier": {
+			"uuid": "^11.1.1"
+		},
+		"sockjs": {
+			"uuid": "^11.1.1"
+		},
 		"webpack-dev-server": "^5.2.5",
 		"minimatch": ">=10.2.1",
 		"bn.js": ">=5.2.3",
