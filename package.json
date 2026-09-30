@@ -8,6 +8,7 @@
 		"postproduction": "npm run build-blocks-manifest",
 		"watch": "concurrently \"mix watch\" \"wp-scripts start --source-path=./assets/src/blocks --output-path=./assets/build/blocks\"",
 		"lint:js": "wp-scripts lint-js ./assets/src/blocks",
+		"lint:js:notes": "wp-scripts lint-js ./assets/js/note-deeplink.js",
 		"lint:style": "wp-scripts lint-style ./assets/src/blocks",
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
 	},
