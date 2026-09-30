@@ -12,6 +12,8 @@
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
 	},
 	"overrides": {
+		"js-yaml": "^5.4.2",
+		"uuid": "^11.1.1",
 		"webpack-dev-server": "^5.2.5",
 		"minimatch": ">=10.2.1",
 		"bn.js": ">=5.2.3",
