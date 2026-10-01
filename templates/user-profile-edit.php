@@ -1,0 +1,52 @@
+<?php
+/**
+ * User profile edit template.
+ *
+ * @package RtCamp\GoogleLogin
+ * @since n.e.x.t
+ */
+
+use RtCamp\GoogleLogin\Utils\UserProfileHelper;
+
+$rtlwg_profile_picture_id     = UserProfileHelper::get_saved_google_profile_picture_id( $wp_user->ID );
+$rtlwg_profile_picture_source = UserProfileHelper::get_profile_picture_source( $wp_user->ID );
+?>
+
+<div class="rtlg-user-profile-edit-wrapper" id="rtlg-user-profile-edit">
+	<h2><?php esc_html_e( 'Login With Google', 'login-with-google' ); ?></h2>
+	<p><?php esc_html_e( 'Login With Google profile settings.', 'login-with-google' ); ?></p>
+	<table class="form-table" role="presentation">
+		<tbody>
+			<tr>
+				<th>
+					<label for="rtlwg_profile_picture_source"><?php esc_html_e( 'Profile Picture Source', 'login-with-google' ); ?></label>
+				</th>
+				<td>
+					<select name="rtlwg_profile_picture_source" style="width: 15em;">
+						<option
+							value="google"
+							<?php selected( $rtlwg_profile_picture_source, 'google' ); ?>
+						><?php esc_html_e( 'Google', 'login-with-google' ); ?></option>
+						<option
+							value="gravatar"
+							<?php selected( $rtlwg_profile_picture_source, 'gravatar' ); ?>
+						><?php esc_html_e( 'Gravatar', 'login-with-google' ); ?></option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<label for="rtlwg_google_profile_picture"><?php esc_html_e( 'Google Profile Picture', 'login-with-google' ); ?></label>
+				</th>
+				<td>
+				<?php if ( empty( $rtlwg_profile_picture_id ) ) : ?>
+					<?php esc_html_e( 'No Google profile picture set.', 'login-with-google' ); ?>
+				<?php else : ?>
+					<?php echo wp_get_attachment_image( $rtlwg_profile_picture_id, [ 96, 96 ] ); ?>
+					<p><?php esc_html_e( 'Note: This image is fetched from your Google account during your first login and is not synced afterward.', 'login-with-google' ); ?></p>
+				<?php endif; ?>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
