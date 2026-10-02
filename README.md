@@ -94,6 +94,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
 | `rtcamp.google_redirect_url` | Filters the URL to which the user will be redirected post successful authentication | <ul><li> `redirect_uri` - contains the URL to be redirected to. Defaults to the current URL.</li></ul>
+| `rtcamp.google_login_failed_redirect` | Filters the URL to redirect the user to when Google authentication fails. Return a non-empty URL to redirect the user to a custom error page instead of showing the default login error. | <ul><li>`redirect_to` - Redirect URL. Default empty string (no redirect).</li><li>`error` - `WP_Error` object describing the authentication failure.</li></ul>
 
 #### Actions
 
