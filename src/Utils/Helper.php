@@ -215,7 +215,15 @@ class Helper {
 		// Initializing the default with admin URL.
 		$default_redirect_url = admin_url();
 
-		if ( 'wp-login.php' === $pagenow ) {
+		$wp_login_url = trailingslashit( wp_login_url() );
+
+		// Get the current page URL.
+		$scheme           = ( ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] ) ? 'https' : 'http';
+		$host             = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : wp_parse_url( site_url(), PHP_URL_HOST );
+		$path             = isset( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( sanitize_text_field( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+		$current_page_url = trailingslashit( $scheme . '://' . $host . $path );
+
+		if ( 'wp-login.php' === $pagenow || $current_page_url === $wp_login_url ) {
 			// If any redirect_to query parameter is available.
 			$redirect_to = filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL );
 
