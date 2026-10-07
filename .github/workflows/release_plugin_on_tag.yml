@@ -17,7 +17,7 @@ jobs:
         coverage: xdebug
         tools: composer,cs2pr
     - name: Set up Node
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version-file: './.nvmrc'
     - name: Install dependencies & build assets
