@@ -111,7 +111,7 @@ class Plugin {
 
 		add_action( 'init', [ $this, 'load_translations' ] );
 
-		add_action( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( $this->path ) . '/login-with-google.php', [ $this, 'add_plugin_action_links' ] );
 	}
 
 	/**

@@ -287,7 +287,7 @@ class PluginTest extends TestCase {
 		);
 
 		WP_Mock::expectActionAdded( 'init', [ $this->testee, 'load_translations' ] );
-		WP_Mock::expectActionAdded( 'plugin_action_links_' . plugin_basename( $this->testee->path ) . '/login-with-google.php', [ $this->testee, 'add_plugin_action_links' ] );
+		WP_Mock::expectFilterAdded( 'plugin_action_links_' . plugin_basename( $this->testee->path ) . '/login-with-google.php', [ $this->testee, 'add_plugin_action_links' ] );
 		WP_Mock::expectFilter( 'rtcamp.google_login_modules', $this->testee->active_modules );
 
 		$this->testee->run();

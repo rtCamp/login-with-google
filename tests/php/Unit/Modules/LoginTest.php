@@ -74,12 +74,12 @@ class LoginTest extends TestCase {
 	 */
 	public function testInit() {
 		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
-		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ], 20 );
-		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
-		WP_Mock::expectActionAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ] );
-		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 		WP_Mock::expectActionAdded( 'wp_login', [ $this->testee, 'login_redirect' ] );
+		WP_Mock::expectFilterAdded( 'authenticate', [ $this->testee, 'authenticate' ], 20 );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
