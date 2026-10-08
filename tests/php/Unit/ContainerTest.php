@@ -82,4 +82,20 @@ class ContainerTest extends  TestCase {
 
 		$this->testee->get( 'test_service' );
 	}
+
+	/**
+	 * @covers ::define_services
+	 */
+	public function testGoogleClientReceivesHostedDomain() {
+		$settings = $this->createPartialMock( \RtCamp\GoogleLogin\Modules\Settings::class, [ 'hosted_domain' ] );
+		$settings->method( 'hosted_domain' )->willReturn( 'example.com' );
+
+		\WP_Mock::userFunction( 'wp_login_url', [ 'return' => 'https://example.test/wp-login.php' ] );
+
+		$testee = new Testee( new PimpleContainer() );
+		$testee->define_services();
+		$testee->container['settings'] = $settings;
+
+		$this->assertSame( 'example.com', $testee->container['gh_client']->hd );
+	}
 }

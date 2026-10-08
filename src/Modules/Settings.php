@@ -18,6 +18,7 @@ use RtCamp\GoogleLogin\Interfaces\Module as ModuleInterface;
  * Class Settings.
  *
  * @property string|null whitelisted_domains
+ * @property bool|null restrict_to_domain
  * @property string|null client_id
  * @property string|null client_secret
  * @property bool|null registration_enabled
@@ -45,6 +46,7 @@ class Settings implements ModuleInterface {
 		'WP_GOOGLE_LOGIN_SECRET'            => 'client_secret',
 		'WP_GOOGLE_LOGIN_USER_REGISTRATION' => 'registration_enabled',
 		'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS' => 'whitelisted_domains',
+		'WP_GOOGLE_LOGIN_RESTRICT_DOMAIN'   => 'restrict_to_domain',
 		'WP_GOOGLE_ONE_TAP_LOGIN'           => 'one_tap_login',
 		'WP_GOOGLE_ONE_TAP_LOGIN_SCREEN'    => 'one_tap_login_screen',
 	];
@@ -161,6 +163,15 @@ class Settings implements ModuleInterface {
 			'login-with-google',
 			'wp_google_login_section',
 			[ 'label_for' => 'whitelisted-domains' ]
+		);
+
+		add_settings_field(
+			'wp_google_restrict_to_domain',
+			__( 'Restrict Account Chooser', 'login-with-google' ),
+			[ $this, 'restrict_to_domain_field' ],
+			'login-with-google',
+			'wp_google_login_section',
+			[ 'label_for' => 'restrict-to-domain' ]
 		);
 	}
 
@@ -314,6 +325,43 @@ class Settings implements ModuleInterface {
 			<?php echo esc_html( __( 'Add each domain comma separated', 'login-with-google' ) ); ?>
 		</p>
 		<?php
+	}
+
+	/**
+	 * Render the account chooser domain restriction field.
+	 *
+	 * @return void
+	 */
+	public function restrict_to_domain_field(): void {
+		?>
+		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'restrict_to_domain' ); ?>
+					type='checkbox'
+					name='wp_google_login_settings[restrict_to_domain]'
+					id="restrict-to-domain" <?php echo esc_attr( checked( $this->restrict_to_domain ) ); ?>
+					value='1'>
+			<?php esc_html_e( 'Only show accounts from the whitelisted domain on the Google sign-in screen', 'login-with-google' ); ?>
+		</label>
+		<p class="description">
+			<?php esc_html_e( 'Applies only when exactly one domain is whitelisted.', 'login-with-google' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Domain to pass as the Google account chooser hint.
+	 *
+	 * @return string Domain when restriction is on and exactly one domain is whitelisted, else empty.
+	 */
+	public function hosted_domain(): string {
+		$restrict = $this->restrict_to_domain;
+
+		if ( empty( $restrict ) ) {
+			return '';
+		}
+
+		$domains = array_filter( array_map( 'trim', explode( ',', strtolower( (string) $this->whitelisted_domains ) ) ) );
+
+		return 1 === count( $domains ) ? reset( $domains ) : '';
 	}
 
 	/**

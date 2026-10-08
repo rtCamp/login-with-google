@@ -60,6 +60,9 @@ website, you enter `myorg.com` in whitelisted domains. Users with Google
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
 
+6. `Restrict Account Chooser` shows only accounts from the whitelisted domain in Google's account chooser (button and One Tap).
+Applies only when exactly one domain is whitelisted. Off by default, since existing users from other domains can still log in.
+
 ### Plugin Constants
 
 Above mentioned settings can also be configured via PHP constants by defining them in wp-config.php
@@ -73,6 +76,7 @@ Refer following list of constants.
 | WP_GOOGLE_LOGIN_SECRET            | String  | Secret key of your application                                                                                                                                              |
 | WP_GOOGLE_LOGIN_USER_REGISTRATION | Boolean | (Optional) Set True If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set. |
 | WP_GOOGLE_LOGIN_WHITELIST_DOMAINS | String  | (Optional) Domain name, if you want to restrict login with your custom domain. By default, It will allow all domains. You can whitelist multiple domains.                   |
+| WP_GOOGLE_LOGIN_RESTRICT_DOMAIN   | Boolean | (Optional) Set True to show only accounts from the whitelisted domain in Google's account chooser. Applies only when exactly one domain is whitelisted.                    |
 
 These constants can also be configured
 via [wp-cli](https://developer.wordpress.org/cli/commands/config/).

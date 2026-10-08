@@ -45,6 +45,7 @@ class GoogleClientTest extends TestCase {
 		$this->assertSame( 'cid', $this->getTesteeProperty( 'client_id', $this->testee ) );
 		$this->assertSame( 'csc', $this->getTesteeProperty( 'client_secret', $this->testee ) );
 		$this->assertSame( '', $this->getTesteeProperty( 'redirect_uri', $this->testee ) );
+		$this->assertSame( '', $this->getTesteeProperty( 'hd', $this->testee ) );
 	}
 
 	/**
@@ -346,5 +347,32 @@ class GoogleClientTest extends TestCase {
 		$expected = 'https://accounts.google.com/o/oauth2/auth?client_id=cid&redirect_uri=&state=abcd&scope=email+profile+openid&access_type=online&response_type=code';
 
 		$this->assertSame( $expected, $ghClient->authorization_url() );
+	}
+
+	/**
+	 * @covers ::authorization_url
+	 */
+	public function testAuthorizationURLWithHostedDomain() {
+		$scope = [ 'email', 'profile', 'openid' ];
+		WP_Mock::onFilter( 'rtcamp.google_scope' )->with( $scope )->reply( $scope );
+		$ghClient = $this->createPartialMock( Testee::class, [ 'gt_redirect_url', 'state' ] );
+		$ghClient->method( 'gt_redirect_url' )->willReturn( '' );
+		$ghClient->method( 'state' )->willReturn( 'abcd' );
+		$ghClient->client_id = 'cid';
+		$ghClient->hd        = 'example.com';
+
+		$client_args = [
+			'client_id'     => 'cid',
+			'redirect_uri'  => '',
+			'state'         => 'abcd',
+			'scope'         => implode( ' ', $scope ),
+			'access_type'   => 'online',
+			'response_type' => 'code',
+			'hd'            => 'example.com',
+		];
+
+		WP_Mock::expectFilter( 'rtcamp.google_client_args', $client_args );
+
+		$this->assertStringEndsWith( '&hd=example.com', $ghClient->authorization_url() );
 	}
 }

@@ -133,7 +133,7 @@ class SettingsTest extends TestCase {
 					\WP_Mock\Functions::type( 'string' ),
 					\WP_Mock\Functions::type( 'array' ),
 				],
-				'times' => 6
+				'times' => 7
 			]
 		);
 
@@ -295,6 +295,44 @@ class SettingsTest extends TestCase {
 		$this->setOutputCallback(function() {});
 		$this->testee->whitelisted_domains();
 		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::restrict_to_domain_field
+	 */
+	public function testRestrictToDomainField() {
+		$this->testee->options = [ 'restrict_to_domain' => '1' ];
+
+		WP_Mock::userFunction( 'checked', [ 'args' => [ '1' ], 'return' => " checked='checked'" ] );
+		WP_Mock::userFunction( 'esc_attr', [ 'return_arg' => 0 ] );
+		WP_Mock::userFunction( 'esc_html_e', [ 'times' => 2 ] );
+
+		$this->expectOutputRegex( '/name=.wp_google_login_settings\[restrict_to_domain\]./' );
+		$this->testee->restrict_to_domain_field();
+		$this->assertConditionsMet();
+	}
+
+	/**
+	 * @covers ::hosted_domain
+	 * @dataProvider hostedDomainProvider
+	 */
+	public function testHostedDomain( $restrict, string $domains, string $expected ) {
+		$this->testee->options = [
+			'restrict_to_domain'  => $restrict,
+			'whitelisted_domains' => $domains,
+		];
+
+		$this->assertSame( $expected, $this->testee->hosted_domain() );
+	}
+
+	public function hostedDomainProvider(): array {
+		return [
+			'toggle off'        => [ '', 'example.com', '' ],
+			'no domains'        => [ '1', '', '' ],
+			'single domain'     => [ '1', ' Example.COM ', 'example.com' ],
+			'trailing comma'    => [ '1', 'example.com,', 'example.com' ],
+			'multiple domains'  => [ '1', 'example.com,example.org', '' ],
+		];
 	}
 
 	/**
