@@ -63,6 +63,13 @@ class GoogleClient {
 	public $redirect_uri;
 
 	/**
+	 * Hosted domain hint for the account chooser.
+	 *
+	 * @var string
+	 */
+	public $hd;
+
+	/**
 	 * Access token.
 	 *
 	 * @var string
@@ -78,6 +85,7 @@ class GoogleClient {
 		$this->client_id     = $config['client_id'] ?? '';
 		$this->client_secret = $config['client_secret'] ?? '';
 		$this->redirect_uri  = $config['redirect_uri'] ?? '';
+		$this->hd            = $config['hd'] ?? '';
 	}
 
 	/**
@@ -162,6 +170,10 @@ class GoogleClient {
 			'access_type'   => 'online',
 			'response_type' => 'code',
 		];
+
+		if ( ! empty( $this->hd ) ) {
+			$client_args['hd'] = $this->hd;
+		}
 
 		/**
 		 * Filter the arguments for sending in query.

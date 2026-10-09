@@ -119,6 +119,7 @@ class Container implements ContainerInterface {
 					'client_id'     => $settings->client_id,
 					'client_secret' => $settings->client_secret,
 					'redirect_uri'  => wp_login_url(),
+					'hd'            => $settings->hosted_domain(),
 				]
 			);
 		};

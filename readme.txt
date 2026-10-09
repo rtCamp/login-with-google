@@ -71,6 +71,8 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 
 **Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
 
+To show only accounts from your domain in Google's account chooser for the login button, enable *Settings > Login with Google > Restrict Account Chooser* or define `WP_GOOGLE_LOGIN_RESTRICT_DOMAIN` as `true`. This applies only when exactly one domain is whitelisted.
+
 ### Hooks
 
 For a list of all hooks please refer to [this documentation](https://github.com/rtCamp/login-with-google#hooks).
@@ -87,6 +89,8 @@ For a list of all hooks please refer to [this documentation](https://github.com/
 
 
 * `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` (string) (optional): Domain names, if you want to restrict login with your custom domain. By default, it will allow all domains. You can whitelist multiple domains.
+
+* `WP_GOOGLE_LOGIN_RESTRICT_DOMAIN` (boolean) (optional): Show only accounts from the whitelisted domain in Google's account chooser. Applies only when exactly one domain is whitelisted.
 
 ### BTW, We're Hiring!
 
