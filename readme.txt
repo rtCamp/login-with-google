@@ -71,7 +71,7 @@ define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 
 **Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
 
-To show only accounts from your domain in Google's account chooser, enable *Settings > Login with Google > Restrict Account Chooser* or define `WP_GOOGLE_LOGIN_RESTRICT_DOMAIN` as `true`. This applies only when exactly one domain is whitelisted.
+To show only accounts from your domain in Google's account chooser for the login button, enable *Settings > Login with Google > Restrict Account Chooser* or define `WP_GOOGLE_LOGIN_RESTRICT_DOMAIN` as `true`. This applies only when exactly one domain is whitelisted.
 
 ### Hooks
 

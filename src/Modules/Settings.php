@@ -337,7 +337,7 @@ class Settings implements ModuleInterface {
 		<label style='display:block;margin-top:6px;'><input <?php $this->disabled( 'restrict_to_domain' ); ?>
 					type='checkbox'
 					name='wp_google_login_settings[restrict_to_domain]'
-					id="restrict-to-domain" <?php echo esc_attr( checked( $this->restrict_to_domain ) ); ?>
+					id="restrict-to-domain" <?php checked( $this->restrict_to_domain ); ?>
 					value='1'>
 			<?php esc_html_e( 'Only show accounts from the whitelisted domain on the Google sign-in screen', 'login-with-google' ); ?>
 		</label>

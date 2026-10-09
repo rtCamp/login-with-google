@@ -60,7 +60,7 @@ website, you enter `myorg.com` in whitelisted domains. Users with Google
 email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
 `something@gmail.com` would not be able to register here.
 
-6. `Restrict Account Chooser` shows only accounts from the whitelisted domain in Google's account chooser (button and One Tap).
+6. `Restrict Account Chooser` shows only accounts from the whitelisted domain in Google's account chooser for the login button. The same hint is passed to One Tap, but Google may not apply it there.
 Applies only when exactly one domain is whitelisted. Off by default, since existing users from other domains can still log in.
 
 ### Plugin Constants

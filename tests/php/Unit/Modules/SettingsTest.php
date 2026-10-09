@@ -303,11 +303,20 @@ class SettingsTest extends TestCase {
 	public function testRestrictToDomainField() {
 		$this->testee->options = [ 'restrict_to_domain' => '1' ];
 
-		WP_Mock::userFunction( 'checked', [ 'args' => [ '1' ], 'return' => " checked='checked'" ] );
-		WP_Mock::userFunction( 'esc_attr', [ 'return_arg' => 0 ] );
+		WP_Mock::userFunction(
+			'checked',
+			[
+				'args'   => [ '1' ],
+				'times'  => 1,
+				'return' => function () {
+					echo " checked='checked'";
+					return " checked='checked'";
+				},
+			]
+		);
 		WP_Mock::userFunction( 'esc_html_e', [ 'times' => 2 ] );
 
-		$this->expectOutputRegex( '/name=.wp_google_login_settings\[restrict_to_domain\]./' );
+		$this->expectOutputRegex( '/^(?!(?:.*checked=.checked.){2}).*name=.wp_google_login_settings\[restrict_to_domain\].\s*id="restrict-to-domain"\s+checked=.checked./s' );
 		$this->testee->restrict_to_domain_field();
 		$this->assertConditionsMet();
 	}
