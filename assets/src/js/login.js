@@ -40,6 +40,12 @@ const wpGoogleLogin = {
 		}
 
 		this.googleLoginButton = this.form.querySelector( '.wp_google_login' );
+
+		// Some screens reuse the form ID without the button, e.g. Two-Factor's challenge form.
+		if ( null === this.googleLoginButton ) {
+			return;
+		}
+
 		this.googleLoginButton.classList.remove( 'hidden' );
 		// HTML is cloned from existing HTML node.
 		this.form.append( this.googleLoginButton );
