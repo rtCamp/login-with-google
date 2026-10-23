@@ -16,6 +16,8 @@ Minimal plugin that allows WordPress users to log in using Google.
 
 Ultra minimal plugin to let your users login to WordPress applications using their Google accounts. No more remembering hefty passwords!
 
+An optional **Notes → Slack** settings tab can send direct messages for native WordPress Notes and replies. This feature requires WordPress 6.9 or newer and a site-owned Slack bot. See [setup and limitations](https://github.com/rtCamp/login-with-google/blob/develop/docs/NOTES_SLACK.md).
+
 ### Initial Setup
 
 1. Create a project from [Google Developers Console](https://console.developers.google.com/apis/dashboard) if none exists.

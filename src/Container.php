@@ -22,6 +22,7 @@ use RtCamp\GoogleLogin\Modules\Assets;
 use RtCamp\GoogleLogin\Modules\Block;
 use RtCamp\GoogleLogin\Modules\Login;
 use RtCamp\GoogleLogin\Modules\OneTapLogin;
+use RtCamp\GoogleLogin\Modules\NotesSlack;
 use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Utils\Authenticator;
 use RtCamp\GoogleLogin\Utils\GoogleClient;
@@ -91,6 +92,10 @@ class Container implements ContainerInterface {
 		 */
 		$this->container['settings'] = function () {
 			return new Settings();
+		};
+
+		$this->container['notes_slack'] = function () {
+			return new NotesSlack();
 		};
 
 		/**
