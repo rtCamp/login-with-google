@@ -53,12 +53,25 @@ in `Settings > Login with Google` settings page in their respective fields.
    Plugin will take this setting as first priority and membership setting as second priority, so if
    any one of them is enabled, new users will be registered by this plugin after successful authorization.
 
-5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered on site.
-This will prevent unwanted registration on website.
-**For Example:** If you want users only from your organization (`myorg.com`) to get registered on the
-website, you enter `myorg.com` in whitelisted domains. Users with Google
-email like `abc@myorg.com` will be able to register on website. Contrary to this, users with emails like
-`something@gmail.com` would not be able to register here.
+5. `Whitelisted Domains` allows users from specific domains (domain in email) to get registered and log in to the site.
+This prevents unwanted registration and unauthorized domain logins.
+**For Example:** If you want users only from your organization (`myorg.com`) to access the
+website, enter `myorg.com` in whitelisted domains. Users with Google
+email like `abc@myorg.com` will be able to register and log in. Contrary to this, users with emails like
+`something@gmail.com` will not be able to log in or register.
+To disable domain enforcement on login for existing users, use the `rtcamp.google_enforce_whitelisted_domains_on_login` filter.
+
+6. `Google Account Linking & Resetting Links`:
+When a user logs in with Google for the first time, their unique Google account ID (`sub`) is permanently bound to their WordPress user account (`google_oauth_sub` user meta) to protect against account takeover.
+If an administrator needs to unlink or reset a user's Google account link (for example, if a user changes their Google account), they can delete the user meta via WP-CLI:
+```bash
+wp user meta delete <user_id> google_oauth_sub
+```
+Or in PHP:
+```php
+delete_user_meta( $user_id, 'google_oauth_sub' );
+```
+
 
 ### Plugin Constants
 
@@ -94,6 +107,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
 | `rtcamp.google_redirect_url` | Filters the URL to which the user will be redirected post successful authentication | <ul><li> `redirect_uri` - contains the URL to be redirected to. Defaults to the current URL.</li></ul>
+| `rtcamp.google_enforce_whitelisted_domains_on_login` | Filter whether to enforce whitelisted domains on login for existing users. Defaults to true. | <ul><li>`enforce` - Boolean whether to enforce domain allowlisting on login.</li><li>`user` - Google user object.</li></ul>
 
 #### Actions
 
