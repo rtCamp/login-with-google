@@ -154,7 +154,7 @@ class Login implements ModuleInterface {
 		}
 
 		if ( empty( $decoded_state['state_token'] ) || ! is_string( $decoded_state['state_token'] ) || ! Helper::verify_state_token( $decoded_state['state_token'] ) ) {
-			return $user;
+			return new WP_Error( 'expired_session', __( 'Your login session has expired. Please try again.', 'login-with-google' ) );
 		}
 
 		Helper::set_state_cookie();

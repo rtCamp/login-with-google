@@ -51,6 +51,9 @@ class SecurityReviewFixesTest extends TestCase {
 	 * Test Finding 03: GoogleClient state() includes state_token bound to cookie.
 	 */
 	public function testGoogleClientStateIncludesStateToken(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( false );
+
 		$_COOKIE[ Helper::STATE_COOKIE ] = 'test_secret_token_123';
 
 		WP_Mock::userFunction( 'wp_create_nonce' )
@@ -60,10 +63,9 @@ class SecurityReviewFixesTest extends TestCase {
 		WP_Mock::onFilter( 'rtcamp.google_login_state' )
 			->with( Mockery::type( 'array' ) )
 			->reply(
-				[
-					'nonce'       => 'test_nonce_abc',
-					'state_token' => 'test_secret_token_123',
-				]
+				function( array $state ) {
+					return $state;
+				}
 			);
 
 		$client = new GoogleClient( [] );
@@ -77,14 +79,37 @@ class SecurityReviewFixesTest extends TestCase {
 	}
 
 	/**
-	 * Test Finding 03: Helper state token verification matches correctly.
+	 * Test Finding 03: Helper state token verification matches correctly on HTTP.
 	 */
 	public function testHelperStateTokenVerification(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( false );
+
 		$this->assertFalse( Helper::verify_state_token( 'some_token' ) );
 
 		$_COOKIE[ Helper::STATE_COOKIE ] = 'valid_token_xyz';
 		$this->assertTrue( Helper::verify_state_token( 'valid_token_xyz' ) );
 		$this->assertFalse( Helper::verify_state_token( 'wrong_token' ) );
+	}
+
+	/**
+	 * Test Finding 03 / Comment 4: Helper state token verification uses __Host- on HTTPS with no fallback.
+	 */
+	public function testHelperStateTokenVerificationOnHttps(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( true );
+
+		$cookie_name = Helper::get_state_cookie_name();
+		$this->assertSame( '__Host-lwg_state_token', $cookie_name );
+
+		$_COOKIE[ $cookie_name ] = 'https_token_123';
+		$this->assertTrue( Helper::verify_state_token( 'https_token_123' ) );
+		$this->assertFalse( Helper::verify_state_token( 'wrong_token' ) );
+
+		// Ensure fallback to plain lwg_state_token fails on HTTPS.
+		$_COOKIE[ Helper::STATE_COOKIE ] = 'plain_attacker_cookie';
+		unset( $_COOKIE[ $cookie_name ] );
+		$this->assertFalse( Helper::verify_state_token( 'plain_attacker_cookie' ) );
 	}
 
 	/**

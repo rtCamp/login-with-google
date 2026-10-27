@@ -18,6 +18,11 @@ namespace RtCamp\GoogleLogin\Utils;
 class Helper {
 
 	/**
+	 * Cookie name for OAuth state binding.
+	 */
+	const STATE_COOKIE = 'lwg_state_token';
+
+	/**
 	 * URL to be redirected to post successful login.
 	 *
 	 * @var string
@@ -279,9 +284,29 @@ class Helper {
 	}
 
 	/**
-	 * Cookie name for OAuth state binding.
+	 * Build cookie options for state cookie.
+	 *
+	 * @param int $expires Expiration timestamp.
+	 * @return array
 	 */
-	const STATE_COOKIE = 'lwg_state_token';
+	private static function get_cookie_options( int $expires ): array {
+		$secure = is_ssl();
+
+		// For __Host- prefix on HTTPS, domain must not be set and path must be '/'.
+		$cookie_options = [
+			'expires'  => $expires,
+			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
+			'secure'   => $secure,
+			'httponly' => true,
+			'samesite' => 'Lax',
+		];
+
+		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
+			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
+		}
+
+		return $cookie_options;
+	}
 
 	/**
 	 * Get the cookie name. Uses __Host- prefix on HTTPS for host-only boundary.
@@ -344,21 +369,8 @@ class Helper {
 			$token = wp_generate_password( 32, false );
 		}
 
-		$secure      = is_ssl();
-		$cookie_name = self::get_state_cookie_name();
-
-		// For __Host- prefix, domain must not be set and path must be '/'.
-		$cookie_options = [
-			'expires'  => time() + HOUR_IN_SECONDS,
-			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
-			'secure'   => $secure,
-			'httponly' => true,
-			'samesite' => 'Lax',
-		];
-
-		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
-			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
-		}
+		$cookie_name    = self::get_state_cookie_name();
+		$cookie_options = self::get_cookie_options( time() + HOUR_IN_SECONDS );
 
 		// Set cookie valid for 1 hour.
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for OAuth anti-CSRF state binding.
@@ -382,20 +394,8 @@ class Helper {
 			return;
 		}
 
-		$secure      = is_ssl();
-		$cookie_name = self::get_state_cookie_name();
-
-		$cookie_options = [
-			'expires'  => time() - HOUR_IN_SECONDS,
-			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
-			'secure'   => $secure,
-			'httponly' => true,
-			'samesite' => 'Lax',
-		];
-
-		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
-			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
-		}
+		$cookie_name    = self::get_state_cookie_name();
+		$cookie_options = self::get_cookie_options( time() - HOUR_IN_SECONDS );
 
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for clearing anti-CSRF cookie.
 		setcookie(
@@ -405,7 +405,7 @@ class Helper {
 		);
 
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Clear superglobal for same-request verification.
-		unset( $_COOKIE[ $cookie_name ], $_COOKIE[ self::STATE_COOKIE ] );
+		unset( $_COOKIE[ $cookie_name ] );
 	}
 
 	/**
@@ -418,7 +418,7 @@ class Helper {
 		$cookie_name = self::get_state_cookie_name();
 
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Anti-CSRF token check, sanitized on line below.
-		$cookie_val = $_COOKIE[ $cookie_name ] ?? ( $_COOKIE[ self::STATE_COOKIE ] ?? '' );
+		$cookie_val = $_COOKIE[ $cookie_name ] ?? '';
 
 		if ( empty( $state_token ) || empty( $cookie_val ) || ! is_string( $cookie_val ) ) {
 			return false;

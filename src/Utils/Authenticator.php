@@ -63,7 +63,17 @@ class Authenticator {
 		}
 
 		$whitelisted_domains = $this->settings->whitelisted_domains;
-		if ( ! empty( $whitelisted_domains ) && ! $this->can_register_with_email( $user->email ) ) {
+		/**
+		 * Filter whether to enforce whitelisted domains on login for existing users.
+		 *
+		 * @since 1.6.0
+		 *
+		 * @param bool     $enforce Whether to enforce whitelisted domains on login. Default true.
+		 * @param stdClass $user    Google user data object.
+		 */
+		$enforce_on_login = apply_filters( 'rtcamp.google_enforce_whitelisted_domains_on_login', true, $user );
+
+		if ( $enforce_on_login && ! empty( $whitelisted_domains ) && ! $this->can_register_with_email( $user->email ) ) {
 			throw new InvalidArgumentException( esc_html__( 'Login is restricted to allowed email domains.', 'login-with-google' ) );
 		}
 

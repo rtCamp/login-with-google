@@ -31,5 +31,16 @@ window.LoginWithGoogleDataCallBack = function( response ) {
             }
         }
     };
+
+    try {
+        var isHttps = window.location.protocol === 'https:';
+        var cookieName = isHttps ? '__Host-lwg_state_token' : 'lwg_state_token';
+        var decoded = JSON.parse( atob( TempAccessOneTap.state ) );
+        if ( decoded && decoded.state_token ) {
+            var secureFlag = isHttps ? '; Secure' : '';
+            document.cookie = cookieName + '=' + decoded.state_token + '; Path=/; max-age=3600; SameSite=Lax' + secureFlag;
+        }
+    } catch ( e ) {}
+
     xhr.send( 'action=validate_id_token&token=' + response.credential + '&state=' + TempAccessOneTap.state );
 };

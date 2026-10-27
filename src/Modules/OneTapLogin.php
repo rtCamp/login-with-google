@@ -91,7 +91,6 @@ class OneTapLogin implements Module {
 		if ( $this->settings->one_tap_login ) {
 			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
 			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
-				add_action( 'init', [ Helper::class, 'maybe_set_state_cookie' ] );
 				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
 			}
@@ -228,8 +227,6 @@ class OneTapLogin implements Module {
 					'redirect' => $redirect_to,
 				]
 			);
-			die;
-
 		} catch ( Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}
@@ -254,6 +251,9 @@ class OneTapLogin implements Module {
 		 * Filter user authentication before setting auth cookies.
 		 * Allows 2FA, lockout and approval plugins to hook in.
 		 *
+		 * Note: Social OAuth authentication passes an empty string as password
+		 * because OAuth is token-based and passwordless.
+		 *
 		 * @param \WP_User|\WP_Error $wp_user WP_User object or WP_Error.
 		 * @param string             $username Username.
 		 */
@@ -261,6 +261,15 @@ class OneTapLogin implements Module {
 
 		if ( is_wp_error( $wp_user ) ) {
 			throw new Exception( esc_html( $wp_user->get_error_message() ) );
+		}
+
+		/**
+		 * If Two-Factor plugin is active and required for this user, redirect to wp-login.php
+		 * to complete 2FA rather than completing login inside the AJAX endpoint.
+		 */
+		if ( class_exists( 'Two_Factor_Core' ) && method_exists( 'Two_Factor_Core', 'is_user_using_two_factor' ) && \Two_Factor_Core::is_user_using_two_factor( $wp_user->ID ) ) {
+			wp_send_json_success( [ 'redirect' => wp_login_url() ] );
+			die;
 		}
 
 		$this->authenticator->set_auth_cookies( $wp_user );
