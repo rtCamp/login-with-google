@@ -91,6 +91,7 @@ class OneTapLogin implements Module {
 		if ( $this->settings->one_tap_login ) {
 			// If oneTap login is enabled sitewide, we need to enqueue it using both wp_enqueue_scripts and login_enqueue_scripts. If it is not sitewide, we only need to enqueue it using login_enqueue_scripts.
 			if ( 'sitewide' === $this->settings->one_tap_login_screen ) {
+				add_action( 'init', [ Helper::class, 'maybe_set_state_cookie' ] );
 				add_action( 'wp_enqueue_scripts', [ $this, 'one_tap_scripts' ] );
 				add_action( 'wp_footer', [ $this, 'one_tap_prompt' ], 10000 );
 			}
@@ -189,9 +190,11 @@ class OneTapLogin implements Module {
 				empty( $decoded_state['provider'] ) ||
 				'google' !== $decoded_state['provider'] ||
 				empty( $decoded_state['nonce'] ) ||
+				! is_string( $decoded_state['nonce'] ) ||
 				! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ||
 				empty( $decoded_state['state_token'] ) ||
-				! Helper::verify_state_token( (string) $decoded_state['state_token'] )
+				! is_string( $decoded_state['state_token'] ) ||
+				! Helper::verify_state_token( $decoded_state['state_token'] )
 			) {
 				throw new Exception( __( 'Invalid request state. Please reload the page.', 'login-with-google' ) );
 			}

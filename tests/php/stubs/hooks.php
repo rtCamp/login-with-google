@@ -37,3 +37,9 @@ if ( ! function_exists( 'wp_unslash' ) ) {
 		return $val;
 	}
 }
+
+if ( ! function_exists( 'is_ssl' ) ) {
+	function is_ssl() {
+		return false;
+	}
+}

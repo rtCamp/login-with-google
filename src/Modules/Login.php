@@ -82,8 +82,7 @@ class Login implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
-		add_action( 'login_init', [ Helper::class, 'maybe_set_state_cookie' ] );
-		add_action( 'init', [ Helper::class, 'maybe_set_state_cookie' ] );
+		add_action( 'login_init', [ $this, 'maybe_set_state_cookie' ] );
 		add_action( 'login_form', [ $this, 'login_button' ] );
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
 		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
@@ -96,6 +95,15 @@ class Login implements ModuleInterface {
 		 */
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+	}
+
+	/**
+	 * Maybe set state cookie on login page initialization.
+	 *
+	 * @return void
+	 */
+	public function maybe_set_state_cookie(): void {
+		Helper::maybe_set_state_cookie();
 	}
 
 	/**
@@ -141,15 +149,15 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
-		if ( empty( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ) {
+		if ( empty( $decoded_state['nonce'] ) || ! is_string( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ) {
 			return $user;
 		}
 
-		if ( empty( $decoded_state['state_token'] ) || ! Helper::verify_state_token( (string) $decoded_state['state_token'] ) ) {
+		if ( empty( $decoded_state['state_token'] ) || ! is_string( $decoded_state['state_token'] ) || ! Helper::verify_state_token( $decoded_state['state_token'] ) ) {
 			return $user;
 		}
 
-		Helper::clear_state_cookie();
+		Helper::set_state_cookie();
 
 		try {
 			$this->gh_client->set_access_token( $code );

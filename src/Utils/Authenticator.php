@@ -78,7 +78,7 @@ class Authenticator {
 			$google_sub        = (string) ( $user->sub ?? $user->id ?? '' );
 			$linked_google_sub = $user_id ? (string) get_user_meta( $user_id, 'google_oauth_sub', true ) : '';
 
-			if ( ! empty( $linked_google_sub ) && ! empty( $google_sub ) && ! hash_equals( $linked_google_sub, $google_sub ) ) {
+			if ( ! empty( $linked_google_sub ) && ( empty( $google_sub ) || ! hash_equals( $linked_google_sub, $google_sub ) ) ) {
 				throw new InvalidArgumentException( esc_html__( 'Google account does not match the account linked with this user.', 'login-with-google' ) );
 			}
 

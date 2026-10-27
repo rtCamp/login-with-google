@@ -284,15 +284,26 @@ class Helper {
 	const STATE_COOKIE = 'lwg_state_token';
 
 	/**
+	 * Get the cookie name. Uses __Host- prefix on HTTPS for host-only boundary.
+	 *
+	 * @return string
+	 */
+	public static function get_state_cookie_name(): string {
+		return is_ssl() ? '__Host-' . self::STATE_COOKIE : self::STATE_COOKIE;
+	}
+
+	/**
 	 * Get or set the state token in a secure cookie.
 	 *
 	 * @return string
 	 */
 	public static function get_or_create_state_token(): string {
+		$cookie_name = self::get_state_cookie_name();
+
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
-		if ( ! empty( $_COOKIE[ self::STATE_COOKIE ] ) && is_string( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+		if ( ! empty( $_COOKIE[ $cookie_name ] ) && is_string( $_COOKIE[ $cookie_name ] ) ) {
 			// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
-			return sanitize_text_field( wp_unslash( $_COOKIE[ self::STATE_COOKIE ] ) );
+			return sanitize_text_field( wp_unslash( $_COOKIE[ $cookie_name ] ) );
 		}
 
 		$token = wp_generate_password( 32, false );
@@ -308,8 +319,10 @@ class Helper {
 	 * @return void
 	 */
 	public static function maybe_set_state_cookie(): void {
+		$cookie_name = self::get_state_cookie_name();
+
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
-		if ( is_user_logged_in() || ! empty( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+		if ( is_user_logged_in() || ! empty( $_COOKIE[ $cookie_name ] ) ) {
 			return;
 		}
 
@@ -331,27 +344,32 @@ class Helper {
 			$token = wp_generate_password( 32, false );
 		}
 
-		$cookie_path   = defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/';
-		$cookie_domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
-		$secure        = is_ssl();
+		$secure      = is_ssl();
+		$cookie_name = self::get_state_cookie_name();
+
+		// For __Host- prefix, domain must not be set and path must be '/'.
+		$cookie_options = [
+			'expires'  => time() + HOUR_IN_SECONDS,
+			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
+			'secure'   => $secure,
+			'httponly' => true,
+			'samesite' => 'Lax',
+		];
+
+		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
+			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
+		}
 
 		// Set cookie valid for 1 hour.
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for OAuth anti-CSRF state binding.
 		setcookie(
-			self::STATE_COOKIE,
+			$cookie_name,
 			$token,
-			[
-				'expires'  => time() + HOUR_IN_SECONDS,
-				'path'     => $cookie_path,
-				'domain'   => $cookie_domain,
-				'secure'   => $secure,
-				'httponly' => true,
-				'samesite' => 'Lax',
-			]
+			$cookie_options
 		);
 
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Update superglobal for same-request verification.
-		$_COOKIE[ self::STATE_COOKIE ] = $token;
+		$_COOKIE[ $cookie_name ] = $token;
 	}
 
 	/**
@@ -364,26 +382,30 @@ class Helper {
 			return;
 		}
 
-		$cookie_path   = defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/';
-		$cookie_domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
-		$secure        = is_ssl();
+		$secure      = is_ssl();
+		$cookie_name = self::get_state_cookie_name();
+
+		$cookie_options = [
+			'expires'  => time() - HOUR_IN_SECONDS,
+			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
+			'secure'   => $secure,
+			'httponly' => true,
+			'samesite' => 'Lax',
+		];
+
+		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
+			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
+		}
 
 		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for clearing anti-CSRF cookie.
 		setcookie(
-			self::STATE_COOKIE,
+			$cookie_name,
 			'',
-			[
-				'expires'  => time() - HOUR_IN_SECONDS,
-				'path'     => $cookie_path,
-				'domain'   => $cookie_domain,
-				'secure'   => $secure,
-				'httponly' => true,
-				'samesite' => 'Lax',
-			]
+			$cookie_options
 		);
 
 		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Clear superglobal for same-request verification.
-		unset( $_COOKIE[ self::STATE_COOKIE ] );
+		unset( $_COOKIE[ $cookie_name ], $_COOKIE[ self::STATE_COOKIE ] );
 	}
 
 	/**
@@ -393,13 +415,16 @@ class Helper {
 	 * @return bool
 	 */
 	public static function verify_state_token( string $state_token ): bool {
-		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
-		if ( empty( $state_token ) || empty( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+		$cookie_name = self::get_state_cookie_name();
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Anti-CSRF token check, sanitized on line below.
+		$cookie_val = $_COOKIE[ $cookie_name ] ?? ( $_COOKIE[ self::STATE_COOKIE ] ?? '' );
+
+		if ( empty( $state_token ) || empty( $cookie_val ) || ! is_string( $cookie_val ) ) {
 			return false;
 		}
 
-		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
-		$cookie_token = sanitize_text_field( wp_unslash( $_COOKIE[ self::STATE_COOKIE ] ) );
+		$cookie_token = sanitize_text_field( wp_unslash( $cookie_val ) );
 
 		return hash_equals( $cookie_token, $state_token );
 	}
