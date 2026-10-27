@@ -2,9 +2,12 @@
 /**
  * Template for google login button.
  *
- * @package RtCamp\GithubLogin
+ * @package RtCamp\GoogleLogin
  * @since 1.0.0
  */
+
+// Prevent direct access.
+defined( 'ABSPATH' ) || exit;
 
 use RtCamp\GoogleLogin\Utils\Helper;
 

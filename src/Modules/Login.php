@@ -82,6 +82,8 @@ class Login implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
+		add_action( 'login_init', [ Helper::class, 'maybe_set_state_cookie' ] );
+		add_action( 'init', [ Helper::class, 'maybe_set_state_cookie' ] );
 		add_action( 'login_form', [ $this, 'login_button' ] );
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
 		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
@@ -143,6 +145,12 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
+		if ( empty( $decoded_state['state_token'] ) || ! Helper::verify_state_token( (string) $decoded_state['state_token'] ) ) {
+			return $user;
+		}
+
+		Helper::clear_state_cookie();
+
 		try {
 			$this->gh_client->set_access_token( $code );
 			$user = $this->gh_client->user();
@@ -165,8 +173,10 @@ class Login implements ModuleInterface {
 
 			throw new Exception( __( 'Could not authenticate the user, please try again.', 'login-with-google' ) );
 
-		} catch ( Throwable $e ) {
+		} catch ( Exception $e ) {
 			return new WP_Error( 'google_login_failed', $e->getMessage() );
+		} catch ( Throwable $e ) {
+			return new WP_Error( 'google_login_failed', esc_html__( 'An error occurred during Google sign-in. Please try again.', 'login-with-google' ) );
 		}
 	}
 

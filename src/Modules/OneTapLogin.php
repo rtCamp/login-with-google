@@ -181,12 +181,29 @@ class OneTapLogin implements Module {
 	 */
 	public function validate_token(): void {
 		try {
+			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+
+			if (
+				! is_array( $decoded_state ) ||
+				empty( $decoded_state['provider'] ) ||
+				'google' !== $decoded_state['provider'] ||
+				empty( $decoded_state['nonce'] ) ||
+				! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ||
+				empty( $decoded_state['state_token'] ) ||
+				! Helper::verify_state_token( (string) $decoded_state['state_token'] )
+			) {
+				throw new Exception( __( 'Invalid request state. Please reload the page.', 'login-with-google' ) );
+			}
+
 			$token    = Helper::filter_input( INPUT_POST, 'token', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			$verified = $this->token_verifier->verify_token( $token );
 
 			if ( ! $verified ) {
 				throw new Exception( __( 'Cannot verify the credentials', 'login-with-google' ) );
 			}
+
+			Helper::clear_state_cookie();
 
 			/**
 			 * Do something when token has been verified successfully.
@@ -197,9 +214,7 @@ class OneTapLogin implements Module {
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
-			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
-			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
 
 			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
 				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
@@ -231,6 +246,28 @@ class OneTapLogin implements Module {
 		}
 
 		$wp_user = $this->authenticator->authenticate( $user );
+
+		/**
+		 * Filter user authentication before setting auth cookies.
+		 * Allows 2FA, lockout and approval plugins to hook in.
+		 *
+		 * @param \WP_User|\WP_Error $wp_user WP_User object or WP_Error.
+		 * @param string             $username Username.
+		 */
+		$wp_user = apply_filters( 'wp_authenticate_user', $wp_user, '' );
+
+		if ( is_wp_error( $wp_user ) ) {
+			throw new Exception( esc_html( $wp_user->get_error_message() ) );
+		}
+
 		$this->authenticator->set_auth_cookies( $wp_user );
+
+		/**
+		 * Fires after the user has successfully logged in via One Tap.
+		 *
+		 * @param string   $user_login User's username.
+		 * @param \WP_User $wp_user    WP_User object of the logged-in user.
+		 */
+		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}
 }

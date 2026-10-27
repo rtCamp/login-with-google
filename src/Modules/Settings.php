@@ -193,8 +193,14 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function client_secret_field(): void {
+		$is_constant_defined = defined( 'WP_GOOGLE_LOGIN_SECRET' );
+		$value               = $is_constant_defined ? '' : (string) $this->client_secret;
+		$placeholder         = $is_constant_defined ? '••••••••' : '';
 		?>
-		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $value ); ?>' placeholder='<?php echo esc_attr( $placeholder ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<?php if ( $is_constant_defined ) : ?>
+			<p class="description"><?php esc_html_e( 'Client Secret is defined via WP_GOOGLE_LOGIN_SECRET constant.', 'login-with-google' ); ?></p>
+		<?php endif; ?>
 		<?php
 	}
 

@@ -62,8 +62,29 @@ class Authenticator {
 			throw new InvalidArgumentException( esc_html__( 'Google account email must be verified.', 'login-with-google' ) );
 		}
 
+		$whitelisted_domains = $this->settings->whitelisted_domains;
+		if ( ! empty( $whitelisted_domains ) && ! $this->can_register_with_email( $user->email ) ) {
+			throw new InvalidArgumentException( esc_html__( 'Login is restricted to allowed email domains.', 'login-with-google' ) );
+		}
+
 		if ( email_exists( $user->email ) ) {
 			$user_wp = get_user_by( 'email', $user->email );
+
+			if ( ! $user_wp instanceof WP_User ) {
+				throw new InvalidArgumentException( esc_html__( 'User could not be found.', 'login-with-google' ) );
+			}
+
+			$user_id           = ! empty( $user_wp->ID ) ? (int) $user_wp->ID : 0;
+			$google_sub        = (string) ( $user->sub ?? $user->id ?? '' );
+			$linked_google_sub = $user_id ? (string) get_user_meta( $user_id, 'google_oauth_sub', true ) : '';
+
+			if ( ! empty( $linked_google_sub ) && ! empty( $google_sub ) && ! hash_equals( $linked_google_sub, $google_sub ) ) {
+				throw new InvalidArgumentException( esc_html__( 'Google account does not match the account linked with this user.', 'login-with-google' ) );
+			}
+
+			if ( empty( $linked_google_sub ) && ! empty( $google_sub ) && $user_id ) {
+				update_user_meta( $user_id, 'google_oauth_sub', $google_sub );
+			}
 
 			/**
 			 * Fires once the user has been authenticated.
@@ -84,7 +105,13 @@ class Authenticator {
 		 * @param stdClass $user User object from google.
 		 * @since 1.0.0
 		 */
-		return apply_filters( 'rtcamp.google_register_user', $this->maybe_create_username( $user ) );
+		$registered_user = apply_filters( 'rtcamp.google_register_user', $this->maybe_create_username( $user ) );
+
+		if ( ! $registered_user instanceof WP_User ) {
+			throw new InvalidArgumentException( esc_html__( 'User could not be registered.', 'login-with-google' ) );
+		}
+
+		return $registered_user;
 	}
 
 	/**
@@ -116,12 +143,26 @@ class Authenticator {
 					]
 				);
 
+				if ( is_wp_error( $uid ) ) {
+					throw new Exception( esc_html( $uid->get_error_message() ) );
+				}
+
+				$google_sub = (string) ( $user->sub ?? $user->id ?? '' );
+				if ( ! empty( $google_sub ) ) {
+					update_user_meta( $uid, 'google_oauth_sub', $google_sub );
+				}
+
 				/**
 				 * Fires once the user has been registered successfully.
 				 */
 				do_action( 'rtcamp.google_user_created', $uid, $user );
 
-				return get_user_by( 'id', $uid );
+				$created_user = get_user_by( 'id', $uid );
+				if ( ! $created_user instanceof WP_User ) {
+					throw new Exception( esc_html__( 'Failed to retrieve newly registered user.', 'login-with-google' ) );
+				}
+
+				return $created_user;
 			}
 
 			/* translators: %s is replaced with email ID of user trying to register */

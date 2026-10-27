@@ -277,4 +277,130 @@ class Helper {
 	public static function remove_redirect_state_filter() {
 		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
 	}
+
+	/**
+	 * Cookie name for OAuth state binding.
+	 */
+	const STATE_COOKIE = 'lwg_state_token';
+
+	/**
+	 * Get or set the state token in a secure cookie.
+	 *
+	 * @return string
+	 */
+	public static function get_or_create_state_token(): string {
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		if ( ! empty( $_COOKIE[ self::STATE_COOKIE ] ) && is_string( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+			// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+			return sanitize_text_field( wp_unslash( $_COOKIE[ self::STATE_COOKIE ] ) );
+		}
+
+		$token = wp_generate_password( 32, false );
+
+		self::set_state_cookie( $token );
+
+		return $token;
+	}
+
+	/**
+	 * Maybe set state cookie if user is not logged in.
+	 *
+	 * @return void
+	 */
+	public static function maybe_set_state_cookie(): void {
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		if ( is_user_logged_in() || ! empty( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+			return;
+		}
+
+		self::set_state_cookie();
+	}
+
+	/**
+	 * Set state cookie.
+	 *
+	 * @param string $token State token.
+	 * @return void
+	 */
+	public static function set_state_cookie( string $token = '' ): void {
+		if ( headers_sent() ) {
+			return;
+		}
+
+		if ( empty( $token ) ) {
+			$token = wp_generate_password( 32, false );
+		}
+
+		$cookie_path   = defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/';
+		$cookie_domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
+		$secure        = is_ssl();
+
+		// Set cookie valid for 1 hour.
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for OAuth anti-CSRF state binding.
+		setcookie(
+			self::STATE_COOKIE,
+			$token,
+			[
+				'expires'  => time() + HOUR_IN_SECONDS,
+				'path'     => $cookie_path,
+				'domain'   => $cookie_domain,
+				'secure'   => $secure,
+				'httponly' => true,
+				'samesite' => 'Lax',
+			]
+		);
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Update superglobal for same-request verification.
+		$_COOKIE[ self::STATE_COOKIE ] = $token;
+	}
+
+	/**
+	 * Clear the state cookie.
+	 *
+	 * @return void
+	 */
+	public static function clear_state_cookie(): void {
+		if ( headers_sent() ) {
+			return;
+		}
+
+		$cookie_path   = defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/';
+		$cookie_domain = defined( 'COOKIE_DOMAIN' ) ? COOKIE_DOMAIN : '';
+		$secure        = is_ssl();
+
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for clearing anti-CSRF cookie.
+		setcookie(
+			self::STATE_COOKIE,
+			'',
+			[
+				'expires'  => time() - HOUR_IN_SECONDS,
+				'path'     => $cookie_path,
+				'domain'   => $cookie_domain,
+				'secure'   => $secure,
+				'httponly' => true,
+				'samesite' => 'Lax',
+			]
+		);
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Clear superglobal for same-request verification.
+		unset( $_COOKIE[ self::STATE_COOKIE ] );
+	}
+
+	/**
+	 * Verify that state token matches the cookie.
+	 *
+	 * @param string $state_token State token to check.
+	 * @return bool
+	 */
+	public static function verify_state_token( string $state_token ): bool {
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		if ( empty( $state_token ) || empty( $_COOKIE[ self::STATE_COOKIE ] ) ) {
+			return false;
+		}
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		$cookie_token = sanitize_text_field( wp_unslash( $_COOKIE[ self::STATE_COOKIE ] ) );
+
+		return hash_equals( $cookie_token, $state_token );
+	}
 }
