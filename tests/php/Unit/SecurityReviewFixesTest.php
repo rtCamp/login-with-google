@@ -271,4 +271,59 @@ class SecurityReviewFixesTest extends TestCase {
 
 		$this->assertConditionsMet();
 	}
+
+	/**
+	 * Test Comment 1: Verify shortcode and block authorization URL contains state_token.
+	 */
+	public function testShortcodeAndBlockFlowIncludesStateTokenInAuthorizationUrl(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( false );
+
+		$_COOKIE[ Helper::STATE_COOKIE ] = 'shortcode_test_token_123';
+
+		WP_Mock::userFunction( 'wp_create_nonce' )
+			->with( 'login_with_google' )
+			->andReturn( 'mock_nonce_123' );
+
+		WP_Mock::onFilter( 'rtcamp.google_login_state' )
+			->with( Mockery::type( 'array' ) )
+			->reply(
+				function( array $state ) {
+					return $state;
+				}
+			);
+
+		WP_Mock::onFilter( 'rtcamp.google_scope' )
+			->with( Mockery::any() )
+			->reply( [ 'openid', 'email', 'profile' ] );
+
+		WP_Mock::onFilter( 'rtcamp.google_redirect_url' )
+			->with( Mockery::any() )
+			->reply( 'https://example.com/callback' );
+
+		WP_Mock::onFilter( 'rtcamp.google_client_args' )
+			->with( Mockery::any() )
+			->reply( [] );
+
+		$client = new GoogleClient(
+			[
+				'client_id'     => 'test-client-id.apps.googleusercontent.com',
+				'client_secret' => 'test-secret',
+				'redirect_uri'  => 'https://example.com/callback',
+			]
+		);
+
+		$auth_url = $client->authorization_url();
+		$this->assertNotEmpty( $auth_url );
+
+		$query = [];
+		parse_str( (string) parse_url( $auth_url, PHP_URL_QUERY ), $query );
+
+		$this->assertArrayHasKey( 'state', $query );
+		$decoded_state = json_decode( base64_decode( $query['state'] ), true );
+
+		$this->assertSame( 'google', $decoded_state['provider'] );
+		$this->assertSame( 'mock_nonce_123', $decoded_state['nonce'] );
+		$this->assertSame( 'shortcode_test_token_123', $decoded_state['state_token'] );
+	}
 }
