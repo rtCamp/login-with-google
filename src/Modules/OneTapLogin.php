@@ -249,6 +249,24 @@ class OneTapLogin implements Module {
 
 		/**
 		 * Filter user authentication before setting auth cookies.
+		 * Allows multisite spam-user checks and lockout plugins hooked to 'authenticate' to run.
+		 *
+		 * @param \WP_User|\WP_Error|null $auth_check Authenticated user or error.
+		 * @param string                  $username   Username.
+		 * @param string                  $password   Password.
+		 */
+		$auth_check = apply_filters( 'authenticate', $wp_user, $wp_user->user_login, '' );
+
+		if ( is_wp_error( $auth_check ) ) {
+			throw new Exception( esc_html( $auth_check->get_error_message() ) );
+		}
+
+		if ( $auth_check instanceof WP_User ) {
+			$wp_user = $auth_check;
+		}
+
+		/**
+		 * Filter user authentication before setting auth cookies.
 		 * Allows 2FA, lockout and approval plugins to hook in.
 		 *
 		 * Note: Social OAuth authentication passes an empty string as password
@@ -269,7 +287,6 @@ class OneTapLogin implements Module {
 		 */
 		if ( class_exists( 'Two_Factor_Core' ) && method_exists( 'Two_Factor_Core', 'is_user_using_two_factor' ) && \Two_Factor_Core::is_user_using_two_factor( $wp_user->ID ) ) {
 			wp_send_json_success( [ 'redirect' => wp_login_url() ] );
-			die;
 		}
 
 		$this->authenticator->set_auth_cookies( $wp_user );

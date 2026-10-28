@@ -211,7 +211,8 @@ class SecurityReviewFixesTest extends TestCase {
 		$google_user = new stdClass();
 		$google_user->email = 'test@example.com';
 
-		$wp_user = Mockery::mock( WP_User::class );
+		$wp_user             = Mockery::mock( WP_User::class );
+		$wp_user->user_login = 'testuser';
 
 		$verifier->shouldReceive( 'current_user' )
 			->andReturn( $google_user );
@@ -224,6 +225,10 @@ class SecurityReviewFixesTest extends TestCase {
 		$auth_error->shouldReceive( 'get_error_message' )
 			->andReturn( 'Two-Factor Authentication required' );
 
+		WP_Mock::onFilter( 'authenticate' )
+			->with( $wp_user, 'testuser', '' )
+			->reply( $wp_user );
+
 		WP_Mock::onFilter( 'wp_authenticate_user' )
 			->with( $wp_user, '' )
 			->reply( $auth_error );
@@ -232,6 +237,44 @@ class SecurityReviewFixesTest extends TestCase {
 
 		$this->expectException( Exception::class );
 		$this->expectExceptionMessage( 'Two-Factor Authentication required' );
+
+		$one_tap->authenticate();
+	}
+
+	/**
+	 * Test Finding 02: OneTap authenticate triggers authenticate filter and aborts on WP_Error (e.g. spam check).
+	 */
+	public function testOneTapAuthenticateHonorsAuthenticateError(): void {
+		$settings      = Mockery::mock( Settings::class );
+		$verifier      = Mockery::mock( TokenVerifier::class );
+		$client        = Mockery::mock( GoogleClient::class );
+		$authenticator = Mockery::mock( Authenticator::class );
+
+		$google_user = new stdClass();
+		$google_user->email = 'spam@example.com';
+
+		$wp_user             = Mockery::mock( WP_User::class );
+		$wp_user->user_login = 'spamuser';
+
+		$verifier->shouldReceive( 'current_user' )
+			->andReturn( $google_user );
+
+		$authenticator->shouldReceive( 'authenticate' )
+			->with( $google_user )
+			->andReturn( $wp_user );
+
+		$spam_error = Mockery::mock( WP_Error::class );
+		$spam_error->shouldReceive( 'get_error_message' )
+			->andReturn( 'Your account has been marked as a spammer.' );
+
+		WP_Mock::onFilter( 'authenticate' )
+			->with( $wp_user, 'spamuser', '' )
+			->reply( $spam_error );
+
+		$one_tap = new OneTapLogin( $settings, $verifier, $client, $authenticator );
+
+		$this->expectException( Exception::class );
+		$this->expectExceptionMessage( 'Your account has been marked as a spammer.' );
 
 		$one_tap->authenticate();
 	}
@@ -255,6 +298,10 @@ class SecurityReviewFixesTest extends TestCase {
 		$authenticator->shouldReceive( 'authenticate' )
 			->with( $google_user )
 			->andReturn( $wp_user );
+
+		WP_Mock::onFilter( 'authenticate' )
+			->with( $wp_user, 'valid_user', '' )
+			->reply( $wp_user );
 
 		WP_Mock::onFilter( 'wp_authenticate_user' )
 			->with( $wp_user, '' )

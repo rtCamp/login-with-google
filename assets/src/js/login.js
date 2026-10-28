@@ -28,25 +28,31 @@ const wpGoogleLogin = {
 			return;
 		}
 
-		const isHttps = window.location.protocol === 'https:';
-		const cookieName = isHttps ? '__Host-lwg_state_token' : 'lwg_state_token';
-
-		const match = document.cookie.match( new RegExp( '(^|;\\s*)' + cookieName + '=([^;]*)' ) );
-		let stateToken = match ? match[2] : '';
-
-		if ( ! stateToken ) {
-			const randomBytes = new Uint8Array( 16 );
-			window.crypto.getRandomValues( randomBytes );
-			stateToken = Array.from( randomBytes, ( byte ) => ( '0' + ( byte & 0xFF ).toString( 16 ) ).slice( -2 ) ).join( '' );
-			const secureFlag = isHttps ? '; Secure' : '';
-			document.cookie = `${cookieName}=${stateToken}; Path=/; max-age=3600; SameSite=Lax${secureFlag}`;
-		}
-
 		try {
 			const url = new URL( button.href );
 			const stateParam = url.searchParams.get( 'state' );
 			if ( stateParam ) {
 				const decoded = JSON.parse( atob( stateParam ) );
+
+				// If server already provided a state_token (e.g. wp-login.php with HttpOnly cookie), do not overwrite it.
+				if ( decoded && decoded.state_token ) {
+					return;
+				}
+
+				const isHttps = window.location.protocol === 'https:';
+				const cookieName = isHttps ? '__Host-lwg_state_token' : 'lwg_state_token';
+
+				const match = document.cookie.match( new RegExp( '(^|;\\s*)' + cookieName + '=([^;]*)' ) );
+				let stateToken = match ? match[2] : '';
+
+				if ( ! stateToken ) {
+					const randomBytes = new Uint8Array( 16 );
+					window.crypto.getRandomValues( randomBytes );
+					stateToken = Array.from( randomBytes, ( byte ) => ( '0' + ( byte & 0xFF ).toString( 16 ) ).slice( -2 ) ).join( '' );
+					const secureFlag = isHttps ? '; Secure' : '';
+					document.cookie = `${cookieName}=${stateToken}; Path=/; max-age=3600; SameSite=Lax${secureFlag}`;
+				}
+
 				decoded.state_token = stateToken;
 				url.searchParams.set( 'state', btoa( JSON.stringify( decoded ) ) );
 				button.href = url.toString();
