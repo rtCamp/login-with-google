@@ -206,13 +206,13 @@ class Settings implements ModuleInterface {
 			return [];
 		}
 
-		if ( ! empty( $settings['clear_client_secret'] ) ) {
+		if ( ! empty( $settings['clear_client_secret'] ) && empty( $settings['client_secret'] ) ) {
 			$settings['client_secret'] = '';
-			unset( $settings['clear_client_secret'] );
 		} elseif ( empty( $settings['client_secret'] ) && ! empty( $this->options['client_secret'] ) ) {
 			// If client secret is left blank and clear flag is not set, retain the existing stored secret.
 			$settings['client_secret'] = $this->options['client_secret'];
 		}
+		unset( $settings['clear_client_secret'] );
 
 		return $settings;
 	}

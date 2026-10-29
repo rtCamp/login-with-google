@@ -95,6 +95,7 @@ class Login implements ModuleInterface {
 		 */
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		add_filter( 'login_message', [ $this, 'filter_login_message' ] );
 	}
 
 	/**
@@ -254,5 +255,22 @@ class Login implements ModuleInterface {
 			wp_safe_redirect( $state->redirect_to, 302, 'Login with Google' );
 			exit;
 		}
+	}
+
+	/**
+	 * Filter login message to display 2FA continuation notice when redirected from One Tap.
+	 *
+	 * @param string $message Existing login message.
+	 * @return string Modified login message.
+	 */
+	public function filter_login_message( $message ): string {
+		if ( ! empty( $_GET['login_with_google_2fa'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$message .= sprintf(
+				'<p class="message notice notice-info">%s</p>',
+				esc_html__( 'Please sign in again to complete two-factor authentication.', 'login-with-google' )
+			);
+		}
+
+		return (string) $message;
 	}
 }

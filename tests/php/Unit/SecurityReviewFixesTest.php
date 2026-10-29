@@ -22,6 +22,7 @@ use RtCamp\GoogleLogin\Utils\GoogleClient;
 use RtCamp\GoogleLogin\Utils\Helper;
 use RtCamp\GoogleLogin\Modules\Settings;
 use RtCamp\GoogleLogin\Modules\OneTapLogin;
+use RtCamp\GoogleLogin\Modules\Login;
 use RtCamp\GoogleLogin\Utils\TokenVerifier;
 
 /**
@@ -525,9 +526,75 @@ class SecurityReviewFixesTest extends TestCase {
 			->once();
 
 		$one_tap = new OneTapLogin( $settings, $verifier, $client, $authenticator );
+
+		// Set the redirect_to property on OneTapLogin as validate_token would do.
+		$ref_redirect = new \ReflectionProperty( OneTapLogin::class, 'redirect_to' );
+		$ref_redirect->setValue( $one_tap, 'https://example.com/wp-admin/' );
+
 		$one_tap->authenticate();
 
 		$this->assertConditionsMet();
+	}
+
+	/**
+	 * Test Settings sanitize_settings keeps new secret when clear_client_secret is checked.
+	 */
+	public function testSettingsSanitizeKeepsNewSecretEvenIfClearIsChecked(): void {
+		$settings = new Settings();
+
+		$ref_options = new \ReflectionProperty( Settings::class, 'options' );
+		$ref_options->setValue( $settings, [ 'client_secret' => 'old_secret_value' ] );
+
+		$sanitized = $settings->sanitize_settings(
+			[
+				'client_secret'       => 'new_secret_123',
+				'clear_client_secret' => '1',
+			]
+		);
+
+		$this->assertSame( 'new_secret_123', $sanitized['client_secret'] );
+		$this->assertArrayNotHasKey( 'clear_client_secret', $sanitized );
+	}
+
+	/**
+	 * Test Login filter_login_message adds notice when login_with_google_2fa is set.
+	 */
+	public function testLoginFilterLoginMessageAddsNoticeWhen2FaParamPresent(): void {
+		$client        = Mockery::mock( GoogleClient::class );
+		$authenticator = Mockery::mock( Authenticator::class );
+
+		$_GET['login_with_google_2fa'] = '1';
+
+		WP_Mock::userFunction( '__' )
+			->with( 'Please sign in again to complete two-factor authentication.', 'login-with-google' )
+			->andReturn( 'Please sign in again to complete two-factor authentication.' );
+
+		WP_Mock::userFunction( 'esc_html__' )
+			->with( 'Please sign in again to complete two-factor authentication.', 'login-with-google' )
+			->andReturn( 'Please sign in again to complete two-factor authentication.' );
+
+		$login   = new Login( $client, $authenticator );
+		$message = $login->filter_login_message( '' );
+
+		unset( $_GET['login_with_google_2fa'] );
+
+		$this->assertStringContainsString( 'Please sign in again to complete two-factor authentication.', $message );
+		$this->assertStringContainsString( 'notice notice-info', $message );
+	}
+
+	/**
+	 * Test Login filter_login_message leaves message untouched when login_with_google_2fa is absent.
+	 */
+	public function testLoginFilterLoginMessageUntouchedWhenNo2FaParam(): void {
+		$client        = Mockery::mock( GoogleClient::class );
+		$authenticator = Mockery::mock( Authenticator::class );
+
+		unset( $_GET['login_with_google_2fa'] );
+
+		$login   = new Login( $client, $authenticator );
+		$message = $login->filter_login_message( 'Original message' );
+
+		$this->assertSame( 'Original message', $message );
 	}
 }
 

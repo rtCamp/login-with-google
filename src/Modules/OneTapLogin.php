@@ -56,6 +56,13 @@ class OneTapLogin implements Module {
 	private $authenticator;
 
 	/**
+	 * Target redirect URL after successful login.
+	 *
+	 * @var string
+	 */
+	private $redirect_to = '';
+
+	/**
 	 * OneTapLogin constructor.
 	 *
 	 * @param Settings      $settings Settings object.
@@ -208,6 +215,14 @@ class OneTapLogin implements Module {
 
 			Helper::clear_state_cookie();
 
+			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+
+			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
+				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
+			}
+
+			$this->redirect_to = $redirect_to;
+
 			/**
 			 * Do something when token has been verified successfully.
 			 *
@@ -216,12 +231,6 @@ class OneTapLogin implements Module {
 			 * @since 1.0.16
 			 */
 			do_action( 'rtcamp.id_token_verified' );
-
-			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
-
-			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
-				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
-			}
 
 			wp_send_json_success(
 				[
@@ -291,7 +300,7 @@ class OneTapLogin implements Module {
 		 * to complete 2FA rather than completing login inside the AJAX endpoint.
 		 */
 		if ( class_exists( 'Two_Factor_Core' ) && method_exists( 'Two_Factor_Core', 'is_user_using_two_factor' ) && \Two_Factor_Core::is_user_using_two_factor( $wp_user->ID ) ) {
-			$redirect_to = Helper::get_redirect_url();
+			$redirect_to = $this->redirect_to ? $this->redirect_to : apply_filters( 'rtcamp.google_default_redirect', admin_url() );
 			$login_url   = add_query_arg(
 				[
 					'login_with_google_2fa' => '1',

@@ -246,7 +246,7 @@ Chore: Documentation update.
 == Upgrade Notice ==
 
 = 1.4.5 =
-Security hardening release: Enforces whitelisted domains on existing accounts during login, binds Google account ID (sub) to prevent account takeover, validates anti-CSRF state tokens per browser session, and masks client secret in settings.
+Security hardening release: Enforces whitelisted domains on existing accounts during login, binds Google account ID (sub) to harden against account takeover, validates anti-CSRF state tokens per browser session, and masks client secret in settings.
 
 = 1.4.4 =
 Update: Updated Composer and NPM dependencies.

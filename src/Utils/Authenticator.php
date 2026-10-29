@@ -66,7 +66,7 @@ class Authenticator {
 		/**
 		 * Filter whether to enforce whitelisted domains on login for existing users.
 		 *
-		 * @since 1.6.0
+		 * @since 1.4.5
 		 *
 		 * @param bool     $enforce Whether to enforce whitelisted domains on login. Default true.
 		 * @param stdClass $user    Google user data object.
