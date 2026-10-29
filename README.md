@@ -73,6 +73,10 @@ delete_user_meta( $user_id, 'google_oauth_sub' );
 ```
 
 
+7. `One Tap Authentication & Two-Factor Authentication`:
+During One Tap authentication, the standard WordPress `authenticate` and `wp_authenticate_user` filters are invoked before setting authentication cookies, allowing user lockout and approval plugins to hook in. (Note: These filters run after user resolution or creation, so if an authentication filter returns a `WP_Error`, cookies are not set and `wp_login` does not fire, but any newly created user record remains in the database).
+If the [Two-Factor](https://wordpress.org/plugins/two-factor/) plugin is active and configured for the user, One Tap redirects the user to `wp-login.php?login_with_google_2fa=1` with their intended `redirect_to` target so they can complete secondary verification securely.
+
 ### Plugin Constants
 
 Above mentioned settings can also be configured via PHP constants by defining them in wp-config.php

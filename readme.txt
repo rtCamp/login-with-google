@@ -69,7 +69,7 @@ Add your domain name, without any schema prefix and `www,` as the value of `WP_G
 define( 'WP_GOOGLE_LOGIN_WHITELIST_DOMAINS', 'example.com,sample.com' );
 ```
 
-**Note:** If a user already exists, they **will be allowed to login with Google** regardless of whether their domain is whitelisted or not. Whitelisting will only prevent users from **registering** with email addresses from non-whitelisted domains.
+**Note:** By default, whitelisted domain restrictions apply to both registration and login for existing accounts. To allow existing users to log in with Google regardless of domain allowlist, use the `rtcamp.google_enforce_whitelisted_domains_on_login` filter and return `false`.
 
 ### Hooks
 
@@ -86,7 +86,7 @@ For a list of all hooks please refer to [this documentation](https://github.com/
 * `WP_GOOGLE_LOGIN_USER_REGISTRATION` (boolean) (optional): Set `true` If you want to enable new user registration. By default, user registration defers to `Settings > General Settings > Membership` if constant is not set.
 
 
-* `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` (string) (optional): Domain names, if you want to restrict login with your custom domain. By default, it will allow all domains. You can whitelist multiple domains.
+* `WP_GOOGLE_LOGIN_WHITELIST_DOMAINS` (string) (optional): Comma-separated list of allowed domains for login and registration. When configured, restricts authentication and account creation to matching email domains. By default, it will allow all domains. You can whitelist multiple domains.
 
 ### BTW, We're Hiring!
 
@@ -140,6 +140,13 @@ Code snippets to extend and customize the plugin can be found [here](https://git
 3. Settings within Google Developer Console.
 
 == Changelog ==
+
+= 1.4.5 =
+Security: Enforce whitelisted domains on login for existing users by default, with `rtcamp.google_enforce_whitelisted_domains_on_login` filter for backward compatibility.
+Security: Bind Google OAuth sub to WordPress account on first verified login (TOFU).
+Security: Use per-browser anti-CSRF state token with __Host- cookie boundary.
+Security: Trigger standard WordPress authentication filters during One Tap login.
+Security: Mask client secret in settings UI and add explicit option to clear stored secret.
 
 = 1.4.4 =
 Update: Updated Composer and NPM dependencies.
@@ -237,6 +244,9 @@ Chore: Documentation update.
 * Maintenance release: Updated minimum requirements.
 
 == Upgrade Notice ==
+
+= 1.4.5 =
+Security hardening release: Enforces whitelisted domains on existing accounts during login, binds Google account ID (sub) to prevent account takeover, validates anti-CSRF state tokens per browser session, and masks client secret in settings.
 
 = 1.4.4 =
 Update: Updated Composer and NPM dependencies.

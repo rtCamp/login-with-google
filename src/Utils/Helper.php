@@ -297,7 +297,7 @@ class Helper {
 			'expires'  => $expires,
 			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
 			'secure'   => $secure,
-			'httponly' => true,
+			'httponly' => false,
 			'samesite' => 'Lax',
 		];
 
@@ -320,6 +320,10 @@ class Helper {
 	/**
 	 * Get or set the state token in a secure cookie.
 	 *
+	 * Only sets the cookie via PHP if headers have not been sent and the request
+	 * is in wp-login or admin (login_init or is_admin). On front-end GET requests,
+	 * client-side JS manages setting the cookie to preserve edge caching.
+	 *
 	 * @return string
 	 */
 	public static function get_or_create_state_token(): string {
@@ -333,7 +337,9 @@ class Helper {
 
 		$token = wp_generate_password( 32, false );
 
-		self::set_state_cookie( $token );
+		if ( did_action( 'login_init' ) || is_admin() ) {
+			self::set_state_cookie( $token );
+		}
 
 		return $token;
 	}

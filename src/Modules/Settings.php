@@ -196,7 +196,7 @@ class Settings implements ModuleInterface {
 	/**
 	 * Sanitize plugin settings on save.
 	 *
-	 * Preserves existing client secret if left blank.
+	 * Preserves existing client secret if left blank, or clears it if requested.
 	 *
 	 * @param mixed $settings Input settings.
 	 * @return array
@@ -206,8 +206,11 @@ class Settings implements ModuleInterface {
 			return [];
 		}
 
-		// If client secret is left blank, retain the existing stored secret.
-		if ( empty( $settings['client_secret'] ) && ! empty( $this->options['client_secret'] ) ) {
+		if ( ! empty( $settings['clear_client_secret'] ) ) {
+			$settings['client_secret'] = '';
+			unset( $settings['clear_client_secret'] );
+		} elseif ( empty( $settings['client_secret'] ) && ! empty( $this->options['client_secret'] ) ) {
+			// If client secret is left blank and clear flag is not set, retain the existing stored secret.
 			$settings['client_secret'] = $this->options['client_secret'];
 		}
 
@@ -229,6 +232,10 @@ class Settings implements ModuleInterface {
 			<p class="description"><?php esc_html_e( 'Client Secret is defined via WP_GOOGLE_LOGIN_SECRET constant.', 'login-with-google' ); ?></p>
 		<?php elseif ( ! empty( $this->client_secret ) ) : ?>
 			<p class="description"><?php esc_html_e( 'Client Secret is configured. Leave blank to keep existing secret.', 'login-with-google' ); ?></p>
+			<label style="display:block;margin-top:6px;">
+				<input type="checkbox" name="wp_google_login_settings[clear_client_secret]" value="1" />
+				<?php esc_html_e( 'Clear stored Client Secret', 'login-with-google' ); ?>
+			</label>
 		<?php endif; ?>
 		<?php
 	}

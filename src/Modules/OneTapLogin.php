@@ -141,9 +141,10 @@ class OneTapLogin implements Module {
 		);
 
 		$data = [
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'state'   => $this->google_client->state(),
-			'homeurl' => get_option( 'home', '' ),
+			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+			'state'       => $this->google_client->state(),
+			'homeurl'     => get_option( 'home', '' ),
+			'cookie_name' => Helper::get_state_cookie_name(),
 		];
 
 		Helper::remove_redirect_state_filter();
@@ -251,6 +252,10 @@ class OneTapLogin implements Module {
 		 * Filter user authentication before setting auth cookies.
 		 * Allows multisite spam-user checks and lockout plugins hooked to 'authenticate' to run.
 		 *
+		 * Timing trade-off: Runs after user resolution/creation ($this->authenticator->authenticate).
+		 * If an authentication filter returns a WP_Error, auth cookies are not set and wp_login does
+		 * not fire, but any newly inserted user record remains in the database.
+		 *
 		 * @param \WP_User|\WP_Error|null $auth_check Authenticated user or error.
 		 * @param string                  $username   Username.
 		 * @param string                  $password   Password.
@@ -286,7 +291,16 @@ class OneTapLogin implements Module {
 		 * to complete 2FA rather than completing login inside the AJAX endpoint.
 		 */
 		if ( class_exists( 'Two_Factor_Core' ) && method_exists( 'Two_Factor_Core', 'is_user_using_two_factor' ) && \Two_Factor_Core::is_user_using_two_factor( $wp_user->ID ) ) {
-			wp_send_json_success( [ 'redirect' => wp_login_url() ] );
+			$redirect_to = Helper::get_redirect_url();
+			$login_url   = add_query_arg(
+				[
+					'login_with_google_2fa' => '1',
+					'redirect_to'           => urlencode( $redirect_to ),
+				],
+				wp_login_url()
+			);
+			wp_send_json_success( [ 'redirect' => $login_url ] );
+			return;
 		}
 
 		$this->authenticator->set_auth_cookies( $wp_user );

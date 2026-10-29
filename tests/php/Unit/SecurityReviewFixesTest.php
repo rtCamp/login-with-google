@@ -373,4 +373,161 @@ class SecurityReviewFixesTest extends TestCase {
 		$this->assertSame( 'mock_nonce_123', $decoded_state['nonce'] );
 		$this->assertSame( 'shortcode_test_token_123', $decoded_state['state_token'] );
 	}
+
+	/**
+	 * Test Comment 1: get_cookie_options sets httponly to false so client JS can synchronize state.
+	 */
+	public function testHelperCookieOptionsAllowsJsAccess(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( true );
+
+		$method  = new \ReflectionMethod( Helper::class, 'get_cookie_options' );
+		$options = $method->invoke( null, 12345 );
+
+		$this->assertFalse( $options['httponly'] );
+		$this->assertTrue( $options['secure'] );
+		$this->assertSame( '/', $options['path'] );
+		$this->assertSame( 'Lax', $options['samesite'] );
+	}
+
+	/**
+	 * Test Comment 3: Template contains data-cookie-name attribute.
+	 */
+	public function testTemplateContainsDataCookieName(): void {
+		$template_path = GH_PLUGIN_DIR . '/templates/google-login-button.php';
+		$content       = file_get_contents( $template_path );
+
+		$this->assertStringContainsString( 'data-cookie-name="<?php echo esc_attr( Helper::get_state_cookie_name() ); ?>"', $content );
+	}
+
+	/**
+	 * Test Comment 5: get_or_create_state_token does not send Set-Cookie header on front-end GET requests.
+	 */
+	public function testHelperGetOrCreateStateTokenPreservesEdgeCaching(): void {
+		WP_Mock::userFunction( 'is_ssl' )
+			->andReturn( false );
+
+		WP_Mock::userFunction( 'did_action' )
+			->with( 'login_init' )
+			->andReturn( 0 );
+
+		WP_Mock::userFunction( 'is_admin' )
+			->andReturn( false );
+
+		WP_Mock::userFunction( 'wp_generate_password' )
+			->with( 32, false )
+			->andReturn( 'random_frontend_token_1234567890' );
+
+		$token = Helper::get_or_create_state_token();
+
+		$this->assertSame( 'random_frontend_token_1234567890', $token );
+		$this->assertArrayNotHasKey( Helper::STATE_COOKIE, $_COOKIE );
+	}
+
+	/**
+	 * Test Comment 6: Settings sanitize_settings clears client secret when clear_client_secret is checked.
+	 */
+	public function testSettingsSanitizeClearsClientSecret(): void {
+		$settings = new Settings();
+
+		$ref_options = new \ReflectionProperty( Settings::class, 'options' );
+		$ref_options->setValue( $settings, [ 'client_secret' => 'old_secret_value' ] );
+
+		$sanitized = $settings->sanitize_settings(
+			[
+				'client_secret'       => '',
+				'clear_client_secret' => '1',
+			]
+		);
+
+		$this->assertSame( '', $sanitized['client_secret'] );
+		$this->assertArrayNotHasKey( 'clear_client_secret', $sanitized );
+	}
+
+	/**
+	 * Test Comment 6: Settings sanitize_settings preserves client secret when left blank.
+	 */
+	public function testSettingsSanitizePreservesClientSecretWhenBlank(): void {
+		$settings = new Settings();
+
+		$ref_options = new \ReflectionProperty( Settings::class, 'options' );
+		$ref_options->setValue( $settings, [ 'client_secret' => 'existing_secret_value' ] );
+
+		$sanitized = $settings->sanitize_settings(
+			[
+				'client_secret' => '',
+			]
+		);
+
+		$this->assertSame( 'existing_secret_value', $sanitized['client_secret'] );
+	}
+
+	/**
+	 * Test Comment 8: OneTap authenticate redirects 2FA user with redirect_to and notice query args.
+	 */
+	public function testOneTapAuthenticateTwoFactorRedirectIncludesArgs(): void {
+		$settings      = Mockery::mock( Settings::class );
+		$verifier      = Mockery::mock( TokenVerifier::class );
+		$client        = Mockery::mock( GoogleClient::class );
+		$authenticator = Mockery::mock( Authenticator::class );
+
+		$google_user = new stdClass();
+		$wp_user     = Mockery::mock( WP_User::class );
+		$wp_user->ID = 99;
+		$wp_user->user_login = 'twofactor_user';
+
+		$verifier->shouldReceive( 'current_user' )
+			->andReturn( $google_user );
+
+		$authenticator->shouldReceive( 'authenticate' )
+			->with( $google_user )
+			->andReturn( $wp_user );
+
+		WP_Mock::onFilter( 'authenticate' )
+			->with( $wp_user, 'twofactor_user', '' )
+			->reply( $wp_user );
+
+		WP_Mock::onFilter( 'wp_authenticate_user' )
+			->with( $wp_user, '' )
+			->reply( $wp_user );
+
+		if ( ! class_exists( 'Two_Factor_Core' ) ) {
+			eval( 'class Two_Factor_Core { public static function is_user_using_two_factor( $user_id ) { return true; } }' );
+		}
+
+		WP_Mock::userFunction( 'admin_url' )
+			->andReturn( 'https://example.com/wp-admin/' );
+
+		WP_Mock::userFunction( 'home_url' )
+			->andReturn( 'https://example.com/' );
+
+		WP_Mock::onFilter( 'rtcamp.google_default_redirect' )
+			->with( Mockery::any() )
+			->reply( 'https://example.com/wp-admin/' );
+
+		WP_Mock::userFunction( 'wp_login_url' )
+			->andReturn( 'https://example.com/wp-login.php' );
+
+		WP_Mock::userFunction( 'add_query_arg' )
+			->with(
+				Mockery::on(
+					function( array $args ) {
+						return isset( $args['login_with_google_2fa'] ) && '1' === $args['login_with_google_2fa']
+							&& isset( $args['redirect_to'] );
+					}
+				),
+				'https://example.com/wp-login.php'
+			)
+			->andReturn( 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . urlencode( 'https://example.com/wp-admin/' ) );
+
+		WP_Mock::userFunction( 'wp_send_json_success' )
+			->with( [ 'redirect' => 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . urlencode( 'https://example.com/wp-admin/' ) ] )
+			->once();
+
+		$one_tap = new OneTapLogin( $settings, $verifier, $client, $authenticator );
+		$one_tap->authenticate();
+
+		$this->assertConditionsMet();
+	}
 }
+
