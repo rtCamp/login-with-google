@@ -56,6 +56,13 @@ class OneTapLogin implements Module {
 	private $authenticator;
 
 	/**
+	 * Target redirect URL after successful login.
+	 *
+	 * @var string
+	 */
+	private $redirect_to = '';
+
+	/**
 	 * OneTapLogin constructor.
 	 *
 	 * @param Settings      $settings Settings object.
@@ -141,9 +148,10 @@ class OneTapLogin implements Module {
 		);
 
 		$data = [
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'state'   => $this->google_client->state(),
-			'homeurl' => get_option( 'home', '' ),
+			'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+			'state'       => $this->google_client->state(),
+			'homeurl'     => get_option( 'home', '' ),
+			'cookie_name' => Helper::get_state_cookie_name(),
 		];
 
 		Helper::remove_redirect_state_filter();
@@ -181,12 +189,39 @@ class OneTapLogin implements Module {
 	 */
 	public function validate_token(): void {
 		try {
+			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+
+			if (
+				! is_array( $decoded_state ) ||
+				empty( $decoded_state['provider'] ) ||
+				'google' !== $decoded_state['provider'] ||
+				empty( $decoded_state['nonce'] ) ||
+				! is_string( $decoded_state['nonce'] ) ||
+				! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ||
+				empty( $decoded_state['state_token'] ) ||
+				! is_string( $decoded_state['state_token'] ) ||
+				! Helper::verify_state_token( $decoded_state['state_token'] )
+			) {
+				throw new Exception( __( 'Invalid request state. Please reload the page.', 'login-with-google' ) );
+			}
+
 			$token    = Helper::filter_input( INPUT_POST, 'token', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			$verified = $this->token_verifier->verify_token( $token );
 
 			if ( ! $verified ) {
 				throw new Exception( __( 'Cannot verify the credentials', 'login-with-google' ) );
 			}
+
+			Helper::clear_state_cookie();
+
+			$redirect_to = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+
+			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
+				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
+			}
+
+			$this->redirect_to = $redirect_to;
 
 			/**
 			 * Do something when token has been verified successfully.
@@ -197,21 +232,11 @@ class OneTapLogin implements Module {
 			 */
 			do_action( 'rtcamp.id_token_verified' );
 
-			$redirect_to   = apply_filters( 'rtcamp.google_default_redirect', admin_url() );
-			$state         = Helper::filter_input( INPUT_POST, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-			$decoded_state = $state ? (array) ( json_decode( base64_decode( $state ) ) ) : null;    // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
-
-			if ( is_array( $decoded_state ) && ! empty( $decoded_state['provider'] ) && 'google' === $decoded_state['provider'] ) {
-				$redirect_to = $decoded_state['redirect_to'] ?? $redirect_to;
-			}
-
 			wp_send_json_success(
 				[
 					'redirect' => $redirect_to,
 				]
 			);
-			die;
-
 		} catch ( Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}
@@ -231,6 +256,70 @@ class OneTapLogin implements Module {
 		}
 
 		$wp_user = $this->authenticator->authenticate( $user );
+
+		/**
+		 * Filter user authentication before setting auth cookies.
+		 * Allows multisite spam-user checks and lockout plugins hooked to 'authenticate' to run.
+		 *
+		 * Timing trade-off: Runs after user resolution/creation ($this->authenticator->authenticate).
+		 * If an authentication filter returns a WP_Error, auth cookies are not set and wp_login does
+		 * not fire, but any newly inserted user record remains in the database.
+		 *
+		 * @param \WP_User|\WP_Error|null $auth_check Authenticated user or error.
+		 * @param string                  $username   Username.
+		 * @param string                  $password   Password.
+		 */
+		$auth_check = apply_filters( 'authenticate', $wp_user, $wp_user->user_login, '' );
+
+		if ( is_wp_error( $auth_check ) ) {
+			throw new Exception( esc_html( $auth_check->get_error_message() ) );
+		}
+
+		if ( $auth_check instanceof WP_User ) {
+			$wp_user = $auth_check;
+		}
+
+		/**
+		 * Filter user authentication before setting auth cookies.
+		 * Allows 2FA, lockout and approval plugins to hook in.
+		 *
+		 * Note: Social OAuth authentication passes an empty string as password
+		 * because OAuth is token-based and passwordless.
+		 *
+		 * @param \WP_User|\WP_Error $wp_user WP_User object or WP_Error.
+		 * @param string             $username Username.
+		 */
+		$wp_user = apply_filters( 'wp_authenticate_user', $wp_user, '' );
+
+		if ( is_wp_error( $wp_user ) ) {
+			throw new Exception( esc_html( $wp_user->get_error_message() ) );
+		}
+
+		/**
+		 * If Two-Factor plugin is active and required for this user, redirect to wp-login.php
+		 * to complete 2FA rather than completing login inside the AJAX endpoint.
+		 */
+		if ( class_exists( 'Two_Factor_Core' ) && method_exists( 'Two_Factor_Core', 'is_user_using_two_factor' ) && \Two_Factor_Core::is_user_using_two_factor( $wp_user->ID ) ) {
+			$redirect_to = $this->redirect_to ? $this->redirect_to : apply_filters( 'rtcamp.google_default_redirect', admin_url() );
+			$login_url   = add_query_arg(
+				[
+					'login_with_google_2fa' => '1',
+					'redirect_to'           => rawurlencode( $redirect_to ),
+				],
+				wp_login_url()
+			);
+			wp_send_json_success( [ 'redirect' => $login_url ] );
+			return;
+		}
+
 		$this->authenticator->set_auth_cookies( $wp_user );
+
+		/**
+		 * Fires after the user has successfully logged in via One Tap.
+		 *
+		 * @param string   $user_login User's username.
+		 * @param \WP_User $wp_user    WP_User object of the logged-in user.
+		 */
+		do_action( 'wp_login', $wp_user->user_login, $wp_user );
 	}
 }

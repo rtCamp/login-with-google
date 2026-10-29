@@ -99,7 +99,13 @@ class Settings implements ModuleInterface {
 	 * @return void
 	 */
 	public function register_settings(): void {
-		register_setting( 'wp_google_login', 'wp_google_login_settings' );
+		register_setting(
+			'wp_google_login',
+			'wp_google_login_settings',
+			[
+				'sanitize_callback' => [ $this, 'sanitize_settings' ],
+			]
+		);
 
 		add_settings_section(
 			'wp_google_login_section',
@@ -188,13 +194,49 @@ class Settings implements ModuleInterface {
 	}
 
 	/**
+	 * Sanitize plugin settings on save.
+	 *
+	 * Preserves existing client secret if left blank, or clears it if requested.
+	 *
+	 * @param mixed $settings Input settings.
+	 * @return array
+	 */
+	public function sanitize_settings( $settings ): array {
+		if ( ! is_array( $settings ) ) {
+			return [];
+		}
+
+		if ( ! empty( $settings['clear_client_secret'] ) && empty( $settings['client_secret'] ) ) {
+			$settings['client_secret'] = '';
+		} elseif ( empty( $settings['client_secret'] ) && ! empty( $this->options['client_secret'] ) ) {
+			// If client secret is left blank and clear flag is not set, retain the existing stored secret.
+			$settings['client_secret'] = $this->options['client_secret'];
+		}
+		unset( $settings['clear_client_secret'] );
+
+		return $settings;
+	}
+
+	/**
 	 * Render client secret field.
 	 *
 	 * @return void
 	 */
 	public function client_secret_field(): void {
+		$is_constant_defined = defined( 'WP_GOOGLE_LOGIN_SECRET' );
+		$has_secret          = $is_constant_defined || ! empty( $this->client_secret );
+		$placeholder         = $has_secret ? '••••••••' : '';
 		?>
-		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='<?php echo esc_attr( $this->client_secret ); ?>' autocomplete="off" <?php $this->disabled( 'client_secret' ); ?> />
+		<input type='password' name='wp_google_login_settings[client_secret]' id="client-secret" value='' placeholder='<?php echo esc_attr( $placeholder ); ?>' autocomplete="new-password" <?php $this->disabled( 'client_secret' ); ?> />
+		<?php if ( $is_constant_defined ) : ?>
+			<p class="description"><?php esc_html_e( 'Client Secret is defined via WP_GOOGLE_LOGIN_SECRET constant.', 'login-with-google' ); ?></p>
+		<?php elseif ( ! empty( $this->client_secret ) ) : ?>
+			<p class="description"><?php esc_html_e( 'Client Secret is configured. Leave blank to keep existing secret.', 'login-with-google' ); ?></p>
+			<label style="display:block;margin-top:6px;">
+				<input type="checkbox" name="wp_google_login_settings[clear_client_secret]" value="1" />
+				<?php esc_html_e( 'Clear stored Client Secret', 'login-with-google' ); ?>
+			</label>
+		<?php endif; ?>
 		<?php
 	}
 

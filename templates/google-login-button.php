@@ -2,9 +2,12 @@
 /**
  * Template for google login button.
  *
- * @package RtCamp\GithubLogin
+ * @package RtCamp\GoogleLogin
  * @since 1.0.0
  */
+
+// Prevent direct access.
+defined( 'ABSPATH' ) || exit;
 
 use RtCamp\GoogleLogin\Utils\Helper;
 
@@ -32,6 +35,7 @@ if ( is_user_logged_in() ) {
 			<?php
 			printf( ' href="%s"', esc_url( $button_url ) );
 			?>
+			data-cookie-name="<?php echo esc_attr( Helper::get_state_cookie_name() ); ?>"
 		>
 			<span class="wp_google_login__google-icon"></span>
 			<?php echo esc_html( $button_text ); ?>

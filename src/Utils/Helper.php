@@ -18,6 +18,11 @@ namespace RtCamp\GoogleLogin\Utils;
 class Helper {
 
 	/**
+	 * Cookie name for OAuth state binding.
+	 */
+	const STATE_COOKIE = 'lwg_state_token';
+
+	/**
 	 * URL to be redirected to post successful login.
 	 *
 	 * @var string
@@ -276,5 +281,157 @@ class Helper {
 	 */
 	public static function remove_redirect_state_filter() {
 		remove_filter( 'rtcamp.google_login_state', [ __CLASS__, 'update_redirect_state' ] );
+	}
+
+	/**
+	 * Build cookie options for state cookie.
+	 *
+	 * @param int $expires Expiration timestamp.
+	 * @return array
+	 */
+	private static function get_cookie_options( int $expires ): array {
+		$secure = is_ssl();
+
+		// For __Host- prefix on HTTPS, domain must not be set and path must be '/'.
+		$cookie_options = [
+			'expires'  => $expires,
+			'path'     => $secure ? '/' : ( ( defined( 'COOKIEPATH' ) && COOKIEPATH ) ? COOKIEPATH : '/' ),
+			'secure'   => $secure,
+			'httponly' => false,
+			'samesite' => 'Lax',
+		];
+
+		if ( ! $secure && defined( 'COOKIE_DOMAIN' ) && COOKIE_DOMAIN ) {
+			$cookie_options['domain'] = (string) COOKIE_DOMAIN;
+		}
+
+		return $cookie_options;
+	}
+
+	/**
+	 * Get the cookie name. Uses __Host- prefix on HTTPS for host-only boundary.
+	 *
+	 * @return string
+	 */
+	public static function get_state_cookie_name(): string {
+		return is_ssl() ? '__Host-' . self::STATE_COOKIE : self::STATE_COOKIE;
+	}
+
+	/**
+	 * Get or set the state token in a secure cookie.
+	 *
+	 * Only sets the cookie via PHP if headers have not been sent and the request
+	 * is in wp-login or admin (login_init or is_admin). On front-end GET requests,
+	 * client-side JS manages setting the cookie to preserve edge caching.
+	 *
+	 * @return string
+	 */
+	public static function get_or_create_state_token(): string {
+		$cookie_name = self::get_state_cookie_name();
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		if ( ! empty( $_COOKIE[ $cookie_name ] ) && is_string( $_COOKIE[ $cookie_name ] ) ) {
+			// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+			return sanitize_text_field( wp_unslash( $_COOKIE[ $cookie_name ] ) );
+		}
+
+		$token = wp_generate_password( 32, false );
+
+		if ( did_action( 'login_init' ) || is_admin() ) {
+			self::set_state_cookie( $token );
+		}
+
+		return $token;
+	}
+
+	/**
+	 * Maybe set state cookie if user is not logged in.
+	 *
+	 * @return void
+	 */
+	public static function maybe_set_state_cookie(): void {
+		$cookie_name = self::get_state_cookie_name();
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Anti-CSRF token check.
+		if ( is_user_logged_in() || ! empty( $_COOKIE[ $cookie_name ] ) ) {
+			return;
+		}
+
+		self::set_state_cookie();
+	}
+
+	/**
+	 * Set state cookie.
+	 *
+	 * @param string $token State token.
+	 * @return void
+	 */
+	public static function set_state_cookie( string $token = '' ): void {
+		if ( headers_sent() ) {
+			return;
+		}
+
+		if ( empty( $token ) ) {
+			$token = wp_generate_password( 32, false );
+		}
+
+		$cookie_name    = self::get_state_cookie_name();
+		$cookie_options = self::get_cookie_options( time() + HOUR_IN_SECONDS );
+
+		// Set cookie valid for 1 hour.
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for OAuth anti-CSRF state binding.
+		setcookie(
+			$cookie_name,
+			$token,
+			$cookie_options
+		);
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Update superglobal for same-request verification.
+		$_COOKIE[ $cookie_name ] = $token;
+	}
+
+	/**
+	 * Clear the state cookie.
+	 *
+	 * @return void
+	 */
+	public static function clear_state_cookie(): void {
+		if ( headers_sent() ) {
+			return;
+		}
+
+		$cookie_name    = self::get_state_cookie_name();
+		$cookie_options = self::get_cookie_options( time() - HOUR_IN_SECONDS );
+
+		// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie -- Required for clearing anti-CSRF cookie.
+		setcookie(
+			$cookie_name,
+			'',
+			$cookie_options
+		);
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE -- Clear superglobal for same-request verification.
+		unset( $_COOKIE[ $cookie_name ] );
+	}
+
+	/**
+	 * Verify that state token matches the cookie.
+	 *
+	 * @param string $state_token State token to check.
+	 * @return bool
+	 */
+	public static function verify_state_token( string $state_token ): bool {
+		$cookie_name = self::get_state_cookie_name();
+
+		// phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Anti-CSRF token check, sanitized on line below.
+		$cookie_val = $_COOKIE[ $cookie_name ] ?? '';
+
+		if ( empty( $state_token ) || empty( $cookie_val ) || ! is_string( $cookie_val ) ) {
+			return false;
+		}
+
+		$cookie_token = sanitize_text_field( wp_unslash( $cookie_val ) );
+
+		return hash_equals( $cookie_token, $state_token );
 	}
 }

@@ -31,5 +31,25 @@ window.LoginWithGoogleDataCallBack = function( response ) {
             }
         }
     };
-    xhr.send( 'action=validate_id_token&token=' + response.credential + '&state=' + TempAccessOneTap.state );
+
+    var stateToSend = TempAccessOneTap.state;
+    try {
+        var isHttps = window.location.protocol === 'https:';
+        var cookieName = ( TempAccessOneTap && TempAccessOneTap.cookie_name ) ? TempAccessOneTap.cookie_name : ( isHttps ? '__Host-lwg_state_token' : 'lwg_state_token' );
+        var randomBytes = new Uint8Array( 16 );
+        window.crypto.getRandomValues( randomBytes );
+        var freshToken = Array.from( randomBytes, function( byte ) {
+            return ( '0' + ( byte & 0xFF ).toString( 16 ) ).slice( -2 );
+        } ).join( '' );
+        var secureFlag = ( isHttps || cookieName.indexOf( '__Host-' ) === 0 ) ? '; Secure' : '';
+        document.cookie = cookieName + '=' + freshToken + '; Path=/; max-age=3600; SameSite=Lax' + secureFlag;
+
+        var decoded = JSON.parse( atob( TempAccessOneTap.state ) );
+        if ( decoded && typeof decoded === 'object' ) {
+            decoded.state_token = freshToken;
+            stateToSend = btoa( JSON.stringify( decoded ) );
+        }
+    } catch ( e ) {}
+
+    xhr.send( 'action=validate_id_token&token=' + encodeURIComponent( response.credential ) + '&state=' + encodeURIComponent( stateToSend ) );
 };
