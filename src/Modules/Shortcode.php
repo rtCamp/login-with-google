@@ -79,12 +79,12 @@ class Shortcode implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
-		add_filter( 'do_shortcode_tag', [ $this, 'scan_shortcode' ], 10, 3 );
-
+		// Add actions here.
+		
 		/**
 		 * Filters.
-		 */
-		// Add filters here.
+		*/
+		add_filter( 'do_shortcode_tag', [ $this, 'scan_shortcode' ], 10, 3 );
 	}
 
 	/**

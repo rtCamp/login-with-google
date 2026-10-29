@@ -94,6 +94,7 @@ via [wp-cli](https://developer.wordpress.org/cli/commands/config/).
 | `rtcamp.google_login_state` | Filters the state to pass to the Google API. | <ul><li>`state_data` - contains the default state data.</li></ul>
 | `rtcamp.default_algorithm` | Filters default algorithm for openssl signature verification | <ul><li>`default_algo` - Default algorithm.</li><li>`algo` - Algorithm from JWT header.</li></ul>
 | `rtcamp.google_redirect_url` | Filters the URL to which the user will be redirected post successful authentication | <ul><li> `redirect_uri` - contains the URL to be redirected to. Defaults to the current URL.</li></ul>
+| `rtcamp.google_one_tap_show` | This filter is used to add one-tap login scripts to specific pages when `sitewide` option is disabled. <br /> Make sure one-tap login is enabled in settings for this to work. | <ul><li> `one_tap_show` - contains the boolean value for the current page. Preferred usage is with conditional tags. Defaults to `sitewide` setting.</li></ul>
 
 #### Actions
 
