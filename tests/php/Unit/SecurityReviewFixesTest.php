@@ -518,10 +518,10 @@ class SecurityReviewFixesTest extends TestCase {
 				),
 				'https://example.com/wp-login.php'
 			)
-			->andReturn( 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . urlencode( 'https://example.com/wp-admin/' ) );
+			->andReturn( 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . rawurlencode( 'https://example.com/wp-admin/' ) );
 
 		WP_Mock::userFunction( 'wp_send_json_success' )
-			->with( [ 'redirect' => 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . urlencode( 'https://example.com/wp-admin/' ) ] )
+			->with( [ 'redirect' => 'https://example.com/wp-login.php?login_with_google_2fa=1&redirect_to=' . rawurlencode( 'https://example.com/wp-admin/' ) ] )
 			->once();
 
 		$one_tap = new OneTapLogin( $settings, $verifier, $client, $authenticator );

@@ -295,7 +295,7 @@ class OneTapLogin implements Module {
 			$login_url   = add_query_arg(
 				[
 					'login_with_google_2fa' => '1',
-					'redirect_to'           => urlencode( $redirect_to ),
+					'redirect_to'           => rawurlencode( $redirect_to ),
 				],
 				wp_login_url()
 			);
