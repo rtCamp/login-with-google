@@ -38,7 +38,7 @@
 		"automattic/vipwpcs": "^3.0.1",
 		"phpcompatibility/phpcompatibility-wp": "^2.1.6",
 		"phpunit/phpunit": "9.6.33",
-		"10up/wp_mock": "1.1.0",
+		"10up/wp_mock": "1.1.1",
 		"wp-cli/i18n-command": "v2.6.5"
 	},
 	"config": {
