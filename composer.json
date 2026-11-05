@@ -39,7 +39,7 @@
 		"phpcompatibility/phpcompatibility-wp": "^2.1.6",
 		"phpunit/phpunit": "9.6.33",
 		"10up/wp_mock": "^1.1.1",
-		"wp-cli/i18n-command": "v2.6.5"
+		"wp-cli/i18n-command": "v3.0.2"
 	},
 	"config": {
 		"allow-plugins": {
