@@ -16,7 +16,6 @@ namespace RtCamp\GoogleLogin\Modules;
 
 use WP_User;
 use WP_Error;
-use stdClass;
 use Throwable;
 use Exception;
 use RtCamp\GoogleLogin\Utils\Helper;
@@ -54,6 +53,14 @@ class Login implements ModuleInterface {
 	private $authenticated = false;
 
 	/**
+	 * Redirect URL from the OAuth state, set once the user
+	 * has been authenticated from plugin.
+	 *
+	 * @var string
+	 */
+	private $redirect_to = '';
+
+	/**
 	 * Login constructor.
 	 *
 	 * @param GoogleClient  $client GH Client object.
@@ -88,11 +95,14 @@ class Login implements ModuleInterface {
 		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
 		add_action( 'rtcamp.google_register_user', [ $this->authenticator, 'register' ] );
 		add_action( 'rtcamp.google_user_created', [ $this, 'user_meta' ] );
-		add_action( 'wp_login', [ $this, 'login_redirect' ] );
 
 		/**
 		 * Filters.
 		 */
+		// Redirect via filter instead of `wp_login` so other `wp_login` callbacks (e.g. Two-Factor) can run.
+		// Runs early (priority 1) so the state destination acts as the initial value, as `redirect_to` does
+		// for password logins in wp-login.php, and other `login_redirect` filters can still override it.
+		add_filter( 'login_redirect', [ $this, 'login_redirect' ], 1 );
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 		add_filter( 'login_message', [ $this, 'filter_login_message' ] );
@@ -168,6 +178,20 @@ class Login implements ModuleInterface {
 			if ( $user instanceof WP_User ) {
 				$this->authenticated = true;
 
+				if ( ! empty( $decoded_state['redirect_to'] ) && is_string( $decoded_state['redirect_to'] ) ) {
+					// Same sanitization and allowed-host validation as wp_safe_redirect().
+					$this->redirect_to = wp_validate_redirect( wp_sanitize_redirect( $decoded_state['redirect_to'] ), '' );
+				}
+
+				if ( $this->redirect_to ) {
+					/*
+					 * Deliberately set the requested redirect for this request. Two-Factor copies it into its
+					 * challenge form, which carries it to the `validate_2fa` request; without this, 2FA users
+					 * lose the destination. Slashed to match core's superglobals (Two-Factor unslashes it).
+					 */
+					$_REQUEST['redirect_to'] = wp_slash( $this->redirect_to );
+				}
+
 				/**
 				 * Fires once the user has been authenticated via Google OAuth.
 				 *
@@ -224,7 +248,8 @@ class Login implements ModuleInterface {
 	 * @return array
 	 */
 	public function state_redirect( array $state ): array {
-		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		// FILTER_SANITIZE_URL keeps `&` intact (FULL_SPECIAL_CHARS turns it into `&amp;`); `$options` must be an int.
+		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL, 0 );
 		/**
 		 * Filter the default redirect URL in case redirect_to param is not available.
 		 * Default to admin URL.
@@ -237,24 +262,18 @@ class Login implements ModuleInterface {
 	}
 
 	/**
-	 * Add a redirect once user has been authenticated successfully.
+	 * Redirect to the URL from state once user has been authenticated successfully.
 	 *
-	 * @return void
+	 * @param string $redirect_to Redirect destination URL.
+	 *
+	 * @return string
 	 */
-	public function login_redirect(): void {
-		$state = Helper::filter_input( INPUT_GET, 'state', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
-
-		if ( ! $state || ! $this->authenticated ) {
-			return;
+	public function login_redirect( $redirect_to ) {
+		if ( ! $this->authenticated || empty( $this->redirect_to ) ) {
+			return $redirect_to;
 		}
 
-		$state = base64_decode( $state );
-		$state = $state ? json_decode( $state ) : null;
-
-		if ( ( $state instanceof stdClass ) && ! empty( $state->provider ) && 'google' === $state->provider && ! empty( $state->redirect_to ) ) {
-			wp_safe_redirect( $state->redirect_to, 302, 'Login with Google' );
-			exit;
-		}
+		return $this->redirect_to;
 	}
 
 	/**
