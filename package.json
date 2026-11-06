@@ -12,6 +12,15 @@
 		"lint:js:fix": "npm run lint:js -- --fix ./assets/src/blocks"
 	},
 	"overrides": {
+		"markdownlint-cli": {
+			"js-yaml": "^5.4.2"
+		},
+		"node-notifier": {
+			"uuid": "^11.1.1"
+		},
+		"sockjs": {
+			"uuid": "^11.1.1"
+		},
 		"webpack-dev-server": "^5.2.5",
 		"minimatch": ">=10.2.1",
 		"bn.js": ">=5.2.3",
@@ -20,8 +29,8 @@
 		"http-proxy-middleware": "^2.0.10"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^31.6.0",
-		"concurrently": "^10.0.3",
+		"@wordpress/scripts": "^36.0.0",
+		"concurrently": "^10.0.6",
 		"cross-env": "^10.1.0",
 		"laravel-mix": "^6.0.49",
 		"lodash": "^4.18.1",

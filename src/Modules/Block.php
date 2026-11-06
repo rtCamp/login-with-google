@@ -138,6 +138,8 @@ class Block implements Module {
 			! is_user_logged_in() ||
 			apply_filters( 'rtcamp.google_login_button_display', false )
 		) {
+			$this->assets->enqueue_login_styles();
+
 			$markup = $this->markup(
 				[
 					'login_url'           => $this->client->authorization_url(),

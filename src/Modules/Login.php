@@ -82,6 +82,7 @@ class Login implements ModuleInterface {
 		/**
 		 * Actions.
 		 */
+		add_action( 'login_init', [ $this, 'maybe_set_state_cookie' ] );
 		add_action( 'login_form', [ $this, 'login_button' ] );
 		// Priority is 20 because of issue: https://core.trac.wordpress.org/ticket/46748.
 		add_action( 'authenticate', [ $this, 'authenticate' ], 20 );
@@ -94,6 +95,16 @@ class Login implements ModuleInterface {
 		 */
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
+		add_filter( 'login_message', [ $this, 'filter_login_message' ] );
+	}
+
+	/**
+	 * Maybe set state cookie on login page initialization.
+	 *
+	 * @return void
+	 */
+	public function maybe_set_state_cookie(): void {
+		Helper::maybe_set_state_cookie();
 	}
 
 	/**
@@ -139,9 +150,15 @@ class Login implements ModuleInterface {
 			return $user;
 		}
 
-		if ( empty( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ) {
+		if ( empty( $decoded_state['nonce'] ) || ! is_string( $decoded_state['nonce'] ) || ! wp_verify_nonce( $decoded_state['nonce'], 'login_with_google' ) ) {
 			return $user;
 		}
+
+		if ( empty( $decoded_state['state_token'] ) || ! is_string( $decoded_state['state_token'] ) || ! Helper::verify_state_token( $decoded_state['state_token'] ) ) {
+			return new WP_Error( 'expired_session', __( 'Your login session has expired. Please try again.', 'login-with-google' ) );
+		}
+
+		Helper::set_state_cookie();
 
 		try {
 			$this->gh_client->set_access_token( $code );
@@ -165,8 +182,10 @@ class Login implements ModuleInterface {
 
 			throw new Exception( __( 'Could not authenticate the user, please try again.', 'login-with-google' ) );
 
-		} catch ( Throwable $e ) {
+		} catch ( Exception $e ) {
 			return new WP_Error( 'google_login_failed', $e->getMessage() );
+		} catch ( Throwable $e ) {
+			return new WP_Error( 'google_login_failed', esc_html__( 'An error occurred during Google sign-in. Please try again.', 'login-with-google' ) );
 		}
 	}
 
@@ -236,5 +255,22 @@ class Login implements ModuleInterface {
 			wp_safe_redirect( $state->redirect_to, 302, 'Login with Google' );
 			exit;
 		}
+	}
+
+	/**
+	 * Filter login message to display 2FA continuation notice when redirected from One Tap.
+	 *
+	 * @param string $message Existing login message.
+	 * @return string Modified login message.
+	 */
+	public function filter_login_message( $message ): string {
+		if ( ! empty( $_GET['login_with_google_2fa'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$message .= sprintf(
+				'<p class="message notice notice-info">%s</p>',
+				esc_html__( 'Please sign in again to complete two-factor authentication.', 'login-with-google' )
+			);
+		}
+
+		return (string) $message;
 	}
 }
