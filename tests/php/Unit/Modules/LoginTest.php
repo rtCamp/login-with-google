@@ -56,6 +56,18 @@ class LoginTest extends TestCase {
 	}
 
 	/**
+	 * Run after each test.
+	 *
+	 * @return void
+	 */
+	public function tearDown(): void {
+		// Login::authenticate() sets this superglobal; clear it even when an assertion fails.
+		unset( $_REQUEST['redirect_to'] );
+
+		parent::tearDown();
+	}
+
+	/**
 	 * @covers ::name
 	 */
 	public function testName() {
@@ -78,7 +90,7 @@ class LoginTest extends TestCase {
 		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ], 20 );
 		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ] );
-		WP_Mock::expectFilterAdded( 'login_redirect', [ $this->testee, 'login_redirect' ] );
+		WP_Mock::expectFilterAdded( 'login_redirect', [ $this->testee, 'login_redirect' ], 1 );
 		WP_Mock::expectFilterAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
 		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 
@@ -431,7 +443,8 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
+				FILTER_SANITIZE_URL,
+				0
 			]
 		)->andReturn( 'https://example.com/state-page' );
 
@@ -450,7 +463,8 @@ class LoginTest extends TestCase {
 			[
 				INPUT_GET,
 				'redirect_to',
-				FILTER_SANITIZE_FULL_SPECIAL_CHARS
+				FILTER_SANITIZE_URL,
+				0
 			]
 		)->andReturn( null );
 
@@ -480,13 +494,103 @@ class LoginTest extends TestCase {
 	 * @covers ::login_redirect
 	 */
 	public function testLoginRedirectUsesStateRedirectAfterAuthentication() {
+		$this->mockSuccessfulGoogleAuthentication( 'https://example.com/state-page' );
+
+		$this->wpMockFunction(
+			'wp_sanitize_redirect',
+			[ 'https://example.com/state-page' ],
+			1,
+			'https://example.com/state-page'
+		);
+
+		$this->wpMockFunction(
+			'wp_validate_redirect',
+			[ 'https://example.com/state-page', '' ],
+			1,
+			'https://example.com/state-page'
+		);
+
+		$this->wpMockFunction(
+			'wp_slash',
+			[ 'https://example.com/state-page' ],
+			1,
+			'https://example.com/state-page'
+		);
+
+		$this->testee->authenticate();
+
+		$this->assertSame( 'https://example.com/state-page', $_REQUEST['redirect_to'] );
+		$this->assertSame( 'https://example.com/state-page', $this->testee->login_redirect( 'https://example.com/wp-admin/' ) );
+	}
+
+	/**
+	 * Open-redirect guard: an off-site destination in the state is dropped.
+	 *
+	 * @covers ::authenticate
+	 * @covers ::login_redirect
+	 */
+	public function testLoginRedirectIgnoresOffsiteStateRedirect() {
+		$this->mockSuccessfulGoogleAuthentication( 'https://evil.example/' );
+
+		$this->wpMockFunction(
+			'wp_sanitize_redirect',
+			[ 'https://evil.example/' ],
+			1,
+			'https://evil.example/'
+		);
+
+		// `wpMockFunction()` skips empty return values, so set `''` directly.
+		WP_Mock::userFunction(
+			'wp_validate_redirect',
+			[
+				'times'  => 1,
+				'args'   => [ 'https://evil.example/', '' ],
+				'return' => '',
+			]
+		);
+
+		WP_Mock::userFunction( 'wp_slash', [ 'times' => 0 ] );
+
+		$this->testee->authenticate();
+
+		$this->assertArrayNotHasKey( 'redirect_to', $_REQUEST );
+		$this->assertSame( 'https://example.com/wp-admin/', $this->testee->login_redirect( 'https://example.com/wp-admin/' ) );
+	}
+
+	/**
+	 * A non-string `redirect_to` in the state is ignored without being validated.
+	 *
+	 * @covers ::authenticate
+	 * @covers ::login_redirect
+	 */
+	public function testLoginRedirectIgnoresNonStringStateRedirect() {
+		$this->mockSuccessfulGoogleAuthentication( [ 'https://example.com/state-page' ] );
+
+		WP_Mock::userFunction( 'wp_sanitize_redirect', [ 'times' => 0 ] );
+		WP_Mock::userFunction( 'wp_validate_redirect', [ 'times' => 0 ] );
+		WP_Mock::userFunction( 'wp_slash', [ 'times' => 0 ] );
+
+		$this->testee->authenticate();
+
+		$this->assertArrayNotHasKey( 'redirect_to', $_REQUEST );
+		$this->assertSame( 'https://example.com/wp-admin/', $this->testee->login_redirect( 'https://example.com/wp-admin/' ) );
+	}
+
+	/**
+	 * Mock a successful Google authentication with the given `redirect_to` in the state.
+	 *
+	 * @param mixed $redirect_to Value of `redirect_to` in the state.
+	 *
+	 * @return void
+	 */
+	private function mockSuccessfulGoogleAuthentication( $redirect_to ): void {
 		$state = base64_encode(
 			json_encode(
 				[
 					'provider'    => 'google',
 					'nonce'       => 'testnonce',
 					'state_token' => 'valid_token',
-					'redirect_to' => 'https://example.com/state-page',
+					'redirect_to' => $redirect_to,
 				]
 			)
 		);
@@ -521,20 +625,6 @@ class LoginTest extends TestCase {
 			true
 		);
 
-		$this->wpMockFunction(
-			'wp_sanitize_redirect',
-			[ 'https://example.com/state-page' ],
-			1,
-			'https://example.com/state-page'
-		);
-
-		$this->wpMockFunction(
-			'wp_validate_redirect',
-			[ 'https://example.com/state-page', '' ],
-			1,
-			'https://example.com/state-page'
-		);
-
 		$this->ghClientMock->expects( $this->once() )
 		                   ->method( 'user' )
 		                   ->willReturn( (object) [ 'email' => 'fakeemail@domain.com' ] );
@@ -542,12 +632,5 @@ class LoginTest extends TestCase {
 		$this->authenticatorMock->expects( $this->once() )
 		                        ->method( 'authenticate' )
 		                        ->willReturn( Mockery::mock( 'WP_User' ) );
-
-		$this->testee->authenticate();
-
-		$this->assertSame( 'https://example.com/state-page', $_REQUEST['redirect_to'] );
-		$this->assertSame( 'https://example.com/state-page', $this->testee->login_redirect( 'https://example.com/wp-admin/' ) );
-
-		unset( $_REQUEST['redirect_to'] );
 	}
 }

@@ -100,7 +100,9 @@ class Login implements ModuleInterface {
 		 * Filters.
 		 */
 		// Redirect via filter instead of `wp_login` so other `wp_login` callbacks (e.g. Two-Factor) can run.
-		add_filter( 'login_redirect', [ $this, 'login_redirect' ] );
+		// Runs early (priority 1) so the state destination acts as the initial value, as `redirect_to` does
+		// for password logins in wp-login.php, and other `login_redirect` filters can still override it.
+		add_filter( 'login_redirect', [ $this, 'login_redirect' ], 1 );
 		add_filter( 'rtcamp.google_redirect_url', [ $this, 'redirect_url' ] );
 		add_filter( 'rtcamp.google_login_state', [ $this, 'state_redirect' ] );
 		add_filter( 'login_message', [ $this, 'filter_login_message' ] );
@@ -182,8 +184,12 @@ class Login implements ModuleInterface {
 				}
 
 				if ( $this->redirect_to ) {
-					// Expose the redirect to plugins that read the requested redirect, e.g. Two-Factor's challenge form.
-					$_REQUEST['redirect_to'] = $this->redirect_to;
+					/*
+					 * Deliberately set the requested redirect for this request. Two-Factor copies it into its
+					 * challenge form, which carries it to the `validate_2fa` request; without this, 2FA users
+					 * lose the destination. Slashed to match core's superglobals (Two-Factor unslashes it).
+					 */
+					$_REQUEST['redirect_to'] = wp_slash( $this->redirect_to );
 				}
 
 				/**
@@ -242,7 +248,8 @@ class Login implements ModuleInterface {
 	 * @return array
 	 */
 	public function state_redirect( array $state ): array {
-		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		// FILTER_SANITIZE_URL keeps `&` intact (FULL_SPECIAL_CHARS turns it into `&amp;`); `$options` must be an int.
+		$redirect_to = Helper::filter_input( INPUT_GET, 'redirect_to', FILTER_SANITIZE_URL, 0 );
 		/**
 		 * Filter the default redirect URL in case redirect_to param is not available.
 		 * Default to admin URL.
