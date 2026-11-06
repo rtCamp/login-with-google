@@ -244,9 +244,11 @@ class GoogleClient {
 	 * @return string
 	 */
 	public function state(): string {
-		$state_data['nonce']    = wp_create_nonce( 'login_with_google' );
-		$state_data             = apply_filters( 'rtcamp.google_login_state', $state_data );
-		$state_data['provider'] = 'google';
+		$state_data                = [];
+		$state_data['nonce']       = wp_create_nonce( 'login_with_google' );
+		$state_data['state_token'] = Helper::get_or_create_state_token();
+		$state_data                = apply_filters( 'rtcamp.google_login_state', $state_data );
+		$state_data['provider']    = 'google';
 
 		return base64_encode( wp_json_encode( $state_data ) );
 	}

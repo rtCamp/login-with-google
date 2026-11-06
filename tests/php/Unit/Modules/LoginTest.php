@@ -73,13 +73,14 @@ class LoginTest extends TestCase {
 	 * @covers ::init
 	 */
 	public function testInit() {
+		WP_Mock::expectActionAdded( 'login_init', [ $this->testee, 'maybe_set_state_cookie' ] );
 		WP_Mock::expectActionAdded( 'login_form', [ $this->testee, 'login_button' ] );
 		WP_Mock::expectActionAdded( 'authenticate', [ $this->testee, 'authenticate' ], 20 );
 		WP_Mock::expectActionAdded( 'rtcamp.google_register_user', [ $this->authenticatorMock, 'register' ] );
-		WP_Mock::expectFilterAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
 		WP_Mock::expectActionAdded( 'rtcamp.google_user_created', [ $this->testee, 'user_meta' ] );
-		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 		WP_Mock::expectFilterAdded( 'login_redirect', [ $this->testee, 'login_redirect' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_redirect_url', [ $this->testee, 'redirect_url' ] );
+		WP_Mock::expectFilterAdded( 'rtcamp.google_login_state', [ $this->testee, 'state_redirect' ] );
 
 		$this->testee->init();
 		$this->assertConditionsMet();
@@ -246,6 +247,12 @@ class LoginTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticationWhenUserExists() {
+		$state = base64_encode( json_encode( [ // phpcs:ignore
+			'provider'    => 'google',
+			'nonce'       => 'testnonce',
+			'state_token' => 'valid_token',
+		] ) );
+
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
@@ -261,11 +268,14 @@ class LoginTest extends TestCase {
 				'state',
 				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
-		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+		)->andReturn( $state );
+
+		$helperMock->expects( 'verify_state_token' )->once()->with( 'valid_token' )->andReturn( true );
+		$helperMock->expects( 'set_state_cookie' )->once()->andReturnNull();
 
 		$this->ghClientMock->expects( $this->never() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+		                   ->willReturn( $state );
 
 		$this->wpMockFunction(
 			'wp_verify_nonce',
@@ -305,6 +315,12 @@ class LoginTest extends TestCase {
 	 * @covers ::authenticate
 	 */
 	public function testAuthenticationCapturesExceptions() {
+		$state = base64_encode( json_encode( [ // phpcs:ignore
+			'provider'    => 'google',
+			'nonce'       => 'testnonce',
+			'state_token' => 'valid_token',
+		] ) );
+
 		$helperMock = Mockery::mock( 'alias:' . Helper::class );
 		$helperMock->expects( 'filter_input' )->once()->withArgs(
 			[
@@ -320,11 +336,14 @@ class LoginTest extends TestCase {
 				'state',
 				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
-		)->andReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+		)->andReturn( $state );
+
+		$helperMock->expects( 'verify_state_token' )->once()->with( 'valid_token' )->andReturn( true );
+		$helperMock->expects( 'set_state_cookie' )->once()->andReturnNull();
 
 		$this->ghClientMock->expects( $this->never() )
 		                   ->method( 'state' )
-		                   ->willReturn( 'eyJwcm92aWRlciI6Imdvb2dsZSIsIm5vbmNlIjoidGVzdG5vbmNlIn0=' );
+		                   ->willReturn( $state );
 
 		$this->wpMockFunction(
 			'wp_verify_nonce',
@@ -466,6 +485,7 @@ class LoginTest extends TestCase {
 				[
 					'provider'    => 'google',
 					'nonce'       => 'testnonce',
+					'state_token' => 'valid_token',
 					'redirect_to' => 'https://example.com/state-page',
 				]
 			)
@@ -487,6 +507,9 @@ class LoginTest extends TestCase {
 				FILTER_SANITIZE_FULL_SPECIAL_CHARS
 			]
 		)->andReturn( $state );
+
+		$helperMock->expects( 'verify_state_token' )->once()->with( 'valid_token' )->andReturn( true );
+		$helperMock->expects( 'set_state_cookie' )->once()->andReturnNull();
 
 		$this->wpMockFunction(
 			'wp_verify_nonce',
